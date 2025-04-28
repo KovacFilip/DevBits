@@ -1,12 +1,12 @@
-import fastify from "fastify";
+import fastify from 'fastify';
 
 const server = fastify({
     logger: true,
 });
 
 // Declare a route
-server.get("/", function (request, reply) {
-    reply.send({ hello: "world" });
+server.get('/', function (request, reply) {
+    reply.send({ hello: 'world' });
 });
 
 /**

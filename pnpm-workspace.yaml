@@ -1,4 +1,4 @@
 packages:
-  - "apps/backend"
-  - "apps/frontend"
-  - "packages/shared"
+    - 'apps/backend'
+    - 'apps/frontend'
+    - 'packages/shared'
