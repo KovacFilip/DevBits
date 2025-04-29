@@ -2,5 +2,6 @@ pnpm-lock.yaml
 eslint.config.mjs
 docker-compose.yml
 ci.yml
+README.md
 
 dist
