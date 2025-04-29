@@ -5,12 +5,15 @@
     "main": "src/index.ts",
     "scripts": {
         "build": "tsc",
-        "dev": "ts-node src/index.ts"
+        "dev": "dotenv -e ../../.env -- fastify start src/index.ts",
+        "migrate:dev": "dotenv -e ../../.env -- prisma migrate dev",
+        "generate": "dotenv -e ../../.env -- prisma generate"
     },
     "keywords": [],
     "author": "",
     "license": "ISC",
     "dependencies": {
+        "@prisma/client": "6.7.0",
         "fastify": "^5.3.2"
     },
     "devDependencies": {
