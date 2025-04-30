@@ -1,0 +1,65 @@
+generator client {
+    provider = "prisma-client-js"
+    output   = "../src/generated/prisma"
+}
+
+datasource db {
+    provider = "postgresql"
+    url      = env("POSTGRES_DB_CONNECTION_STRING")
+}
+
+model User {
+    userId         String    @id @default(uuid())
+    username       String    @unique
+    profilePicture String?
+    email          String
+    createdAt      DateTime
+    updatedAt      DateTime
+    deletedAt      DateTime?
+    posts          Post[]
+    comments       Comment[]
+    like           Like[]
+}
+
+model Post {
+    postId    String    @id @default(uuid())
+    user      User      @relation(fields: [userId], references: [userId])
+    userId    String
+    title     String
+    content   String    @db.Text
+    createdAt DateTime
+    updatedAt DateTime
+    deletedAt DateTime?
+    comments  Comment[]
+    likes     Like[]
+}
+
+model Comment {
+    commentId       String    @id @default(uuid())
+    user            User      @relation(fields: [userId], references: [userId])
+    userId          String
+    post            Post      @relation(fields: [postId], references: [postId])
+    postId          String
+    content         String    @db.Text
+    parentComment   Comment?  @relation("commentsToComments", fields: [parentCommentId], references: [commentId])
+    parentCommentId String?
+    childComments   Comment[] @relation("commentsToComments")
+    createdAt       DateTime
+    updatedAt       DateTime
+    deletedAt       DateTime?
+    likes           Like[]
+}
+
+model Like {
+    likeId    String    @id @default(uuid())
+    user      User      @relation(fields: [userId], references: [userId])
+    userId    String
+    post      Post?     @relation(fields: [postId], references: [postId])
+    postId    String?
+    comment   Comment?  @relation(fields: [commentId], references: [commentId])
+    commentId String?
+    createdAt DateTime
+    updatedAt DateTime
+    deletedAt DateTime?
+    
+}
