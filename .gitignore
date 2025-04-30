@@ -6,4 +6,4 @@ dist/
 
 pg/
 
-**/generated/prisma/
+**/generated/*/

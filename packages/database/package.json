@@ -1,0 +1,26 @@
+{
+    "name": "@devbits/database",
+    "version": "1.0.0",
+    "description": "",
+    "main": "dist/index.js",
+    "scripts": {
+        "db:migrate": "dotenv -e ../../.env -- prisma migrate dev",
+        "db:generate": "dotenv -e ../../.env -- prisma generate",
+        "db:deploy": "dotenv -e ../../.env -- prisma migrate deploy",
+        "db:studio": "dotenv -e ../../.env -- prisma studio",
+        "db:reset": "dotenv -e ../../.env -- prisma migrate reset"
+    },
+    "keywords": [],
+    "author": "",
+    "license": "ISC",
+    "devDependencies": {
+        "@types/node": "^22.15.3",
+        "prisma": "^6.7.0",
+        "tsx": "^4.19.4",
+        "typescript": "^5.8.3"
+    },
+    "dependencies": {
+        "@prisma/client": "6.7.0",
+        "@prisma/extension-accelerate": "^1.3.0"
+    }
+}
