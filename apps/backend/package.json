@@ -12,7 +12,8 @@
     "license": "ISC",
     "dependencies": {
         "fastify": "^5.3.2",
-        "@devbits/database": "workspace:*"
+        "@devbits/database": "workspace:*",
+        "@devbits/shared": "workspace:*"
     },
     "devDependencies": {
         "ts-node": "^10.9.2"
