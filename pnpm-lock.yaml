@@ -73,6 +73,10 @@ importers:
         version: 5.8.3
 
   packages/shared:
+    dependencies:
+      '@devbits/database':
+        specifier: workspace:*
+        version: link:../database
     devDependencies:
       '@types/node':
         specifier: ^22.15.3

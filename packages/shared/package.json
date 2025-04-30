@@ -9,6 +9,9 @@
   "keywords": [],
   "author": "",
   "license": "ISC",
+  "dependencies": {
+    "@devbits/database": "workspace:*"
+  },
   "devDependencies": {
     "@types/node": "^22.15.3",
     "tsx": "^4.19.4",
