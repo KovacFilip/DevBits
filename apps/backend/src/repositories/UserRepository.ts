@@ -1,5 +1,5 @@
+import { prisma, Prisma, User } from '@devbits/database';
 import { IUserRepository } from '@devbits/shared';
-import { prisma, Prisma, User } from 'packages/database';
 
 class UserRepository implements IUserRepository {
     createUser(createUser: Prisma.UserCreateInput): Promise<User> {

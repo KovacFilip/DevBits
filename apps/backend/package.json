@@ -5,7 +5,7 @@
     "main": "src/index.ts",
     "scripts": {
         "build": "tsc",
-        "dev": "dotenv -e ../../.env -- fastify start src/index.ts"
+        "dev": "dotenv -e ../../.env -- tsc && node dist/index.js"
     },
     "keywords": [],
     "author": "",

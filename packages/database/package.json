@@ -8,7 +8,8 @@
         "db:generate": "dotenv -e ../../.env -- prisma generate",
         "db:deploy": "dotenv -e ../../.env -- prisma migrate deploy",
         "db:studio": "dotenv -e ../../.env -- prisma studio",
-        "db:reset": "dotenv -e ../../.env -- prisma migrate reset"
+        "db:reset": "dotenv -e ../../.env -- prisma migrate reset",
+        "build": "tsc"
     },
     "keywords": [],
     "author": "",
