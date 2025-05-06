@@ -6,7 +6,9 @@ export interface IUserRepository {
 
     // Read
     readUserById(userId: string): Promise<User | null>;
-    // readUserByUsername(username: string): Promise<User | null>;
+    readUserByProvider(
+        providerInfo: Prisma.OAuthAccountProviderProviderUserIdCompoundUniqueInput
+    ): Promise<User | null>;
 
     // Update
     updateUser(

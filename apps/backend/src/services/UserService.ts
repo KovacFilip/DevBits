@@ -7,16 +7,24 @@ const userRepository = new UserRepository();
 export class UserService implements IUserService {
     async registerUser(dto: CreateUserDTO): Promise<UserResponseDTO> {
         try {
-            const user = await userRepository.createUser({
-                email: dto.email,
-                profilePicture: dto.profilePicture,
-                accounts: {
-                    create: {
-                        provider: dto.provider,
-                        providerUserId: dto.providerUserId,
-                    },
-                },
+            let user = await userRepository.readUserByProvider({
+                provider: dto.provider,
+                providerUserId: dto.providerUserId,
             });
+
+            if (!user) {
+                user = await userRepository.createUser({
+                    email: dto.email,
+                    profilePicture: dto.profilePicture,
+                    username: dto.name,
+                    accounts: {
+                        create: {
+                            provider: dto.provider,
+                            providerUserId: dto.providerUserId,
+                        },
+                    },
+                });
+            }
 
             return {
                 userId: user.userId,

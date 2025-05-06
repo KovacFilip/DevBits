@@ -22,6 +22,22 @@ export class UserRepository implements IUserRepository {
         });
     }
 
+    async readUserByProvider(
+        providerInfo: Prisma.OAuthAccountProviderProviderUserIdCompoundUniqueInput
+    ): Promise<User | null> {
+        const account = await prisma.oAuthAccount.findUnique({
+            where: {
+                provider_providerUserId: {
+                    provider: providerInfo.provider,
+                    providerUserId: providerInfo.providerUserId,
+                },
+            },
+            select: { user: true },
+        });
+
+        return account?.user || null;
+    }
+
     updateUser(
         where: Prisma.UserWhereUniqueInput,
         data: Prisma.UserUpdateInput
