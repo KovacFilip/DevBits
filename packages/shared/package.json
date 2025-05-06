@@ -2,17 +2,15 @@
   "name": "@devbits/shared",
   "version": "1.0.0",
   "description": "",
-  "main": "dist/index.js",
+  "exports": {
+    "./index.ts": "./index.ts"
+  },
   "scripts": {},
   "keywords": [],
-  "author": "",
+  "author": "Filip Kovac",
   "license": "ISC",
-  "dependencies": {
-    "@devbits/database": "workspace:*"
-  },
+  "dependencies": {},
   "devDependencies": {
-    "@types/node": "^22.15.3",
-    "tsx": "^4.19.4",
-    "typescript": "^5.8.3"
+    "tsx": "^4.19.4"
   }
 }

@@ -1,21 +1,32 @@
 {
-    "name": "backend",
+    "name": "@devbits/backend",
     "version": "1.0.0",
     "description": "",
-    "main": "src/index.ts",
+    "main": "dist/index.js",
     "scripts": {
         "build": "tsc",
-        "dev": "dotenv -e ../../.env -- tsc && node dist/index.js"
+        "db:migrate": "dotenv -e ../../.env -- prisma migrate dev",
+        "db:generate": "dotenv -e ../../.env -- prisma generate",
+        "db:deploy": "dotenv -e ../../.env -- prisma migrate deploy",
+        "db:studio": "dotenv -e ../../.env -- prisma studio",
+        "db:reset": "dotenv -e ../../.env -- prisma migrate reset",
+        "dev": "tsx --watch --env-file=../../.env src/index.ts"
     },
     "keywords": [],
     "author": "",
     "license": "ISC",
     "dependencies": {
+        "@devbits/shared": "workspace:*",
+        "@fastify/oauth2": "^8.1.2",
+        "@prisma/client": "6.7.0",
+        "dotenv": "^16.5.0",
         "fastify": "^5.3.2",
-        "@devbits/database": "workspace:*",
-        "@devbits/shared": "workspace:*"
+        "google-auth-library": "^9.15.1",
+        "jsonwebtoken": "^9.0.2",
+        "prisma": "^6.7.0"
     },
     "devDependencies": {
+        "@types/jsonwebtoken": "^9.0.9",
         "ts-node": "^10.9.2"
     }
 }

@@ -1,13 +1,15 @@
+import * as dotenv from 'dotenv';
 import fastify from 'fastify';
+import path from 'path';
+import { googleAuthRoutes } from './controllers/auth/GoogleAuthController';
+
+dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 
 const server = fastify({
     logger: true,
 });
 
-// Declare a route
-server.get('/', function (request, reply) {
-    reply.send({ hello: 'world' });
-});
+server.register(googleAuthRoutes);
 
 /**
  * Run the server!

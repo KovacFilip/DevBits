@@ -1,4 +1,4 @@
-import { Prisma, User } from '@devbits/database';
+import { Prisma, User } from 'apps/backend/prisma/generated/client';
 
 export interface IUserRepository {
     // Create
@@ -6,7 +6,7 @@ export interface IUserRepository {
 
     // Read
     readUserById(userId: string): Promise<User | null>;
-    readUserByUsername(username: string): Promise<User | null>;
+    // readUserByUsername(username: string): Promise<User | null>;
 
     // Update
     updateUser(

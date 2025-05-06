@@ -1,7 +1,13 @@
-import { prisma, Prisma, User } from '@devbits/database';
-import { IUserRepository } from '@devbits/shared';
+import {
+    Prisma,
+    PrismaClient,
+    User,
+} from 'apps/backend/prisma/generated/client';
+import { IUserRepository } from '../models/interfaces/IUserRepository';
 
-class UserRepository implements IUserRepository {
+const prisma = new PrismaClient();
+
+export class UserRepository implements IUserRepository {
     createUser(createUser: Prisma.UserCreateInput): Promise<User> {
         return prisma.user.create({
             data: createUser,
@@ -12,14 +18,6 @@ class UserRepository implements IUserRepository {
         return prisma.user.findUnique({
             where: {
                 userId: userId,
-            },
-        });
-    }
-
-    readUserByUsername(username: string): Promise<User | null> {
-        return prisma.user.findUnique({
-            where: {
-                username: username,
             },
         });
     }
