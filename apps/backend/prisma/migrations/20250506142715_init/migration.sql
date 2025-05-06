@@ -1,14 +1,25 @@
 -- CreateTable
 CREATE TABLE "User" (
     "userId" TEXT NOT NULL,
-    "username" TEXT NOT NULL,
     "profilePicture" TEXT,
-    "email" TEXT NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL,
+    "email" TEXT,
+    "username" TEXT,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "deletedAt" TIMESTAMP(3),
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("userId")
+);
+
+-- CreateTable
+CREATE TABLE "OAuthAccount" (
+    "id" TEXT NOT NULL,
+    "provider" TEXT NOT NULL,
+    "providerUserId" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
+    "expiresAt" TIMESTAMP(3),
+
+    CONSTRAINT "OAuthAccount_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -17,7 +28,7 @@ CREATE TABLE "Post" (
     "userId" TEXT NOT NULL,
     "title" TEXT NOT NULL,
     "content" TEXT NOT NULL,
-    "createdAt" TIMESTAMP(3) NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "deletedAt" TIMESTAMP(3),
 
@@ -31,7 +42,7 @@ CREATE TABLE "Comment" (
     "postId" TEXT NOT NULL,
     "content" TEXT NOT NULL,
     "parentCommentId" TEXT,
-    "createdAt" TIMESTAMP(3) NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "deletedAt" TIMESTAMP(3),
 
@@ -44,7 +55,7 @@ CREATE TABLE "Like" (
     "userId" TEXT NOT NULL,
     "postId" TEXT,
     "commentId" TEXT,
-    "createdAt" TIMESTAMP(3) NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
     "deletedAt" TIMESTAMP(3),
 
@@ -52,7 +63,13 @@ CREATE TABLE "Like" (
 );
 
 -- CreateIndex
-CREATE UNIQUE INDEX "User_username_key" ON "User"("username");
+CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "OAuthAccount_provider_providerUserId_key" ON "OAuthAccount"("provider", "providerUserId");
+
+-- AddForeignKey
+ALTER TABLE "OAuthAccount" ADD CONSTRAINT "OAuthAccount_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("userId") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Post" ADD CONSTRAINT "Post_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("userId") ON DELETE RESTRICT ON UPDATE CASCADE;
