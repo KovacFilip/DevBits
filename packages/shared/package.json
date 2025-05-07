@@ -1,16 +1,16 @@
 {
-  "name": "@devbits/shared",
-  "version": "1.0.0",
-  "description": "",
-  "exports": {
-    "./index.ts": "./index.ts"
-  },
-  "scripts": {},
-  "keywords": [],
-  "author": "Filip Kovac",
-  "license": "ISC",
-  "dependencies": {},
-  "devDependencies": {
-    "tsx": "^4.19.4"
-  }
+    "name": "@devbits/shared",
+    "version": "1.0.0",
+    "description": "",
+    "exports": {
+        "./index.ts": "./index.ts"
+    },
+    "scripts": {},
+    "keywords": [],
+    "author": "Filip Kovac",
+    "license": "ISC",
+    "dependencies": {},
+    "devDependencies": {
+        "tsx": "^4.19.4"
+    }
 }
