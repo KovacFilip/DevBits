@@ -4,4 +4,8 @@ docker-compose.yml
 ci.yml
 README.md
 
-dist
+pg/
+**/pg
+**/pg/**
+dist/
+**/dist/**

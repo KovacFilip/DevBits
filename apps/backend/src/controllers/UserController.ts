@@ -1,6 +1,4 @@
-import { FastifyInstance } from 'fastify';
-
-const UserRoutes = (fastify: FastifyInstance, options: Object) => {};
+const UserRoutes = () => {};
 
 module.exports = {
     UserRoutes,
