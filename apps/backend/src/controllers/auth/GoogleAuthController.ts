@@ -8,7 +8,7 @@ import { UserService } from '../../services/UserService';
 
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 
-export const googleAuthRoutes = (fastify: FastifyInstance, options: Object) => {
+export const googleAuthRoutes = (fastify: FastifyInstance) => {
     const userService = new UserService();
 
     fastify.register(oauthPlugin, {
