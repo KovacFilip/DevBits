@@ -7,6 +7,22 @@ export interface ILikeRepository {
     // Read
     readLike(like: Prisma.LikeWhereUniqueInput): Promise<Like | null>;
 
+    readLikesPerPost(post: Prisma.PostWhereUniqueInput): Promise<Like[]>;
+
+    readNumberOfLikesPerPost(
+        post: Prisma.PostWhereUniqueInput
+    ): Promise<number>;
+
+    readLikesPerComment(
+        comment: Prisma.CommentWhereUniqueInput
+    ): Promise<Like[]>;
+
+    readNumberOfLikesPerComment(
+        comment: Prisma.CommentWhereUniqueInput
+    ): Promise<number>;
+
+    readLikesByUser(user: Prisma.UserWhereUniqueInput): Promise<Like[]>;
+
     // Update
     updateLike(
         where: Prisma.LikeWhereUniqueInput,
