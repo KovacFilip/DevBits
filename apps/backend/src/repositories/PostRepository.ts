@@ -20,6 +20,14 @@ export class PostRepository implements IPostRepository {
         });
     }
 
+    readUsersPosts(user: Prisma.UserWhereUniqueInput): Promise<Post[] | null> {
+        return prisma.post.findMany({
+            where: {
+                user,
+            },
+        });
+    }
+
     updatePost(
         where: Prisma.PostWhereUniqueInput,
         data: Prisma.PostUpdateInput
