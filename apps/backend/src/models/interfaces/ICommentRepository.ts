@@ -9,6 +9,14 @@ export interface ICommentRepository {
         comment: Prisma.CommentWhereUniqueInput
     ): Promise<Comment | null>;
 
+    readCommentForPost(
+        post: Prisma.PostWhereUniqueInput
+    ): Promise<Comment[] | null>;
+
+    readCommentForUser(
+        user: Prisma.UserWhereUniqueInput
+    ): Promise<Comment[] | null>;
+
     // Update
     updateComment(
         where: Prisma.CommentWhereUniqueInput,
