@@ -16,22 +16,14 @@ const commentRepository = new CommentRepository();
 export class CommentService implements ICommentService {
     async createComment(dto: CreateCommentDTO): Promise<CommentDTO> {
         const commentToCreate: Prisma.CommentCreateInput = {
-            user: {
-                connect: {
-                    userId: dto.userId,
-                },
-            },
-            post: {
-                connect: {
-                    postId: dto.postId,
-                },
-            },
+            user: { connect: { userId: dto.userId } },
+            post: { connect: { postId: dto.postId } },
             content: dto.content,
-            parentComment: {
-                connect: {
-                    commentId: dto.parentCommentId,
+            ...(dto.parentCommentId && {
+                parentComment: {
+                    connect: { commentId: dto.parentCommentId },
                 },
-            },
+            }),
         };
 
         const comment = await commentRepository.createComment(commentToCreate);
