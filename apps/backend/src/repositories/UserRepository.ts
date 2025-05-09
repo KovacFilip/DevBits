@@ -8,6 +8,12 @@ import { IUserRepository } from '../models/interfaces/IUserRepository';
 const prisma = new PrismaClient();
 
 export class UserRepository implements IUserRepository {
+    readUser(user: Prisma.UserWhereUniqueInput): Promise<User | null> {
+        return prisma.user.findUnique({
+            where: user,
+        });
+    }
+
     createUser(createUser: Prisma.UserCreateInput): Promise<User> {
         return prisma.user.create({
             data: createUser,

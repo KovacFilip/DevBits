@@ -4,9 +4,6 @@ export type CreateUserDTO = {
     profilePicture?: string;
     provider: 'google' | 'facebook' | 'github' | 'discord';
     providerUserId: string;
-    // accessToken?: string;
-    // refreshToken?: string;
-    // expiresAt?: Date;
 };
 
 export type UserResponseDTO = {
@@ -14,4 +11,17 @@ export type UserResponseDTO = {
     email: string | null;
     profilePicture: string | null;
     username: string | null;
+};
+
+export type UserIdDTO = {
+    userId: string;
+};
+
+export type UpdateUserDTO = {
+    userId: string;
+    updateData: {
+        email?: string;
+        name?: string;
+        profilePicture?: string;
+    };
 };

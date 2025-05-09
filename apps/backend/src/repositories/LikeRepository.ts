@@ -20,6 +20,52 @@ export class LikeRepository implements ILikeRepository {
         });
     }
 
+    readLikesPerPost(post: Prisma.PostWhereUniqueInput): Promise<Like[]> {
+        return prisma.like.findMany({
+            where: {
+                post,
+            },
+        });
+    }
+
+    readNumberOfLikesPerPost(
+        post: Prisma.PostWhereUniqueInput
+    ): Promise<number> {
+        return prisma.like.count({
+            where: {
+                post,
+            },
+        });
+    }
+
+    readLikesPerComment(
+        comment: Prisma.CommentWhereUniqueInput
+    ): Promise<Like[]> {
+        return prisma.like.findMany({
+            where: {
+                comment,
+            },
+        });
+    }
+
+    readNumberOfLikesPerComment(
+        comment: Prisma.CommentWhereUniqueInput
+    ): Promise<number> {
+        return prisma.like.count({
+            where: {
+                comment,
+            },
+        });
+    }
+
+    readLikesByUser(user: Prisma.UserWhereUniqueInput): Promise<Like[]> {
+        return prisma.like.findMany({
+            where: {
+                user,
+            },
+        });
+    }
+
     updateLike(
         where: Prisma.LikeWhereUniqueInput,
         data: Prisma.LikeUpdateInput

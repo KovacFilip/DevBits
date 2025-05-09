@@ -22,6 +22,26 @@ export class CommentRepository implements ICommentRepository {
         });
     }
 
+    readCommentForPost(
+        post: Prisma.PostWhereUniqueInput
+    ): Promise<Comment[] | null> {
+        return prisma.comment.findMany({
+            where: {
+                post,
+            },
+        });
+    }
+
+    readCommentForUser(
+        user: Prisma.UserWhereUniqueInput
+    ): Promise<Comment[] | null> {
+        return prisma.comment.findMany({
+            where: {
+                user,
+            },
+        });
+    }
+
     updateComment(
         where: Prisma.CommentWhereUniqueInput,
         data: Prisma.CommentUpdateInput
