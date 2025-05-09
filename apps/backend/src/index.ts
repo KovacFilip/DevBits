@@ -2,6 +2,7 @@ import * as dotenv from 'dotenv';
 import fastify from 'fastify';
 import path from 'path';
 import { googleAuthRoutes } from './controllers/auth/GoogleAuthController';
+import { postRoutes } from './controllers/PostController';
 
 dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 
@@ -10,6 +11,7 @@ const server = fastify({
 });
 
 server.register(googleAuthRoutes);
+server.register(postRoutes);
 
 /**
  * Run the server!
