@@ -6,7 +6,10 @@ declare module 'fastify' {
     interface FastifyInstance {
         facebookOAuth2: OAuth2Namespace;
         googleOAuth2: OAuth2Namespace;
-        authenticate: any;
+        authenticate: (
+            request: FastifyRequest,
+            reply: FastifyReply
+        ) => Promise<void>;
     }
 
     interface FastifyRequest {
