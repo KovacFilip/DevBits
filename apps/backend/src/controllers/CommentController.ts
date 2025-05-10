@@ -15,12 +15,15 @@ export const commentRoutes = (fastify: FastifyInstance) => {
     // Create Comment
     fastify.post<{ Body: Omit<CreateCommentDTO, 'userId'> }>(
         BASE_COMMENT_ROUTE,
+        {
+            preHandler: [fastify.authenticate],
+        },
         async (request, response) => {
             // UserID - TODO: should be taken from auth header
-            const userId = 'bd1c8f1a-5a1a-48b0-a2a1-dd7ebd742fe1';
+            const user = request.user;
 
             const newComment = await commentService.createComment({
-                userId,
+                userId: user.userId,
                 ...request.body,
             });
 
@@ -31,6 +34,9 @@ export const commentRoutes = (fastify: FastifyInstance) => {
     // Get Comment
     fastify.get<{ Querystring: GetCommentQueryDTO }>(
         BASE_COMMENT_ROUTE,
+        {
+            preHandler: [fastify.authenticate],
+        },
         async (request, response) => {
             const { commentId, postId, userId } = request.query;
 
@@ -63,6 +69,9 @@ export const commentRoutes = (fastify: FastifyInstance) => {
     // Update Comment
     fastify.put<{ Body: UpdateCommentDTO }>(
         BASE_COMMENT_ROUTE,
+        {
+            preHandler: [fastify.authenticate],
+        },
         async (request, response) => {
             const updatedComment = await commentService.updateComment(
                 request.body
@@ -75,6 +84,9 @@ export const commentRoutes = (fastify: FastifyInstance) => {
     // Delete Comment
     fastify.delete<{ Querystring: CommentIdDTO }>(
         BASE_COMMENT_ROUTE,
+        {
+            preHandler: [fastify.authenticate],
+        },
         async (request, response) => {
             const deletedComment = await commentService.deleteComment(
                 request.query

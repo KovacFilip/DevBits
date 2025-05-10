@@ -25,3 +25,9 @@ export type UpdateUserDTO = {
         profilePicture?: string;
     };
 };
+
+export type UserJWTPayload = {
+    userId: string;
+    email: string;
+    name: string;
+};

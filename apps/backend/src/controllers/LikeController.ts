@@ -12,14 +12,16 @@ export const likeRoutes = (fastify: FastifyInstance) => {
     // Create Like
     fastify.post<{ Querystring: LikeEntityQueryDTO }>(
         BASE_LIKE_ROUTE,
+        {
+            preHandler: [fastify.authenticate],
+        },
         async (request, response) => {
             const { commentId, postId } = request.query;
-            // UserID - TODO: should be taken from auth header
-            const userId = 'bd1c8f1a-5a1a-48b0-a2a1-dd7ebd742fe1';
+            const user = request.user;
 
             if (commentId) {
                 const like = await likeService.likeComment({
-                    userId,
+                    userId: user.userId,
                     entity: { commentId },
                 });
                 return response.code(200).send({ success: true, like });
@@ -27,7 +29,7 @@ export const likeRoutes = (fastify: FastifyInstance) => {
 
             if (postId) {
                 const like = await likeService.likePost({
-                    userId,
+                    userId: user.userId,
                     entity: { postId },
                 });
                 return response.code(200).send({ success: true, like });
@@ -43,6 +45,9 @@ export const likeRoutes = (fastify: FastifyInstance) => {
     // Get Like
     fastify.get<{ Querystring: GetLikeQueryDTO }>(
         BASE_LIKE_ROUTE,
+        {
+            preHandler: [fastify.authenticate],
+        },
         async (request, response) => {
             const { likeId, commentId, postId } = request.query;
 
@@ -73,6 +78,9 @@ export const likeRoutes = (fastify: FastifyInstance) => {
     // Get Count Of Likes
     fastify.get<{ Querystring: LikeEntityQueryDTO }>(
         BASE_LIKE_ROUTE + '/count',
+        {
+            preHandler: [fastify.authenticate],
+        },
         async (request, response) => {
             const { commentId, postId } = request.query;
 
@@ -100,6 +108,9 @@ export const likeRoutes = (fastify: FastifyInstance) => {
     // Remove Like
     fastify.delete<{ Querystring: LikeIdDTO }>(
         BASE_LIKE_ROUTE,
+        {
+            preHandler: [fastify.authenticate],
+        },
         async (request, response) => {
             const deletedLike = await likeService.removeLike(request.query);
 

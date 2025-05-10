@@ -11,12 +11,16 @@ export const postRoutes = (fastify: FastifyInstance) => {
     // Create New Post
     fastify.post<{ Body: Omit<CreatePostDTO, 'userId'> }>(
         BASE_POST_ROUTE,
+        {
+            preHandler: [fastify.authenticate],
+        },
         async (request, response) => {
             // const { title, content } = request.body;
-            const userId = 'bd1c8f1a-5a1a-48b0-a2a1-dd7ebd742fe1';
+            const user = request.user;
+            // const userId = 'bd1c8f1a-5a1a-48b0-a2a1-dd7ebd742fe1';
 
             const newPost = await postService.createPost({
-                userId,
+                userId: user.userId,
                 ...request.body,
             });
 

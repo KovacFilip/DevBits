@@ -3,7 +3,6 @@ import { CreateUserDTO } from '@devbits/shared';
 import oauthPlugin from '@fastify/oauth2';
 import { FastifyInstance } from 'fastify';
 import { OAuth2Client } from 'google-auth-library';
-import jwt from 'jsonwebtoken';
 import { UserService } from '../../services/UserService';
 
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
@@ -23,6 +22,9 @@ export const googleAuthRoutes = (fastify: FastifyInstance) => {
         scope: ['email', 'profile'],
         startRedirectPath: '/auth/google',
         callbackUri: 'http://localhost:3000/auth/google/callback',
+        callbackUriParams: {
+            access_type: 'offline',
+        },
     });
 
     fastify.get('/auth/google/callback', async (request, response) => {
@@ -58,23 +60,22 @@ export const googleAuthRoutes = (fastify: FastifyInstance) => {
 
         const createdUser = await userService.registerUser(userDto);
 
-        const appJwt = jwt.sign(
-            {
-                userId: createdUser.userId,
-                email: createdUser.email,
-                name: payload.name,
-            },
-            process.env.JWT_SECRET!,
-            { expiresIn: '1h' }
-        );
+        const jwtPayload = {
+            userId: createdUser.userId,
+            email: createdUser.email,
+            name: payload.name,
+        };
 
-        response.setCookie('token', appJwt, {
+        const jwtToken = request.jwt.sign(jwtPayload, { expiresIn: '1h' });
+
+        response.setCookie('access_token', jwtToken, {
             httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
+            secure: true,
             path: '/',
-            sameSite: 'lax',
         });
 
-        response.send({ payload: appJwt });
+        console.log(`Returning the following token: ${jwtToken}`);
+
+        return response.send({ payload: jwtToken });
     });
 };
