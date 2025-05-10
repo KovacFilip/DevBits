@@ -20,7 +20,7 @@ export const postRoutes = (fastify: FastifyInstance) => {
                 ...request.body,
             });
 
-            response.code(200).send({ success: true });
+            response.code(200).send({ success: true, post: newPost });
         }
     );
 
