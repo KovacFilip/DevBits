@@ -7,7 +7,9 @@ import { IPostService } from '../models/interfaces/services/IPostService';
 
 export const BASE_POST_ROUTE = '/post';
 
-const postService = container.get<IPostService>(SERVICE_IDENTIFIER.POST_SERVICE);
+const postService = container.get<IPostService>(
+    SERVICE_IDENTIFIER.POST_SERVICE
+);
 
 export const postRoutes = (fastify: FastifyInstance) => {
     // Create New Post

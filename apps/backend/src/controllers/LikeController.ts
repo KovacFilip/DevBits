@@ -8,7 +8,9 @@ import { LikeEntityQueryDTO } from '../models/LikeEntityQueryDTO';
 
 export const BASE_LIKE_ROUTE = '/like';
 
-const likeService = container.get<ILikeService>(SERVICE_IDENTIFIER.LIKE_SERVICE);
+const likeService = container.get<ILikeService>(
+    SERVICE_IDENTIFIER.LIKE_SERVICE
+);
 
 export const likeRoutes = (fastify: FastifyInstance) => {
     // Create Like
