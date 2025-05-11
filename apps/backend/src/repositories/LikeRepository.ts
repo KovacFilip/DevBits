@@ -86,8 +86,8 @@ export class LikeRepository implements ILikeRepository {
         return prisma.like.update({
             where: like,
             data: {
-                deletedAt: Date.now().toString(),
-                updatedAt: Date.now().toString(),
+                deletedAt: new Date(),
+                updatedAt: new Date(),
             },
         });
     }

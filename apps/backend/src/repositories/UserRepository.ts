@@ -54,9 +54,19 @@ export class UserRepository implements IUserRepository {
         });
     }
 
-    deleteUser(where: Prisma.UserWhereUniqueInput): Promise<User> {
+    hardDeleteUser(user: Prisma.UserWhereUniqueInput): Promise<User> {
         return prisma.user.delete({
-            where,
+            where: user,
+        });
+    }
+
+    softDeleteUser(user: Prisma.UserWhereUniqueInput): Promise<User> {
+        return prisma.user.update({
+            data: {
+                updatedAt: new Date(),
+                deletedAt: new Date(),
+            },
+            where: user,
         });
     }
 }

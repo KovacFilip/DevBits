@@ -66,8 +66,8 @@ export class CommentRepository implements ICommentRepository {
         return prisma.comment.update({
             where: comment,
             data: {
-                deletedAt: Date.now().toString(),
-                updatedAt: Date.now().toString(),
+                deletedAt: new Date(),
+                updatedAt: new Date(),
             },
         });
     }

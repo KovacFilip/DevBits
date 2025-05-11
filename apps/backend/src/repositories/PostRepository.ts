@@ -48,8 +48,8 @@ export class PostRepository implements IPostRepository {
         return prisma.post.update({
             where: post,
             data: {
-                deletedAt: Date.now().toString(),
-                updatedAt: Date.now().toString(),
+                deletedAt: new Date(),
+                updatedAt: new Date(),
             },
         });
     }
