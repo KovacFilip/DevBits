@@ -3,13 +3,19 @@ import {
     Prisma,
     PrismaClient,
 } from 'apps/backend/prisma/generated/client';
+import { inject, injectable } from 'inversify';
+import { DATABASE_IDENTIFIER } from '../constants/identifiers';
 import { ICommentRepository } from '../models/interfaces/ICommentRepository';
 
-const prisma = new PrismaClient();
-
+@injectable()
 export class CommentRepository implements ICommentRepository {
+    constructor(
+        @inject(DATABASE_IDENTIFIER.PRISMA)
+        private readonly prisma: PrismaClient
+    ) {}
+
     createComment(comment: Prisma.CommentCreateInput): Promise<Comment> {
-        return prisma.comment.create({
+        return this.prisma.comment.create({
             data: comment,
         });
     }
@@ -17,7 +23,7 @@ export class CommentRepository implements ICommentRepository {
     readComment(
         comment: Prisma.CommentWhereUniqueInput
     ): Promise<Comment | null> {
-        return prisma.comment.findUnique({
+        return this.prisma.comment.findUnique({
             where: comment,
         });
     }
@@ -25,7 +31,7 @@ export class CommentRepository implements ICommentRepository {
     readCommentForPost(
         post: Prisma.PostWhereUniqueInput
     ): Promise<Comment[] | null> {
-        return prisma.comment.findMany({
+        return this.prisma.comment.findMany({
             where: {
                 post,
             },
@@ -35,7 +41,7 @@ export class CommentRepository implements ICommentRepository {
     readCommentForUser(
         user: Prisma.UserWhereUniqueInput
     ): Promise<Comment[] | null> {
-        return prisma.comment.findMany({
+        return this.prisma.comment.findMany({
             where: {
                 user,
             },
@@ -46,7 +52,7 @@ export class CommentRepository implements ICommentRepository {
         where: Prisma.CommentWhereUniqueInput,
         data: Prisma.CommentUpdateInput
     ): Promise<Comment> {
-        return prisma.comment.update({
+        return this.prisma.comment.update({
             where,
             data,
         });
@@ -55,7 +61,7 @@ export class CommentRepository implements ICommentRepository {
     hardDeleteComment(
         comment: Prisma.CommentWhereUniqueInput
     ): Promise<Comment> {
-        return prisma.comment.delete({
+        return this.prisma.comment.delete({
             where: comment,
         });
     }
@@ -63,7 +69,7 @@ export class CommentRepository implements ICommentRepository {
     softDeleteComment(
         comment: Prisma.CommentWhereUniqueInput
     ): Promise<Comment> {
-        return prisma.comment.update({
+        return this.prisma.comment.update({
             where: comment,
             data: {
                 deletedAt: new Date(),

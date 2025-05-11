@@ -1,12 +1,16 @@
 import { FastifyInstance } from 'fastify';
 import { LikeIdDTO } from 'packages/shared';
+import { container } from '../config/inversify.config';
+import { SERVICE_IDENTIFIER } from '../constants/identifiers';
 import { GetLikeQueryDTO } from '../models/GetLikeQueryDTO';
+import { ILikeService } from '../models/interfaces/services/ILikeService';
 import { LikeEntityQueryDTO } from '../models/LikeEntityQueryDTO';
-import { LikeService } from '../services/LikeService';
 
 export const BASE_LIKE_ROUTE = '/like';
 
-const likeService = new LikeService();
+const likeService = container.get<ILikeService>(
+    SERVICE_IDENTIFIER.LIKE_SERVICE
+);
 
 export const likeRoutes = (fastify: FastifyInstance) => {
     // Create Like

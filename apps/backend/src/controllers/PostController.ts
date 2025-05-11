@@ -1,11 +1,15 @@
 import { FastifyInstance } from 'fastify';
 import { CreatePostDTO, PostIdDTO, UpdatePostDTO } from 'packages/shared';
+import { container } from '../config/inversify.config';
+import { SERVICE_IDENTIFIER } from '../constants/identifiers';
 import { GetPostQueryDTO } from '../models/GetPostQueryDTO';
-import { PostService } from '../services/PostService';
+import { IPostService } from '../models/interfaces/services/IPostService';
 
 export const BASE_POST_ROUTE = '/post';
 
-const postService = new PostService();
+const postService = container.get<IPostService>(
+    SERVICE_IDENTIFIER.POST_SERVICE
+);
 
 export const postRoutes = (fastify: FastifyInstance) => {
     // Create New Post

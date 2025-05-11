@@ -1,4 +1,5 @@
 import { Prisma } from 'apps/backend/prisma/generated/client';
+import { inject, injectable } from 'inversify';
 import {
     CommentDTO,
     CommentIdDTO,
@@ -7,13 +8,18 @@ import {
     UpdateCommentDTO,
     UserIdDTO,
 } from 'packages/shared';
+import { REPOSITORY_IDENTIFIER } from '../constants/identifiers';
 import { NotFoundError } from '../errors/NotFoundError';
+import { ICommentRepository } from '../models/interfaces/ICommentRepository';
 import { ICommentService } from '../models/interfaces/services/ICommentService';
-import { CommentRepository } from '../repositories/CommentRepository';
 
-const commentRepository = new CommentRepository();
-
+@injectable()
 export class CommentService implements ICommentService {
+    constructor(
+        @inject(REPOSITORY_IDENTIFIER.COMMENT_REPOSITORY)
+        private readonly commentRepository: ICommentRepository
+    ) {}
+
     async createComment(dto: CreateCommentDTO): Promise<CommentDTO> {
         const commentToCreate: Prisma.CommentCreateInput = {
             user: { connect: { userId: dto.userId } },
@@ -26,7 +32,8 @@ export class CommentService implements ICommentService {
             }),
         };
 
-        const comment = await commentRepository.createComment(commentToCreate);
+        const comment =
+            await this.commentRepository.createComment(commentToCreate);
 
         return {
             commentId: comment.commentId,
@@ -42,7 +49,8 @@ export class CommentService implements ICommentService {
             commentId: dto.commentId,
         };
 
-        const comment = await commentRepository.readComment(commentUniqueInput);
+        const comment =
+            await this.commentRepository.readComment(commentUniqueInput);
 
         if (!comment) {
             throw new NotFoundError(
@@ -65,7 +73,7 @@ export class CommentService implements ICommentService {
         };
 
         const comments =
-            await commentRepository.readCommentForPost(uniquePostInput);
+            await this.commentRepository.readCommentForPost(uniquePostInput);
 
         if (!comments) {
             throw new Error(
@@ -90,7 +98,7 @@ export class CommentService implements ICommentService {
         };
 
         const comments =
-            await commentRepository.readCommentForUser(uniqueUserInput);
+            await this.commentRepository.readCommentForUser(uniqueUserInput);
 
         if (!comments) {
             throw new Error(
@@ -118,7 +126,7 @@ export class CommentService implements ICommentService {
             content: dto.updateData.content,
         };
 
-        const updatedComment = await commentRepository.updateComment(
+        const updatedComment = await this.commentRepository.updateComment(
             where,
             data
         );
@@ -138,7 +146,7 @@ export class CommentService implements ICommentService {
         };
 
         const deletedComment =
-            await commentRepository.softDeleteComment(commentUniqueInput);
+            await this.commentRepository.softDeleteComment(commentUniqueInput);
 
         return {
             commentId: deletedComment.commentId,

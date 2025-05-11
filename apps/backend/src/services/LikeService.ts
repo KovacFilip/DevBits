@@ -1,4 +1,5 @@
 import { Prisma } from 'apps/backend/prisma/generated/client';
+import { inject, injectable } from 'inversify';
 import {
     CommentIdDTO,
     CreateCommentLikeDTO,
@@ -8,13 +9,18 @@ import {
     LikePostDTO,
     PostIdDTO,
 } from 'packages/shared';
+import { REPOSITORY_IDENTIFIER } from '../constants/identifiers';
 import { NotFoundError } from '../errors/NotFoundError';
+import { ILikeRepository } from '../models/interfaces/ILikeRepository';
 import { ILikeService } from '../models/interfaces/services/ILikeService';
-import { LikeRepository } from '../repositories/LikeRepository';
 
-const likeRepository = new LikeRepository();
-
+@injectable()
 export class LikeService implements ILikeService {
+    constructor(
+        @inject(REPOSITORY_IDENTIFIER.LIKE_REPOSITORY)
+        private readonly likeRepository: ILikeRepository
+    ) {}
+
     async likePost(dto: CreatePostLikeDTO): Promise<LikePostDTO> {
         const createLikeInput: Prisma.LikeCreateInput = {
             user: {
@@ -29,7 +35,7 @@ export class LikeService implements ILikeService {
             },
         };
 
-        const like = await likeRepository.createLike(createLikeInput);
+        const like = await this.likeRepository.createLike(createLikeInput);
 
         return {
             likeId: like.likeId,
@@ -54,7 +60,7 @@ export class LikeService implements ILikeService {
             },
         };
 
-        const like = await likeRepository.createLike(createLikeInput);
+        const like = await this.likeRepository.createLike(createLikeInput);
 
         return {
             likeId: like.likeId,
@@ -70,7 +76,7 @@ export class LikeService implements ILikeService {
             likeId: dto.likeId,
         };
 
-        const like = await likeRepository.readLike(likeUniqueInput);
+        const like = await this.likeRepository.readLike(likeUniqueInput);
 
         if (!like) {
             throw new NotFoundError(
@@ -103,7 +109,7 @@ export class LikeService implements ILikeService {
         };
 
         const removedLike =
-            await likeRepository.softDeleteLike(likeUniqueInput);
+            await this.likeRepository.softDeleteLike(likeUniqueInput);
 
         if (removedLike.postId) {
             return {
@@ -129,7 +135,8 @@ export class LikeService implements ILikeService {
             postId: dto.postId,
         };
 
-        const likes = await likeRepository.readLikesPerPost(postUniqueInput);
+        const likes =
+            await this.likeRepository.readLikesPerPost(postUniqueInput);
 
         return likes.map((like) => {
             return {
@@ -148,7 +155,7 @@ export class LikeService implements ILikeService {
         };
 
         const likes =
-            await likeRepository.readLikesPerComment(commentUniqueInput);
+            await this.likeRepository.readLikesPerComment(commentUniqueInput);
 
         return likes.map((like) => {
             return {
@@ -166,7 +173,9 @@ export class LikeService implements ILikeService {
             postId: dto.postId,
         };
 
-        return await likeRepository.readNumberOfLikesPerPost(postUniqueInput);
+        return await this.likeRepository.readNumberOfLikesPerPost(
+            postUniqueInput
+        );
     }
 
     async getNumberOfLikesOfComment(dto: CommentIdDTO): Promise<number> {
@@ -174,7 +183,7 @@ export class LikeService implements ILikeService {
             commentId: dto.commentId,
         };
 
-        return await likeRepository.readNumberOfLikesPerComment(
+        return await this.likeRepository.readNumberOfLikesPerComment(
             commentUniqueInput
         );
     }

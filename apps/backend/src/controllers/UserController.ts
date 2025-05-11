@@ -1,10 +1,14 @@
 import { FastifyInstance } from 'fastify';
 import { UpdateUserDTO, UserIdDTO } from 'packages/shared';
-import { UserService } from '../services/UserService';
+import { container } from '../config/inversify.config';
+import { SERVICE_IDENTIFIER } from '../constants/identifiers';
+import { IUserService } from '../models/interfaces/services/IUserService';
 
 export const BASE_USER_ROUTE = '/user';
 
-const userService = new UserService();
+const userService = container.get<IUserService>(
+    SERVICE_IDENTIFIER.USER_SERVICE
+);
 
 export const UserRoutes = (fastify: FastifyInstance) => {
     // Get user info

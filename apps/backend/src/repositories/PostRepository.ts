@@ -3,25 +3,31 @@ import {
     Prisma,
     PrismaClient,
 } from 'apps/backend/prisma/generated/client';
+import { inject, injectable } from 'inversify';
+import { DATABASE_IDENTIFIER } from '../constants/identifiers';
 import { IPostRepository } from '../models/interfaces/IPostRepository';
 
-const prisma = new PrismaClient();
-
+@injectable()
 export class PostRepository implements IPostRepository {
+    constructor(
+        @inject(DATABASE_IDENTIFIER.PRISMA)
+        private readonly prisma: PrismaClient
+    ) {}
+
     createPost(post: Prisma.PostCreateInput): Promise<Post> {
-        return prisma.post.create({
+        return this.prisma.post.create({
             data: post,
         });
     }
 
     readPost(post: Prisma.PostWhereUniqueInput): Promise<Post | null> {
-        return prisma.post.findUnique({
+        return this.prisma.post.findUnique({
             where: post,
         });
     }
 
     readUsersPosts(user: Prisma.UserWhereUniqueInput): Promise<Post[] | null> {
-        return prisma.post.findMany({
+        return this.prisma.post.findMany({
             where: {
                 user,
             },
@@ -32,20 +38,20 @@ export class PostRepository implements IPostRepository {
         where: Prisma.PostWhereUniqueInput,
         data: Prisma.PostUpdateInput
     ): Promise<Post> {
-        return prisma.post.update({
+        return this.prisma.post.update({
             where,
             data,
         });
     }
 
     hardDeletePost(post: Prisma.PostWhereUniqueInput): Promise<Post> {
-        return prisma.post.delete({
+        return this.prisma.post.delete({
             where: post,
         });
     }
 
     softDeletePost(post: Prisma.PostWhereUniqueInput): Promise<Post> {
-        return prisma.post.update({
+        return this.prisma.post.update({
             where: post,
             data: {
                 deletedAt: new Date(),
