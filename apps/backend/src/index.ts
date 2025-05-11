@@ -7,6 +7,7 @@ import { googleAuthRoutes } from './controllers/auth/GoogleAuthController';
 import { commentRoutes } from './controllers/CommentController';
 import { likeRoutes } from './controllers/LikeController';
 import { postRoutes } from './controllers/PostController';
+import { UserRoutes } from './controllers/UserController';
 
 dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 
@@ -55,6 +56,7 @@ server.register(googleAuthRoutes);
 server.register(postRoutes);
 server.register(commentRoutes);
 server.register(likeRoutes);
+server.register(UserRoutes);
 
 /**
  * Run the server!

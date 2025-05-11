@@ -92,7 +92,7 @@ export class UserService implements IUserService {
             userId: dto.userId,
         };
 
-        const deletedUser = await userRepository.deleteUser(userWhereInput);
+        const deletedUser = await userRepository.softDeleteUser(userWhereInput);
 
         return {
             userId: deletedUser.userId,

@@ -31,6 +31,9 @@ export const postRoutes = (fastify: FastifyInstance) => {
     // Get Post By ID
     fastify.get<{ Querystring: GetPostQueryDTO }>(
         BASE_POST_ROUTE,
+        {
+            preHandler: [fastify.authenticate],
+        },
         async (request, response) => {
             const { postId, userId } = request.query;
 
@@ -55,6 +58,9 @@ export const postRoutes = (fastify: FastifyInstance) => {
     // Update Post
     fastify.put<{ Body: UpdatePostDTO }>(
         BASE_POST_ROUTE,
+        {
+            preHandler: [fastify.authenticate],
+        },
         async (request, response) => {
             const updatedPost = await postService.updatePost(request.body);
 
@@ -65,6 +71,9 @@ export const postRoutes = (fastify: FastifyInstance) => {
     // Delete Post
     fastify.delete<{ Querystring: PostIdDTO }>(
         BASE_POST_ROUTE,
+        {
+            preHandler: [fastify.authenticate],
+        },
         async (request, response) => {
             const deletedPost = await postService.deletePost(request.query);
 

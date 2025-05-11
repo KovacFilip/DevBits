@@ -19,5 +19,6 @@ export interface IUserRepository {
     ): Promise<User>;
 
     // Delete
-    deleteUser(where: Prisma.UserWhereUniqueInput): Promise<User>;
+    hardDeleteUser(user: Prisma.UserWhereUniqueInput): Promise<User>;
+    softDeleteUser(user: Prisma.UserWhereUniqueInput): Promise<User>;
 }
