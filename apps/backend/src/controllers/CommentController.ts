@@ -1,12 +1,17 @@
 import { FastifyInstance } from 'fastify';
 import {
-    CommentIdDTO,
-    CreateCommentDTO,
-    UpdateCommentDTO,
+    CommentIdParams,
+    commentIdSchema,
+    CreateCommentRequest,
+    createCommentSchema,
+    GetCommentRequest,
+    getCommentSchema,
+    updateCommentBodySchema,
+    UpdateCommentRequestBody,
 } from 'packages/shared';
 import { container } from '../config/inversify.config';
 import { SERVICE_IDENTIFIER } from '../constants/identifiers';
-import { GetCommentQueryDTO } from '../models/GetCommentQueryDTO';
+import { UpdateCommentDTO } from '../models/DTOs/CommentDTO';
 import { ICommentService } from '../models/interfaces/services/ICommentService';
 
 export const BASE_COMMENT_ROUTE = '/comment';
@@ -17,13 +22,15 @@ const commentService = container.get<ICommentService>(
 
 export const commentRoutes = (fastify: FastifyInstance) => {
     // Create Comment
-    fastify.post<{ Body: Omit<CreateCommentDTO, 'userId'> }>(
+    fastify.post<{ Body: CreateCommentRequest }>(
         BASE_COMMENT_ROUTE,
         {
             preHandler: [fastify.authenticate],
+            schema: {
+                body: createCommentSchema,
+            },
         },
         async (request, response) => {
-            // UserID - TODO: should be taken from auth header
             const user = request.user;
 
             const newComment = await commentService.createComment({
@@ -36,10 +43,13 @@ export const commentRoutes = (fastify: FastifyInstance) => {
     );
 
     // Get Comment
-    fastify.get<{ Querystring: GetCommentQueryDTO }>(
+    fastify.get<{ Querystring: GetCommentRequest }>(
         BASE_COMMENT_ROUTE,
         {
             preHandler: [fastify.authenticate],
+            schema: {
+                querystring: getCommentSchema,
+            },
         },
         async (request, response) => {
             const { commentId, postId, userId } = request.query;
@@ -71,25 +81,41 @@ export const commentRoutes = (fastify: FastifyInstance) => {
     );
 
     // Update Comment
-    fastify.put<{ Body: UpdateCommentDTO }>(
+    fastify.put<{
+        Body: UpdateCommentRequestBody;
+        Querystring: CommentIdParams;
+    }>(
         BASE_COMMENT_ROUTE,
         {
             preHandler: [fastify.authenticate],
+            schema: {
+                querystring: commentIdSchema,
+                body: updateCommentBodySchema,
+            },
         },
         async (request, response) => {
-            const updatedComment = await commentService.updateComment(
-                request.body
-            );
+            const updateCommentDTO: UpdateCommentDTO = {
+                commentId: request.query.commentId,
+                updateData: {
+                    content: request.body.content,
+                },
+            };
+
+            const updatedComment =
+                await commentService.updateComment(updateCommentDTO);
 
             return response.code(200).send({ success: true, updatedComment });
         }
     );
 
     // Delete Comment
-    fastify.delete<{ Querystring: CommentIdDTO }>(
+    fastify.delete<{ Querystring: CommentIdParams }>(
         BASE_COMMENT_ROUTE,
         {
             preHandler: [fastify.authenticate],
+            schema: {
+                querystring: commentIdSchema,
+            },
         },
         async (request, response) => {
             const deletedComment = await commentService.deleteComment(

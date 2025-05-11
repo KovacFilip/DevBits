@@ -1,16 +1,16 @@
 import { Prisma } from 'apps/backend/prisma/generated/client';
 import { inject, injectable } from 'inversify';
+import { REPOSITORY_IDENTIFIER } from '../constants/identifiers';
+import { NotFoundError } from '../errors/NotFoundError';
 import {
     CommentDTO,
     CommentIdDTO,
     CreateCommentDTO,
-    PostIdDTO,
     UpdateCommentDTO,
-    UserIdDTO,
-} from 'packages/shared';
-import { REPOSITORY_IDENTIFIER } from '../constants/identifiers';
-import { NotFoundError } from '../errors/NotFoundError';
-import { ICommentRepository } from '../models/interfaces/ICommentRepository';
+} from '../models/DTOs/CommentDTO';
+import { PostIdDTO } from '../models/DTOs/PostDTO';
+import { UserIdDTO } from '../models/DTOs/UserDTO';
+import { ICommentRepository } from '../models/interfaces/repositories/ICommentRepository';
 import { ICommentService } from '../models/interfaces/services/ICommentService';
 
 @injectable()

@@ -2,6 +2,11 @@ import fCookie from '@fastify/cookie';
 import fjwt, { FastifyJWT } from '@fastify/jwt';
 import * as dotenv from 'dotenv';
 import fastify, { FastifyReply, FastifyRequest } from 'fastify';
+import {
+    ZodTypeProvider,
+    serializerCompiler,
+    validatorCompiler,
+} from 'fastify-type-provider-zod';
 import path from 'path';
 import { googleAuthRoutes } from './controllers/auth/GoogleAuthController';
 import { commentRoutes } from './controllers/CommentController';
@@ -13,7 +18,7 @@ dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 
 const server = fastify({
     logger: true,
-});
+}).withTypeProvider<ZodTypeProvider>();
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
@@ -21,6 +26,9 @@ if (!JWT_SECRET) {
     console.log('The `JWT_SECRET` environment variable must be set');
     process.exit();
 }
+
+server.setValidatorCompiler(validatorCompiler);
+server.setSerializerCompiler(serializerCompiler);
 
 // jwt
 server.register(fjwt, { secret: JWT_SECRET });

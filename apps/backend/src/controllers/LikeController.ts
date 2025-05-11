@@ -1,10 +1,15 @@
 import { FastifyInstance } from 'fastify';
-import { LikeIdDTO } from 'packages/shared';
+import {
+    GetCountOfLikesRequest,
+    getCountOfLikesSchema,
+    GetLikeRequest,
+    getLikeSchema,
+    LikeIdRequest,
+    likeIdSchema,
+} from 'packages/shared';
 import { container } from '../config/inversify.config';
 import { SERVICE_IDENTIFIER } from '../constants/identifiers';
-import { GetLikeQueryDTO } from '../models/GetLikeQueryDTO';
 import { ILikeService } from '../models/interfaces/services/ILikeService';
-import { LikeEntityQueryDTO } from '../models/LikeEntityQueryDTO';
 
 export const BASE_LIKE_ROUTE = '/like';
 
@@ -14,10 +19,13 @@ const likeService = container.get<ILikeService>(
 
 export const likeRoutes = (fastify: FastifyInstance) => {
     // Create Like
-    fastify.post<{ Querystring: LikeEntityQueryDTO }>(
+    fastify.post<{ Querystring: GetCountOfLikesRequest }>(
         BASE_LIKE_ROUTE,
         {
             preHandler: [fastify.authenticate],
+            schema: {
+                querystring: getCountOfLikesSchema,
+            },
         },
         async (request, response) => {
             const { commentId, postId } = request.query;
@@ -47,10 +55,13 @@ export const likeRoutes = (fastify: FastifyInstance) => {
     );
 
     // Get Like
-    fastify.get<{ Querystring: GetLikeQueryDTO }>(
+    fastify.get<{ Querystring: GetLikeRequest }>(
         BASE_LIKE_ROUTE,
         {
             preHandler: [fastify.authenticate],
+            schema: {
+                querystring: getLikeSchema,
+            },
         },
         async (request, response) => {
             const { likeId, commentId, postId } = request.query;
@@ -80,10 +91,13 @@ export const likeRoutes = (fastify: FastifyInstance) => {
     );
 
     // Get Count Of Likes
-    fastify.get<{ Querystring: LikeEntityQueryDTO }>(
+    fastify.get<{ Querystring: GetCountOfLikesRequest }>(
         BASE_LIKE_ROUTE + '/count',
         {
             preHandler: [fastify.authenticate],
+            schema: {
+                querystring: getCountOfLikesSchema,
+            },
         },
         async (request, response) => {
             const { commentId, postId } = request.query;
@@ -110,10 +124,13 @@ export const likeRoutes = (fastify: FastifyInstance) => {
     );
 
     // Remove Like
-    fastify.delete<{ Querystring: LikeIdDTO }>(
+    fastify.delete<{ Querystring: LikeIdRequest }>(
         BASE_LIKE_ROUTE,
         {
             preHandler: [fastify.authenticate],
+            schema: {
+                querystring: likeIdSchema,
+            },
         },
         async (request, response) => {
             const deletedLike = await likeService.removeLike(request.query);

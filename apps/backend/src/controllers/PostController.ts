@@ -1,8 +1,17 @@
 import { FastifyInstance } from 'fastify';
-import { CreatePostDTO, PostIdDTO, UpdatePostDTO } from 'packages/shared';
+import {
+    CreatePostRequest,
+    createPostSchema,
+    GetPostRequest,
+    getPostSchema,
+    PostIdParams,
+    postIdSchema,
+    UpdatePostRequest,
+    updatePostSchema,
+} from 'packages/shared';
 import { container } from '../config/inversify.config';
 import { SERVICE_IDENTIFIER } from '../constants/identifiers';
-import { GetPostQueryDTO } from '../models/GetPostQueryDTO';
+import { UpdatePostDTO } from '../models/DTOs/PostDTO';
 import { IPostService } from '../models/interfaces/services/IPostService';
 
 export const BASE_POST_ROUTE = '/post';
@@ -13,15 +22,14 @@ const postService = container.get<IPostService>(
 
 export const postRoutes = (fastify: FastifyInstance) => {
     // Create New Post
-    fastify.post<{ Body: Omit<CreatePostDTO, 'userId'> }>(
+    fastify.post<{ Body: CreatePostRequest }>(
         BASE_POST_ROUTE,
         {
             preHandler: [fastify.authenticate],
+            schema: { body: createPostSchema },
         },
         async (request, response) => {
-            // const { title, content } = request.body;
             const user = request.user;
-            // const userId = 'bd1c8f1a-5a1a-48b0-a2a1-dd7ebd742fe1';
 
             const newPost = await postService.createPost({
                 userId: user.userId,
@@ -33,10 +41,13 @@ export const postRoutes = (fastify: FastifyInstance) => {
     );
 
     // Get Post By ID
-    fastify.get<{ Querystring: GetPostQueryDTO }>(
+    fastify.get<{ Querystring: GetPostRequest }>(
         BASE_POST_ROUTE,
         {
             preHandler: [fastify.authenticate],
+            schema: {
+                querystring: getPostSchema,
+            },
         },
         async (request, response) => {
             const { postId, userId } = request.query;
@@ -60,23 +71,37 @@ export const postRoutes = (fastify: FastifyInstance) => {
     );
 
     // Update Post
-    fastify.put<{ Body: UpdatePostDTO }>(
+    fastify.put<{ Body: UpdatePostRequest; Querystring: PostIdParams }>(
         BASE_POST_ROUTE,
         {
             preHandler: [fastify.authenticate],
+            schema: {
+                body: updatePostSchema,
+                querystring: postIdSchema,
+            },
         },
         async (request, response) => {
-            const updatedPost = await postService.updatePost(request.body);
+            const updatePostDTO: UpdatePostDTO = {
+                postId: request.query.postId,
+                updateData: {
+                    title: request.body.title,
+                    content: request.body.content,
+                },
+            };
+            const updatedPost = await postService.updatePost(updatePostDTO);
 
             response.code(200).send({ success: true, updatedPost });
         }
     );
 
     // Delete Post
-    fastify.delete<{ Querystring: PostIdDTO }>(
+    fastify.delete<{ Querystring: PostIdParams }>(
         BASE_POST_ROUTE,
         {
             preHandler: [fastify.authenticate],
+            schema: {
+                querystring: postIdSchema,
+            },
         },
         async (request, response) => {
             const deletedPost = await postService.deletePost(request.query);
