@@ -1,15 +1,15 @@
 import { Prisma } from 'apps/backend/prisma/generated/client';
 import { inject, injectable } from 'inversify';
+import { REPOSITORY_IDENTIFIER } from '../constants/identifiers';
+import { NotFoundError } from '../errors/NotFoundError';
 import {
     CreatePostDTO,
     PostIdDTO,
     PostSimpleDTO,
     PostWithContentDTO,
     UpdatePostDTO,
-    UserIdDTO,
-} from 'packages/shared';
-import { REPOSITORY_IDENTIFIER } from '../constants/identifiers';
-import { NotFoundError } from '../errors/NotFoundError';
+} from '../models/DTOs/PostDTO';
+import { UserIdDTO } from '../models/DTOs/UserDTO';
 import { IPostRepository } from '../models/interfaces/repositories/IPostRepository';
 import { IPostService } from '../models/interfaces/services/IPostService';
 

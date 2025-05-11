@@ -6,12 +6,12 @@ import {
     getPostSchema,
     PostIdParams,
     postIdSchema,
-    UpdatePostDTO,
     UpdatePostRequest,
     updatePostSchema,
 } from 'packages/shared';
 import { container } from '../config/inversify.config';
 import { SERVICE_IDENTIFIER } from '../constants/identifiers';
+import { UpdatePostDTO } from '../models/DTOs/PostDTO';
 import { IPostService } from '../models/interfaces/services/IPostService';
 
 export const BASE_POST_ROUTE = '/post';

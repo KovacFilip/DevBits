@@ -7,11 +7,11 @@ import {
     GetCommentRequest,
     getCommentSchema,
     updateCommentBodySchema,
-    UpdateCommentDTO,
     UpdateCommentRequestBody,
 } from 'packages/shared';
 import { container } from '../config/inversify.config';
 import { SERVICE_IDENTIFIER } from '../constants/identifiers';
+import { UpdateCommentDTO } from '../models/DTOs/CommentDTO';
 import { ICommentService } from '../models/interfaces/services/ICommentService';
 
 export const BASE_COMMENT_ROUTE = '/comment';

@@ -1,16 +1,16 @@
 import { Prisma } from 'apps/backend/prisma/generated/client';
 import { inject, injectable } from 'inversify';
+import { REPOSITORY_IDENTIFIER } from '../constants/identifiers';
+import { NotFoundError } from '../errors/NotFoundError';
+import { CommentIdDTO } from '../models/DTOs/CommentDTO';
 import {
-    CommentIdDTO,
     CreateCommentLikeDTO,
     CreatePostLikeDTO,
     LikeCommentDTO,
     LikeIdDTO,
     LikePostDTO,
-    PostIdDTO,
-} from 'packages/shared';
-import { REPOSITORY_IDENTIFIER } from '../constants/identifiers';
-import { NotFoundError } from '../errors/NotFoundError';
+} from '../models/DTOs/LikeDTO';
+import { PostIdDTO } from '../models/DTOs/PostDTO';
 import { ILikeRepository } from '../models/interfaces/repositories/ILikeRepository';
 import { ILikeService } from '../models/interfaces/services/ILikeService';
 

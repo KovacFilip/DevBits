@@ -1,13 +1,13 @@
+import { Prisma } from 'apps/backend/prisma/generated/client';
+import { inject, injectable } from 'inversify';
+import { REPOSITORY_IDENTIFIER } from '../constants/identifiers';
+import { NotFoundError } from '../errors/NotFoundError';
 import {
     CreateUserDTO,
     UpdateUserDTO,
     UserIdDTO,
     UserResponseDTO,
-} from '@devbits/shared';
-import { Prisma } from 'apps/backend/prisma/generated/client';
-import { inject, injectable } from 'inversify';
-import { REPOSITORY_IDENTIFIER } from '../constants/identifiers';
-import { NotFoundError } from '../errors/NotFoundError';
+} from '../models/DTOs/UserDTO';
 import { IUserRepository } from '../models/interfaces/repositories/IUserRepository';
 import { IUserService } from '../models/interfaces/services/IUserService';
 
