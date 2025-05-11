@@ -5,7 +5,7 @@ import {
 } from 'apps/backend/prisma/generated/client';
 import { inject, injectable } from 'inversify';
 import { DATABASE_IDENTIFIER } from '../constants/identifiers';
-import { ICommentRepository } from '../models/interfaces/ICommentRepository';
+import { ICommentRepository } from '../models/interfaces/repositories/ICommentRepository';
 
 @injectable()
 export class CommentRepository implements ICommentRepository {

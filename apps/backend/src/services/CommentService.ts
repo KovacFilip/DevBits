@@ -10,7 +10,6 @@ import {
 } from 'packages/shared';
 import { REPOSITORY_IDENTIFIER } from '../constants/identifiers';
 import { NotFoundError } from '../errors/NotFoundError';
-import { ICommentRepository } from '../models/interfaces/ICommentRepository';
 import { ICommentService } from '../models/interfaces/services/ICommentService';
 
 @injectable()

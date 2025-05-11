@@ -5,7 +5,7 @@ import {
 } from 'apps/backend/prisma/generated/client';
 import { inject, injectable } from 'inversify';
 import { DATABASE_IDENTIFIER } from '../constants/identifiers';
-import { IUserRepository } from '../models/interfaces/IUserRepository';
+import { IUserRepository } from '../models/interfaces/repositories/IUserRepository';
 
 @injectable()
 export class UserRepository implements IUserRepository {

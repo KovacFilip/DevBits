@@ -11,7 +11,7 @@ import {
 } from 'packages/shared';
 import { REPOSITORY_IDENTIFIER } from '../constants/identifiers';
 import { NotFoundError } from '../errors/NotFoundError';
-import { ILikeRepository } from '../models/interfaces/ILikeRepository';
+import { ILikeRepository } from '../models/interfaces/repositories/ILikeRepository';
 import { ILikeService } from '../models/interfaces/services/ILikeService';
 
 @injectable()

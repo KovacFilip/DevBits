@@ -8,7 +8,7 @@ import { Prisma } from 'apps/backend/prisma/generated/client';
 import { inject, injectable } from 'inversify';
 import { REPOSITORY_IDENTIFIER } from '../constants/identifiers';
 import { NotFoundError } from '../errors/NotFoundError';
-import { IUserRepository } from '../models/interfaces/IUserRepository';
+import { IUserRepository } from '../models/interfaces/repositories/IUserRepository';
 import { IUserService } from '../models/interfaces/services/IUserService';
 
 @injectable()
