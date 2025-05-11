@@ -1,5 +1,10 @@
 import { FastifyInstance } from 'fastify';
-import { UpdateUserDTO, UserIdDTO } from 'packages/shared';
+import {
+    UpdateUserRequest,
+    updateUserSchema,
+    UserIdParams,
+    userIdSchema,
+} from 'packages/shared';
 import { container } from '../config/inversify.config';
 import { SERVICE_IDENTIFIER } from '../constants/identifiers';
 import { IUserService } from '../models/interfaces/services/IUserService';
@@ -12,10 +17,13 @@ const userService = container.get<IUserService>(
 
 export const UserRoutes = (fastify: FastifyInstance) => {
     // Get user info
-    fastify.get<{ Querystring: UserIdDTO }>(
+    fastify.get<{ Querystring: UserIdParams }>(
         BASE_USER_ROUTE,
         {
             preHandler: [fastify.authenticate],
+            schema: {
+                querystring: userIdSchema,
+            },
         },
         async (request, response) => {
             const user = await userService.getUser(request.query);
@@ -25,17 +33,20 @@ export const UserRoutes = (fastify: FastifyInstance) => {
     );
 
     // Update
-    fastify.put<{ Body: Omit<UpdateUserDTO, 'userId'> }>(
+    fastify.put<{ Body: UpdateUserRequest }>(
         BASE_USER_ROUTE,
         {
             preHandler: [fastify.authenticate],
+            schema: { body: updateUserSchema },
         },
         async (request, response) => {
             const user = request.user;
 
             const updatedUser = await userService.updateUser({
                 userId: user.userId,
-                ...request.body,
+                updateData: {
+                    ...request.body,
+                },
             });
 
             return response.code(200).send({ success: true, updatedUser });
