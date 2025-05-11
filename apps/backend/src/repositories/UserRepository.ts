@@ -3,25 +3,31 @@ import {
     PrismaClient,
     User,
 } from 'apps/backend/prisma/generated/client';
+import { inject, injectable } from 'inversify';
+import { DATABASE_IDENTIFIER } from '../constants/identifiers';
 import { IUserRepository } from '../models/interfaces/IUserRepository';
 
-const prisma = new PrismaClient();
-
+@injectable()
 export class UserRepository implements IUserRepository {
+    constructor(
+        @inject(DATABASE_IDENTIFIER.PRISMA)
+        private readonly prisma: PrismaClient
+    ) {}
+
     readUser(user: Prisma.UserWhereUniqueInput): Promise<User | null> {
-        return prisma.user.findUnique({
+        return this.prisma.user.findUnique({
             where: user,
         });
     }
 
     createUser(createUser: Prisma.UserCreateInput): Promise<User> {
-        return prisma.user.create({
+        return this.prisma.user.create({
             data: createUser,
         });
     }
 
     readUserById(userId: string): Promise<User | null> {
-        return prisma.user.findUnique({
+        return this.prisma.user.findUnique({
             where: {
                 userId: userId,
             },
@@ -31,7 +37,7 @@ export class UserRepository implements IUserRepository {
     async readUserByProvider(
         providerInfo: Prisma.OAuthAccountProviderProviderUserIdCompoundUniqueInput
     ): Promise<User | null> {
-        const account = await prisma.oAuthAccount.findUnique({
+        const account = await this.prisma.oAuthAccount.findUnique({
             where: {
                 provider_providerUserId: {
                     provider: providerInfo.provider,
@@ -48,20 +54,20 @@ export class UserRepository implements IUserRepository {
         where: Prisma.UserWhereUniqueInput,
         data: Prisma.UserUpdateInput
     ): Promise<User> {
-        return prisma.user.update({
+        return this.prisma.user.update({
             where,
             data,
         });
     }
 
     hardDeleteUser(user: Prisma.UserWhereUniqueInput): Promise<User> {
-        return prisma.user.delete({
+        return this.prisma.user.delete({
             where: user,
         });
     }
 
     softDeleteUser(user: Prisma.UserWhereUniqueInput): Promise<User> {
-        return prisma.user.update({
+        return this.prisma.user.update({
             data: {
                 updatedAt: new Date(),
                 deletedAt: new Date(),

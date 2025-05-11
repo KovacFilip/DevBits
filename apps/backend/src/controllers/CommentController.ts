@@ -4,12 +4,16 @@ import {
     CreateCommentDTO,
     UpdateCommentDTO,
 } from 'packages/shared';
+import { container } from '../config/inversify.config';
+import { SERVICE_IDENTIFIER } from '../constants/identifiers';
 import { GetCommentQueryDTO } from '../models/GetCommentQueryDTO';
-import { CommentService } from '../services/CommentService';
+import { ICommentService } from '../models/interfaces/services/ICommentService';
 
 export const BASE_COMMENT_ROUTE = '/comment';
 
-const commentService = new CommentService();
+const commentService = container.get<ICommentService>(
+    SERVICE_IDENTIFIER.COMMENT_SERVICE
+);
 
 export const commentRoutes = (fastify: FastifyInstance) => {
     // Create Comment

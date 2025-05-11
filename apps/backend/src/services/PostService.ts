@@ -1,4 +1,5 @@
 import { Prisma } from 'apps/backend/prisma/generated/client';
+import { inject, injectable } from 'inversify';
 import {
     CreatePostDTO,
     PostIdDTO,
@@ -7,13 +8,18 @@ import {
     UpdatePostDTO,
     UserIdDTO,
 } from 'packages/shared';
+import { REPOSITORY_IDENTIFIER } from '../constants/identifiers';
 import { NotFoundError } from '../errors/NotFoundError';
+import { IPostRepository } from '../models/interfaces/IPostRepository';
 import { IPostService } from '../models/interfaces/services/IPostService';
-import { PostRepository } from '../repositories/PostRepository';
 
-const postRepository = new PostRepository();
-
+@injectable()
 export class PostService implements IPostService {
+    constructor(
+        @inject(REPOSITORY_IDENTIFIER.POST_REPOSITORY)
+        private readonly postRepository: IPostRepository
+    ) {}
+
     async createPost(dto: CreatePostDTO): Promise<PostSimpleDTO> {
         const postToCreate: Prisma.PostCreateInput = {
             title: dto.title,
@@ -25,7 +31,7 @@ export class PostService implements IPostService {
             },
         };
 
-        const createdPost = await postRepository.createPost(postToCreate);
+        const createdPost = await this.postRepository.createPost(postToCreate);
 
         return {
             postId: createdPost.postId,
@@ -39,7 +45,7 @@ export class PostService implements IPostService {
             postId: dto.postId,
         };
 
-        const post = await postRepository.readPost(uniquePostInput);
+        const post = await this.postRepository.readPost(uniquePostInput);
 
         if (!post) {
             throw new NotFoundError(
@@ -60,7 +66,7 @@ export class PostService implements IPostService {
             userId: dto.userId,
         };
 
-        const posts = await postRepository.readUsersPosts(uniqueUserInput);
+        const posts = await this.postRepository.readUsersPosts(uniqueUserInput);
 
         if (!posts) {
             throw new NotFoundError(
@@ -87,7 +93,7 @@ export class PostService implements IPostService {
             content: dto.updateData.content,
         };
 
-        const updatedPost = await postRepository.updatePost(where, data);
+        const updatedPost = await this.postRepository.updatePost(where, data);
 
         return {
             postId: updatedPost.postId,
@@ -103,7 +109,7 @@ export class PostService implements IPostService {
         };
 
         const deletedPost =
-            await postRepository.softDeletePost(uniquePostInput);
+            await this.postRepository.softDeletePost(uniquePostInput);
 
         return {
             postId: deletedPost.postId,

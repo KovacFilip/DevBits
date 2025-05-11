@@ -3,25 +3,31 @@ import {
     Prisma,
     PrismaClient,
 } from 'apps/backend/prisma/generated/client';
+import { inject, injectable } from 'inversify';
+import { DATABASE_IDENTIFIER } from '../constants/identifiers';
 import { ILikeRepository } from '../models/interfaces/ILikeRepository';
 
-const prisma = new PrismaClient();
-
+@injectable()
 export class LikeRepository implements ILikeRepository {
+    constructor(
+        @inject(DATABASE_IDENTIFIER.PRISMA)
+        private readonly prisma: PrismaClient
+    ) {}
+
     createLike(like: Prisma.LikeCreateInput): Promise<Like> {
-        return prisma.like.create({
+        return this.prisma.like.create({
             data: like,
         });
     }
 
     readLike(like: Prisma.LikeWhereUniqueInput): Promise<Like | null> {
-        return prisma.like.findUnique({
+        return this.prisma.like.findUnique({
             where: like,
         });
     }
 
     readLikesPerPost(post: Prisma.PostWhereUniqueInput): Promise<Like[]> {
-        return prisma.like.findMany({
+        return this.prisma.like.findMany({
             where: {
                 post,
             },
@@ -31,7 +37,7 @@ export class LikeRepository implements ILikeRepository {
     readNumberOfLikesPerPost(
         post: Prisma.PostWhereUniqueInput
     ): Promise<number> {
-        return prisma.like.count({
+        return this.prisma.like.count({
             where: {
                 post,
             },
@@ -41,7 +47,7 @@ export class LikeRepository implements ILikeRepository {
     readLikesPerComment(
         comment: Prisma.CommentWhereUniqueInput
     ): Promise<Like[]> {
-        return prisma.like.findMany({
+        return this.prisma.like.findMany({
             where: {
                 comment,
             },
@@ -51,7 +57,7 @@ export class LikeRepository implements ILikeRepository {
     readNumberOfLikesPerComment(
         comment: Prisma.CommentWhereUniqueInput
     ): Promise<number> {
-        return prisma.like.count({
+        return this.prisma.like.count({
             where: {
                 comment,
             },
@@ -59,7 +65,7 @@ export class LikeRepository implements ILikeRepository {
     }
 
     readLikesByUser(user: Prisma.UserWhereUniqueInput): Promise<Like[]> {
-        return prisma.like.findMany({
+        return this.prisma.like.findMany({
             where: {
                 user,
             },
@@ -70,20 +76,20 @@ export class LikeRepository implements ILikeRepository {
         where: Prisma.LikeWhereUniqueInput,
         data: Prisma.LikeUpdateInput
     ): Promise<Like> {
-        return prisma.like.update({
+        return this.prisma.like.update({
             where,
             data,
         });
     }
 
     hardDeleteLike(like: Prisma.LikeWhereUniqueInput): Promise<Like> {
-        return prisma.like.delete({
+        return this.prisma.like.delete({
             where: like,
         });
     }
 
     softDeleteLike(like: Prisma.LikeWhereUniqueInput): Promise<Like> {
-        return prisma.like.update({
+        return this.prisma.like.update({
             where: like,
             data: {
                 deletedAt: new Date(),

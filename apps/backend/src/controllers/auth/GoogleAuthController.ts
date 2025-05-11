@@ -3,13 +3,16 @@ import { CreateUserDTO } from '@devbits/shared';
 import oauthPlugin from '@fastify/oauth2';
 import { FastifyInstance } from 'fastify';
 import { OAuth2Client } from 'google-auth-library';
-import { UserService } from '../../services/UserService';
+import { container } from '../../config/inversify.config';
+import { SERVICE_IDENTIFIER } from '../../constants/identifiers';
+import { IUserService } from '../../models/interfaces/services/IUserService';
 
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+const userService = container.get<IUserService>(
+    SERVICE_IDENTIFIER.USER_SERVICE
+);
 
 export const googleAuthRoutes = (fastify: FastifyInstance) => {
-    const userService = new UserService();
-
     fastify.register(oauthPlugin, {
         name: 'googleOAuth2',
         credentials: {
@@ -73,8 +76,6 @@ export const googleAuthRoutes = (fastify: FastifyInstance) => {
             secure: true,
             path: '/',
         });
-
-        console.log(`Returning the following token: ${jwtToken}`);
 
         return response.send({ payload: jwtToken });
     });
