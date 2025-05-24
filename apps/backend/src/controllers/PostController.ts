@@ -26,7 +26,7 @@ export const postRoutes = (fastify: FastifyInstance) => {
         BASE_POST_ROUTE,
         {
             preHandler: [fastify.authenticate],
-            schema: { body: createPostSchema },
+            schema: { body: createPostSchema, tags: ['post'] },
         },
         async (request, response) => {
             const user = request.user;
@@ -46,6 +46,7 @@ export const postRoutes = (fastify: FastifyInstance) => {
         {
             preHandler: [fastify.authenticate],
             schema: {
+                tags: ['post'],
                 querystring: getPostSchema,
             },
         },
@@ -77,6 +78,7 @@ export const postRoutes = (fastify: FastifyInstance) => {
             preHandler: [fastify.authenticate],
             schema: {
                 body: updatePostSchema,
+                tags: ['post'],
                 querystring: postIdSchema,
             },
         },
@@ -100,6 +102,7 @@ export const postRoutes = (fastify: FastifyInstance) => {
         {
             preHandler: [fastify.authenticate],
             schema: {
+                tags: ['post'],
                 querystring: postIdSchema,
             },
         },

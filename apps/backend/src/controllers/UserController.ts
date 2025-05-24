@@ -22,6 +22,7 @@ export const UserRoutes = (fastify: FastifyInstance) => {
         {
             preHandler: [fastify.authenticate],
             schema: {
+                tags: ['user'],
                 querystring: userIdSchema,
             },
         },
@@ -37,7 +38,7 @@ export const UserRoutes = (fastify: FastifyInstance) => {
         BASE_USER_ROUTE,
         {
             preHandler: [fastify.authenticate],
-            schema: { body: updateUserSchema },
+            schema: { tags: ['user'], body: updateUserSchema },
         },
         async (request, response) => {
             const user = request.user;
@@ -56,7 +57,7 @@ export const UserRoutes = (fastify: FastifyInstance) => {
     // Delete
     fastify.delete(
         BASE_USER_ROUTE,
-        { preHandler: [fastify.authenticate] },
+        { preHandler: [fastify.authenticate], schema: { tags: ['user'] } },
         async (request, response) => {
             const deletedUser = await userService.deleteUser({
                 userId: request.user.userId,

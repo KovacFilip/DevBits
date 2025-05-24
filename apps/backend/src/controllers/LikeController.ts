@@ -24,6 +24,7 @@ export const likeRoutes = (fastify: FastifyInstance) => {
         {
             preHandler: [fastify.authenticate],
             schema: {
+                tags: ['like'],
                 querystring: getCountOfLikesSchema,
             },
         },
@@ -60,6 +61,7 @@ export const likeRoutes = (fastify: FastifyInstance) => {
         {
             preHandler: [fastify.authenticate],
             schema: {
+                tags: ['like'],
                 querystring: getLikeSchema,
             },
         },
@@ -96,6 +98,7 @@ export const likeRoutes = (fastify: FastifyInstance) => {
         {
             preHandler: [fastify.authenticate],
             schema: {
+                tags: ['like'],
                 querystring: getCountOfLikesSchema,
             },
         },
@@ -129,6 +132,7 @@ export const likeRoutes = (fastify: FastifyInstance) => {
         {
             preHandler: [fastify.authenticate],
             schema: {
+                tags: ['like'],
                 querystring: likeIdSchema,
             },
         },

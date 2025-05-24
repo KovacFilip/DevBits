@@ -27,6 +27,7 @@ export const commentRoutes = (fastify: FastifyInstance) => {
         {
             preHandler: [fastify.authenticate],
             schema: {
+                tags: ['comment'],
                 body: createCommentSchema,
             },
         },
@@ -48,6 +49,7 @@ export const commentRoutes = (fastify: FastifyInstance) => {
         {
             preHandler: [fastify.authenticate],
             schema: {
+                tags: ['comment'],
                 querystring: getCommentSchema,
             },
         },
@@ -89,6 +91,7 @@ export const commentRoutes = (fastify: FastifyInstance) => {
         {
             preHandler: [fastify.authenticate],
             schema: {
+                tags: ['comment'],
                 querystring: commentIdSchema,
                 body: updateCommentBodySchema,
             },
@@ -114,6 +117,7 @@ export const commentRoutes = (fastify: FastifyInstance) => {
         {
             preHandler: [fastify.authenticate],
             schema: {
+                tags: ['comment'],
                 querystring: commentIdSchema,
             },
         },
