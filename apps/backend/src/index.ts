@@ -1,9 +1,12 @@
 import fCookie from '@fastify/cookie';
 import fjwt, { FastifyJWT } from '@fastify/jwt';
+import fastifySwagger from '@fastify/swagger';
+import fastifySwaggerUi from '@fastify/swagger-ui';
 import * as dotenv from 'dotenv';
 import fastify, { FastifyReply, FastifyRequest } from 'fastify';
 import {
     ZodTypeProvider,
+    jsonSchemaTransform,
     serializerCompiler,
     validatorCompiler,
 } from 'fastify-type-provider-zod';
@@ -29,6 +32,45 @@ if (!JWT_SECRET) {
 
 server.setValidatorCompiler(validatorCompiler);
 server.setSerializerCompiler(serializerCompiler);
+
+// Swagger
+server.register(fastifySwagger, {
+    openapi: {
+        info: {
+            title: 'DevBits API',
+            description: 'Dev Bits API Description',
+            version: '1.0.0',
+        },
+        tags: [
+            {
+                name: 'auth',
+                description: 'auth-related endpoints',
+            },
+            {
+                name: 'user',
+                description: 'user-related endpoints',
+            },
+            {
+                name: 'post',
+                description: 'post-related endpoints',
+            },
+            {
+                name: 'comment',
+                description: 'comment-related endpoints',
+            },
+            {
+                name: 'like',
+                description: 'like-related endpoints',
+            },
+        ],
+        servers: [],
+    },
+    transform: jsonSchemaTransform,
+});
+
+server.register(fastifySwaggerUi, {
+    routePrefix: '/documentation',
+});
 
 // jwt
 server.register(fjwt, { secret: JWT_SECRET });
