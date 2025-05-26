@@ -1,12 +1,12 @@
+import { CommentIdDTO } from 'apps/backend/src/models/DTOs/CommentDTO';
 import {
-    CommentIdDTO,
     CreateCommentLikeDTO,
     CreatePostLikeDTO,
     LikeCommentDTO,
     LikeIdDTO,
     LikePostDTO,
-    PostIdDTO,
-} from 'packages/shared';
+} from 'apps/backend/src/models/DTOs/LikeDTO';
+import { PostIdDTO } from 'apps/backend/src/models/DTOs/PostDTO';
 
 export interface ILikeService {
     likePost(dto: CreatePostLikeDTO): Promise<LikePostDTO>;

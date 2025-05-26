@@ -3,7 +3,7 @@ import {
     UpdateUserDTO,
     UserIdDTO,
     UserResponseDTO,
-} from 'packages/shared';
+} from 'apps/backend/src/models/DTOs/UserDTO';
 
 export interface IUserService {
     registerUser(dto: CreateUserDTO): Promise<UserResponseDTO>;

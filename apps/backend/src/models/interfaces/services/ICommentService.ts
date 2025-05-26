@@ -2,10 +2,10 @@ import {
     CommentDTO,
     CommentIdDTO,
     CreateCommentDTO,
-    PostIdDTO,
     UpdateCommentDTO,
-    UserIdDTO,
-} from 'packages/shared';
+} from 'apps/backend/src/models/DTOs/CommentDTO';
+import { PostIdDTO } from 'apps/backend/src/models/DTOs/PostDTO';
+import { UserIdDTO } from 'apps/backend/src/models/DTOs/UserDTO';
 
 export interface ICommentService {
     createComment(dto: CreateCommentDTO): Promise<CommentDTO>;

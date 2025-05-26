@@ -4,8 +4,8 @@ import {
     PostSimpleDTO,
     PostWithContentDTO,
     UpdatePostDTO,
-    UserIdDTO,
-} from 'packages/shared';
+} from 'apps/backend/src/models/DTOs/PostDTO';
+import { UserIdDTO } from 'apps/backend/src/models/DTOs/UserDTO';
 
 export interface IPostService {
     // Create
