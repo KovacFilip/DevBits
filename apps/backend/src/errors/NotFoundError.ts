@@ -1,6 +1,8 @@
-export class NotFoundError extends Error {
+import { AppError } from './AppError';
+
+export class NotFoundError extends AppError {
     constructor(message?: string) {
-        super(message);
+        super(message, 404);
         this.name = 'NotFoundError';
     }
 }
