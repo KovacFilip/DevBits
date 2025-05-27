@@ -1,18 +1,18 @@
 import { Prisma } from 'apps/backend/prisma/generated/client';
-import { inject, injectable } from 'inversify';
-import { REPOSITORY_IDENTIFIER } from '../constants/identifiers';
-import { NotFoundError } from '../errors/NotFoundError';
-import { CommentIdDTO } from '../models/DTOs/CommentDTO';
+import { REPOSITORY_IDENTIFIER } from 'apps/backend/src/constants/identifiers';
+import { NotFoundError } from 'apps/backend/src/errors/NotFoundError';
+import { CommentIdDTO } from 'apps/backend/src/models/DTOs/CommentDTO';
 import {
     CreateCommentLikeDTO,
     CreatePostLikeDTO,
     LikeCommentDTO,
     LikeIdDTO,
     LikePostDTO,
-} from '../models/DTOs/LikeDTO';
-import { PostIdDTO } from '../models/DTOs/PostDTO';
-import { ILikeRepository } from '../models/interfaces/repositories/ILikeRepository';
-import { ILikeService } from '../models/interfaces/services/ILikeService';
+} from 'apps/backend/src/models/DTOs/LikeDTO';
+import { PostIdDTO } from 'apps/backend/src/models/DTOs/PostDTO';
+import { ILikeRepository } from 'apps/backend/src/models/interfaces/repositories/ILikeRepository';
+import { ILikeService } from 'apps/backend/src/models/interfaces/services/ILikeService';
+import { inject, injectable } from 'inversify';
 
 @injectable()
 export class LikeService implements ILikeService {

@@ -1,8 +1,8 @@
-import { AppError } from './AppError';
+import { AppError } from 'apps/backend/src/errors/AppError';
+import { StatusCodes } from 'http-status-codes';
 
 export class NotFoundError extends AppError {
     constructor(message?: string) {
-        super(message, 404);
-        this.name = 'NotFoundError';
+        super(message, StatusCodes.NOT_FOUND);
     }
 }

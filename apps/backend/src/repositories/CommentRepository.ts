@@ -3,9 +3,9 @@ import {
     Prisma,
     PrismaClient,
 } from 'apps/backend/prisma/generated/client';
+import { DATABASE_IDENTIFIER } from 'apps/backend/src/constants/identifiers';
+import { ICommentRepository } from 'apps/backend/src/models/interfaces/repositories/ICommentRepository';
 import { inject, injectable } from 'inversify';
-import { DATABASE_IDENTIFIER } from '../constants/identifiers';
-import { ICommentRepository } from '../models/interfaces/repositories/ICommentRepository';
 
 @injectable()
 export class CommentRepository implements ICommentRepository {

@@ -1,4 +1,9 @@
+import { container } from 'apps/backend/src/config/inversify.config';
+import { SERVICE_IDENTIFIER } from 'apps/backend/src/constants/identifiers';
+import { UpdatePostDTO } from 'apps/backend/src/models/DTOs/PostDTO';
+import { IPostService } from 'apps/backend/src/models/interfaces/services/IPostService';
 import { FastifyInstance } from 'fastify';
+import { StatusCodes } from 'http-status-codes';
 import {
     CreatePostRequest,
     createPostSchema,
@@ -9,10 +14,6 @@ import {
     UpdatePostRequest,
     updatePostSchema,
 } from 'packages/shared';
-import { container } from '../config/inversify.config';
-import { SERVICE_IDENTIFIER } from '../constants/identifiers';
-import { UpdatePostDTO } from '../models/DTOs/PostDTO';
-import { IPostService } from '../models/interfaces/services/IPostService';
 
 export const BASE_POST_ROUTE = '/post';
 
@@ -36,7 +37,7 @@ export const postRoutes = (fastify: FastifyInstance) => {
                 ...request.body,
             });
 
-            response.code(200).send({ success: true, post: newPost });
+            response.code(StatusCodes.OK).send({ post: newPost });
         }
     );
 
@@ -55,17 +56,16 @@ export const postRoutes = (fastify: FastifyInstance) => {
 
             if (postId) {
                 const post = await postService.getPostById({ postId });
-                return response.code(200).send({ success: true, post });
+                return response.code(StatusCodes.OK).send({ post });
             }
 
             if (userId) {
                 const posts = await postService.getPostsByUser({ userId });
 
-                response.code(200).send({ success: true, posts });
+                response.code(StatusCodes.OK).send({ posts });
             }
 
             return response.code(400).send({
-                success: false,
                 message: 'Missing required query parameter.',
             });
         }
@@ -92,7 +92,7 @@ export const postRoutes = (fastify: FastifyInstance) => {
             };
             const updatedPost = await postService.updatePost(updatePostDTO);
 
-            response.code(200).send({ success: true, updatedPost });
+            response.code(StatusCodes.OK).send({ updatedPost });
         }
     );
 
@@ -109,7 +109,7 @@ export const postRoutes = (fastify: FastifyInstance) => {
         async (request, response) => {
             const deletedPost = await postService.deletePost(request.query);
 
-            response.code(200).send({ success: true, deletedPost });
+            response.code(StatusCodes.OK).send({ deletedPost });
         }
     );
 };

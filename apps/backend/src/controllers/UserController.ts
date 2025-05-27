@@ -1,13 +1,14 @@
+import { container } from 'apps/backend/src/config/inversify.config';
+import { SERVICE_IDENTIFIER } from 'apps/backend/src/constants/identifiers';
+import { IUserService } from 'apps/backend/src/models/interfaces/services/IUserService';
 import { FastifyInstance } from 'fastify';
+import { StatusCodes } from 'http-status-codes';
 import {
     UpdateUserRequest,
     updateUserSchema,
     UserIdParams,
     userIdSchema,
 } from 'packages/shared';
-import { container } from '../config/inversify.config';
-import { SERVICE_IDENTIFIER } from '../constants/identifiers';
-import { IUserService } from '../models/interfaces/services/IUserService';
 
 export const BASE_USER_ROUTE = '/user';
 
@@ -29,7 +30,7 @@ export const UserRoutes = (fastify: FastifyInstance) => {
         async (request, response) => {
             const user = await userService.getUser(request.query);
 
-            return response.code(200).send({ success: true, user });
+            return response.code(StatusCodes.OK).send({ user });
         }
     );
 
@@ -50,7 +51,7 @@ export const UserRoutes = (fastify: FastifyInstance) => {
                 },
             });
 
-            return response.code(200).send({ success: true, updatedUser });
+            return response.code(StatusCodes.OK).send({ updatedUser });
         }
     );
 
@@ -63,7 +64,7 @@ export const UserRoutes = (fastify: FastifyInstance) => {
                 userId: request.user.userId,
             });
 
-            return response.code(200).send({ success: true, deletedUser });
+            return response.code(StatusCodes.OK).send({ deletedUser });
         }
     );
 };

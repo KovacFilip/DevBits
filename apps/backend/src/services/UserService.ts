@@ -1,15 +1,15 @@
 import { Prisma } from 'apps/backend/prisma/generated/client';
-import { inject, injectable } from 'inversify';
-import { REPOSITORY_IDENTIFIER } from '../constants/identifiers';
-import { NotFoundError } from '../errors/NotFoundError';
+import { REPOSITORY_IDENTIFIER } from 'apps/backend/src/constants/identifiers';
+import { NotFoundError } from 'apps/backend/src/errors/NotFoundError';
 import {
     CreateUserDTO,
     UpdateUserDTO,
     UserIdDTO,
     UserResponseDTO,
-} from '../models/DTOs/UserDTO';
-import { IUserRepository } from '../models/interfaces/repositories/IUserRepository';
-import { IUserService } from '../models/interfaces/services/IUserService';
+} from 'apps/backend/src/models/DTOs/UserDTO';
+import { IUserRepository } from 'apps/backend/src/models/interfaces/repositories/IUserRepository';
+import { IUserService } from 'apps/backend/src/models/interfaces/services/IUserService';
+import { inject, injectable } from 'inversify';
 
 @injectable()
 export class UserService implements IUserService {

@@ -3,9 +3,9 @@ import {
     Prisma,
     PrismaClient,
 } from 'apps/backend/prisma/generated/client';
+import { DATABASE_IDENTIFIER } from 'apps/backend/src/constants/identifiers';
+import { IPostRepository } from 'apps/backend/src/models/interfaces/repositories/IPostRepository';
 import { inject, injectable } from 'inversify';
-import { DATABASE_IDENTIFIER } from '../constants/identifiers';
-import { IPostRepository } from '../models/interfaces/repositories/IPostRepository';
 
 @injectable()
 export class PostRepository implements IPostRepository {

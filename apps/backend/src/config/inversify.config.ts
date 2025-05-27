@@ -1,16 +1,15 @@
 import { PrismaClient } from 'apps/backend/prisma/generated/client';
+import { ICommentRepository } from 'apps/backend/src/models/interfaces/repositories/ICommentRepository';
+import { ILikeRepository } from 'apps/backend/src/models/interfaces/repositories/ILikeRepository';
+import { IPostRepository } from 'apps/backend/src/models/interfaces/repositories/IPostRepository';
+import { IUserRepository } from 'apps/backend/src/models/interfaces/repositories/IUserRepository';
 import { Container } from 'inversify';
-
 import 'reflect-metadata';
 import {
     DATABASE_IDENTIFIER,
     REPOSITORY_IDENTIFIER,
     SERVICE_IDENTIFIER,
 } from '../constants/identifiers';
-import { ICommentRepository } from '../models/interfaces/ICommentRepository';
-import { ILikeRepository } from '../models/interfaces/ILikeRepository';
-import { IPostRepository } from '../models/interfaces/IPostRepository';
-import { IUserRepository } from '../models/interfaces/IUserRepository';
 import { ICommentService } from '../models/interfaces/services/ICommentService';
 import { ILikeService } from '../models/interfaces/services/ILikeService';
 import { IPostService } from '../models/interfaces/services/IPostService';
