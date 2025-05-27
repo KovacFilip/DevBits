@@ -1,9 +1,11 @@
 import { container } from 'apps/backend/src/config/inversify.config';
 import { SERVICE_IDENTIFIER } from 'apps/backend/src/constants/identifiers';
-import { UpdateCommentDTO } from 'apps/backend/src/models/DTOs/CommentDTO';
+import { createHandleCreateComment } from 'apps/backend/src/controllers/CommentController/Factories/CreateHandleCreateComment';
+import { createHandleDeleteComment } from 'apps/backend/src/controllers/CommentController/Factories/CreateHandleDeleteComment';
+import { createHandleGetComment } from 'apps/backend/src/controllers/CommentController/Factories/CreateHandleGetComment';
+import { createHandleUpdateComment } from 'apps/backend/src/controllers/CommentController/Factories/CreateHandleUpdateComment';
 import { ICommentService } from 'apps/backend/src/models/interfaces/services/ICommentService';
 import { FastifyInstance } from 'fastify';
-import { StatusCodes } from 'http-status-codes';
 import {
     CommentIdParams,
     commentIdSchema,
@@ -22,6 +24,11 @@ const commentService = container.get<ICommentService>(
 );
 
 export const commentRoutes = (fastify: FastifyInstance) => {
+    const handleCreateComment = createHandleCreateComment(commentService);
+    const handleGetComment = createHandleGetComment(commentService);
+    const handleUpdateComment = createHandleUpdateComment(commentService);
+    const handleDeleteComment = createHandleDeleteComment(commentService);
+
     // Create Comment
     fastify.post<{ Body: CreateCommentRequest }>(
         BASE_COMMENT_ROUTE,
@@ -32,16 +39,7 @@ export const commentRoutes = (fastify: FastifyInstance) => {
                 body: createCommentSchema,
             },
         },
-        async (request, response) => {
-            const user = request.user;
-
-            const newComment = await commentService.createComment({
-                userId: user.userId,
-                ...request.body,
-            });
-
-            return response.code(StatusCodes.OK).send({ newComment });
-        }
+        handleCreateComment
     );
 
     // Get Comment
@@ -54,32 +52,7 @@ export const commentRoutes = (fastify: FastifyInstance) => {
                 querystring: getCommentSchema,
             },
         },
-        async (request, response) => {
-            const { commentId, postId, userId } = request.query;
-
-            if (commentId) {
-                const comment = await commentService.getComment({ commentId });
-                return response.code(StatusCodes.OK).send({ comment });
-            }
-
-            if (postId) {
-                const comments = await commentService.getCommentsForPost({
-                    postId,
-                });
-                return response.code(StatusCodes.OK).send({ comments });
-            }
-
-            if (userId) {
-                const comments = await commentService.getCommentsByUser({
-                    userId,
-                });
-                return response.code(StatusCodes.OK).send({ comments });
-            }
-
-            return response.code(400).send({
-                message: 'Missing required query parameter.',
-            });
-        }
+        handleGetComment
     );
 
     // Update Comment
@@ -96,19 +69,7 @@ export const commentRoutes = (fastify: FastifyInstance) => {
                 body: updateCommentBodySchema,
             },
         },
-        async (request, response) => {
-            const updateCommentDTO: UpdateCommentDTO = {
-                commentId: request.query.commentId,
-                updateData: {
-                    content: request.body.content,
-                },
-            };
-
-            const updatedComment =
-                await commentService.updateComment(updateCommentDTO);
-
-            return response.code(StatusCodes.OK).send({ updatedComment });
-        }
+        handleUpdateComment
     );
 
     // Delete Comment
@@ -121,12 +82,6 @@ export const commentRoutes = (fastify: FastifyInstance) => {
                 querystring: commentIdSchema,
             },
         },
-        async (request, response) => {
-            const deletedComment = await commentService.deleteComment(
-                request.query
-            );
-
-            return response.code(StatusCodes.OK).send({ deletedComment });
-        }
+        handleDeleteComment
     );
 };

@@ -3,7 +3,7 @@ import fjwt, { FastifyJWT } from '@fastify/jwt';
 import fastifySwagger from '@fastify/swagger';
 import fastifySwaggerUi from '@fastify/swagger-ui';
 import { googleAuthRoutes } from 'apps/backend/src/controllers/auth/GoogleAuthController';
-import { commentRoutes } from 'apps/backend/src/controllers/CommentController';
+import { commentRoutes } from 'apps/backend/src/controllers/CommentController/CommentController';
 import { likeRoutes } from 'apps/backend/src/controllers/LikeController';
 import { postRoutes } from 'apps/backend/src/controllers/PostController';
 import { UserRoutes } from 'apps/backend/src/controllers/UserController';
