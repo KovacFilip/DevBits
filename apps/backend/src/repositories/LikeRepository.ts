@@ -3,9 +3,9 @@ import {
     Prisma,
     PrismaClient,
 } from 'apps/backend/prisma/generated/client';
+import { DATABASE_IDENTIFIER } from 'apps/backend/src/constants/identifiers';
+import { ILikeRepository } from 'apps/backend/src/models/interfaces/repositories/ILikeRepository';
 import { inject, injectable } from 'inversify';
-import { DATABASE_IDENTIFIER } from '../constants/identifiers';
-import { ILikeRepository } from '../models/interfaces/repositories/ILikeRepository';
 
 @injectable()
 export class LikeRepository implements ILikeRepository {

@@ -1,17 +1,17 @@
 import { Prisma } from 'apps/backend/prisma/generated/client';
-import { inject, injectable } from 'inversify';
-import { REPOSITORY_IDENTIFIER } from '../constants/identifiers';
-import { NotFoundError } from '../errors/NotFoundError';
+import { REPOSITORY_IDENTIFIER } from 'apps/backend/src/constants/identifiers';
+import { NotFoundError } from 'apps/backend/src/errors/NotFoundError';
 import {
     CommentDTO,
     CommentIdDTO,
     CreateCommentDTO,
     UpdateCommentDTO,
-} from '../models/DTOs/CommentDTO';
-import { PostIdDTO } from '../models/DTOs/PostDTO';
-import { UserIdDTO } from '../models/DTOs/UserDTO';
-import { ICommentRepository } from '../models/interfaces/repositories/ICommentRepository';
-import { ICommentService } from '../models/interfaces/services/ICommentService';
+} from 'apps/backend/src/models/DTOs/CommentDTO';
+import { PostIdDTO } from 'apps/backend/src/models/DTOs/PostDTO';
+import { UserIdDTO } from 'apps/backend/src/models/DTOs/UserDTO';
+import { ICommentRepository } from 'apps/backend/src/models/interfaces/repositories/ICommentRepository';
+import { ICommentService } from 'apps/backend/src/models/interfaces/services/ICommentService';
+import { inject, injectable } from 'inversify';
 
 @injectable()
 export class CommentService implements ICommentService {

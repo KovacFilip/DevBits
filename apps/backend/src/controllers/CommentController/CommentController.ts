@@ -3,6 +3,7 @@ import { SERVICE_IDENTIFIER } from 'apps/backend/src/constants/identifiers';
 import { UpdateCommentDTO } from 'apps/backend/src/models/DTOs/CommentDTO';
 import { ICommentService } from 'apps/backend/src/models/interfaces/services/ICommentService';
 import { FastifyInstance } from 'fastify';
+import { StatusCodes } from 'http-status-codes';
 import {
     CommentIdParams,
     commentIdSchema,
@@ -39,7 +40,7 @@ export const commentRoutes = (fastify: FastifyInstance) => {
                 ...request.body,
             });
 
-            return response.code(200).send({ success: true, newComment });
+            return response.code(StatusCodes.OK).send({ newComment });
         }
     );
 
@@ -58,25 +59,24 @@ export const commentRoutes = (fastify: FastifyInstance) => {
 
             if (commentId) {
                 const comment = await commentService.getComment({ commentId });
-                return response.code(200).send({ success: true, comment });
+                return response.code(StatusCodes.OK).send({ comment });
             }
 
             if (postId) {
                 const comments = await commentService.getCommentsForPost({
                     postId,
                 });
-                return response.code(200).send({ success: true, comments });
+                return response.code(StatusCodes.OK).send({ comments });
             }
 
             if (userId) {
                 const comments = await commentService.getCommentsByUser({
                     userId,
                 });
-                return response.code(200).send({ success: true, comments });
+                return response.code(StatusCodes.OK).send({ comments });
             }
 
             return response.code(400).send({
-                success: false,
                 message: 'Missing required query parameter.',
             });
         }
@@ -107,7 +107,7 @@ export const commentRoutes = (fastify: FastifyInstance) => {
             const updatedComment =
                 await commentService.updateComment(updateCommentDTO);
 
-            return response.code(200).send({ success: true, updatedComment });
+            return response.code(StatusCodes.OK).send({ updatedComment });
         }
     );
 
@@ -126,7 +126,7 @@ export const commentRoutes = (fastify: FastifyInstance) => {
                 request.query
             );
 
-            return response.code(200).send({ success: true, deletedComment });
+            return response.code(StatusCodes.OK).send({ deletedComment });
         }
     );
 };

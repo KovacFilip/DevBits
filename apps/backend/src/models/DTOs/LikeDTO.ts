@@ -1,5 +1,5 @@
-import { CommentIdDTO } from './CommentDTO';
-import { PostIdDTO } from './PostDTO';
+import { CommentIdDTO } from 'apps/backend/src/models/DTOs/CommentDTO';
+import { PostIdDTO } from 'apps/backend/src/models/DTOs/PostDTO';
 
 export type LikePostDTO = {
     likeId: string;

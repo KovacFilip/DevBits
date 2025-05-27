@@ -2,6 +2,12 @@ import fCookie from '@fastify/cookie';
 import fjwt, { FastifyJWT } from '@fastify/jwt';
 import fastifySwagger from '@fastify/swagger';
 import fastifySwaggerUi from '@fastify/swagger-ui';
+import { googleAuthRoutes } from 'apps/backend/src/controllers/auth/GoogleAuthController';
+import { commentRoutes } from 'apps/backend/src/controllers/CommentController';
+import { likeRoutes } from 'apps/backend/src/controllers/LikeController';
+import { postRoutes } from 'apps/backend/src/controllers/PostController';
+import { UserRoutes } from 'apps/backend/src/controllers/UserController';
+import { ErrorHandler } from 'apps/backend/src/errors/ErrorHandler';
 import { UnauthorizedError } from 'apps/backend/src/errors/UnauthorizedError';
 import * as dotenv from 'dotenv';
 import fastify, { FastifyRequest } from 'fastify';
@@ -12,12 +18,6 @@ import {
     validatorCompiler,
 } from 'fastify-type-provider-zod';
 import path from 'path';
-import { googleAuthRoutes } from './controllers/auth/GoogleAuthController';
-import { commentRoutes } from './controllers/CommentController';
-import { likeRoutes } from './controllers/LikeController';
-import { postRoutes } from './controllers/PostController';
-import { UserRoutes } from './controllers/UserController';
-import { ErrorHandler } from './errors/ErrorHandler';
 
 dotenv.config({ path: path.resolve(__dirname, '../../.env') });
 

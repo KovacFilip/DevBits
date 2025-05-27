@@ -3,9 +3,9 @@ import {
     PrismaClient,
     User,
 } from 'apps/backend/prisma/generated/client';
+import { DATABASE_IDENTIFIER } from 'apps/backend/src/constants/identifiers';
+import { IUserRepository } from 'apps/backend/src/models/interfaces/repositories/IUserRepository';
 import { inject, injectable } from 'inversify';
-import { DATABASE_IDENTIFIER } from '../constants/identifiers';
-import { IUserRepository } from '../models/interfaces/repositories/IUserRepository';
 
 @injectable()
 export class UserRepository implements IUserRepository {
