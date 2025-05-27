@@ -6,7 +6,7 @@ import { googleAuthRoutes } from 'apps/backend/src/controllers/auth/GoogleAuthCo
 import { commentRoutes } from 'apps/backend/src/controllers/CommentController/CommentController';
 import { likeRoutes } from 'apps/backend/src/controllers/LikeController';
 import { postRoutes } from 'apps/backend/src/controllers/PostController';
-import { UserRoutes } from 'apps/backend/src/controllers/UserController';
+import { UserRoutes } from 'apps/backend/src/controllers/UserController/UserController';
 import { ErrorHandler } from 'apps/backend/src/errors/ErrorHandler';
 import { UnauthorizedError } from 'apps/backend/src/errors/UnauthorizedError';
 import * as dotenv from 'dotenv';
