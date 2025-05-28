@@ -97,6 +97,7 @@ server.decorate('authenticate', async (request: FastifyRequest) => {
     try {
         const decoded = request.jwt.verify<FastifyJWT['user']>(token);
         request.user = decoded;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } catch (err: any) {
         throw new UnauthorizedError(err.message);
     }
