@@ -1,7 +1,9 @@
 import { PrismaClient } from 'apps/backend/prisma/generated/client';
 import { CommentController } from 'apps/backend/src/controllers/CommentController';
+import { LikeController } from 'apps/backend/src/controllers/LikeController';
 import { UserController } from 'apps/backend/src/controllers/UserController';
 import { ICommentController } from 'apps/backend/src/models/interfaces/controllers/ICommentController';
+import { ILikeController } from 'apps/backend/src/models/interfaces/controllers/ILikeController';
 import { IUserController } from 'apps/backend/src/models/interfaces/controllers/IUserController';
 import { ICommentRepository } from 'apps/backend/src/models/interfaces/repositories/ICommentRepository';
 import { ILikeRepository } from 'apps/backend/src/models/interfaces/repositories/ILikeRepository';
@@ -69,5 +71,9 @@ container
 container
     .bind<ICommentController>(CONTROLLER_IDENTIFIER.COMMENT_CONTROLLER)
     .to(CommentController);
+
+container
+    .bind<ILikeController>(CONTROLLER_IDENTIFIER.LIKE_CONTROLLER)
+    .to(LikeController);
 
 export { container };
