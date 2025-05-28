@@ -3,11 +3,11 @@ import fjwt, { FastifyJWT } from '@fastify/jwt';
 import fastifySwagger from '@fastify/swagger';
 import fastifySwaggerUi from '@fastify/swagger-ui';
 import { googleAuthRoutes } from 'apps/backend/src/controllers/auth/GoogleAuthController';
-import { postRoutes } from 'apps/backend/src/controllers/PostController';
 import { ErrorHandler } from 'apps/backend/src/errors/ErrorHandler';
 import { UnauthorizedError } from 'apps/backend/src/errors/UnauthorizedError';
 import { CommentRoutes } from 'apps/backend/src/routes/CommentRoutes';
 import { likeRoutes } from 'apps/backend/src/routes/LikeRoutes';
+import { PostRoutes } from 'apps/backend/src/routes/PostRoutes';
 import { UserRoutes } from 'apps/backend/src/routes/UserRoutes';
 import * as dotenv from 'dotenv';
 import fastify, { FastifyRequest } from 'fastify';
@@ -103,7 +103,7 @@ server.decorate('authenticate', async (request: FastifyRequest) => {
 });
 
 server.register(googleAuthRoutes);
-server.register(postRoutes);
+server.register(PostRoutes);
 server.register(CommentRoutes);
 server.register(likeRoutes);
 server.register(UserRoutes);
