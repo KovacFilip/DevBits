@@ -1,10 +1,6 @@
 import { container } from 'apps/backend/src/config/inversify.config';
-import { SERVICE_IDENTIFIER } from 'apps/backend/src/constants/identifiers';
-import { handleCreateComment } from 'apps/backend/src/controllers/CommentController/Handlers/HandleCreateComment';
-import { handleDeleteComment } from 'apps/backend/src/controllers/CommentController/Handlers/HandleDeleteComment';
-import { handleGetComment } from 'apps/backend/src/controllers/CommentController/Handlers/HandleGetComment';
-import { handleUpdateComment } from 'apps/backend/src/controllers/CommentController/Handlers/HandleUpdateComment';
-import { ICommentService } from 'apps/backend/src/models/interfaces/services/ICommentService';
+import { CONTROLLER_IDENTIFIER } from 'apps/backend/src/constants/identifiers';
+import { ICommentController } from 'apps/backend/src/models/interfaces/controllers/ICommentController';
 import { FastifyInstance } from 'fastify';
 import {
     CommentIdParams,
@@ -19,11 +15,11 @@ import {
 
 export const BASE_COMMENT_ROUTE = '/comment';
 
-const commentService = container.get<ICommentService>(
-    SERVICE_IDENTIFIER.COMMENT_SERVICE
-);
+export const CommentRoutes = (fastify: FastifyInstance) => {
+    const commentController = container.get<ICommentController>(
+        CONTROLLER_IDENTIFIER.COMMENT_CONTROLLER
+    );
 
-export const commentRoutes = (fastify: FastifyInstance) => {
     // Create Comment
     fastify.post<{ Body: CreateCommentRequest }>(
         BASE_COMMENT_ROUTE,
@@ -34,7 +30,7 @@ export const commentRoutes = (fastify: FastifyInstance) => {
                 body: createCommentSchema,
             },
         },
-        handleCreateComment(commentService)
+        commentController.createComment.bind(commentController)
     );
 
     // Get Comment
@@ -47,7 +43,7 @@ export const commentRoutes = (fastify: FastifyInstance) => {
                 querystring: getCommentSchema,
             },
         },
-        handleGetComment(commentService)
+        commentController.getComment.bind(commentController)
     );
 
     // Update Comment
@@ -64,7 +60,7 @@ export const commentRoutes = (fastify: FastifyInstance) => {
                 body: updateCommentBodySchema,
             },
         },
-        handleUpdateComment(commentService)
+        commentController.updateComment.bind(commentController)
     );
 
     // Delete Comment
@@ -77,6 +73,6 @@ export const commentRoutes = (fastify: FastifyInstance) => {
                 querystring: commentIdSchema,
             },
         },
-        handleDeleteComment(commentService)
+        commentController.deleteComment.bind(commentController)
     );
 };
