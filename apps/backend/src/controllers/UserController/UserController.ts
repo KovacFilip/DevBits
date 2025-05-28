@@ -1,8 +1,8 @@
 import { container } from 'apps/backend/src/config/inversify.config';
 import { SERVICE_IDENTIFIER } from 'apps/backend/src/constants/identifiers';
-import { createHandleDeleteUser } from 'apps/backend/src/controllers/UserController/Factories/CreateHandleDeleteUser';
-import { createHandleGetUser } from 'apps/backend/src/controllers/UserController/Factories/CreateHandleGetUser';
-import { createHandleUpdateUser } from 'apps/backend/src/controllers/UserController/Factories/CreateHandleUpdateUser';
+import { handleDeleteUser } from 'apps/backend/src/controllers/UserController/Handlers/HandleDeleteUser';
+import { handleGetUser } from 'apps/backend/src/controllers/UserController/Handlers/HandleGetUser';
+import { handleUpdateUser } from 'apps/backend/src/controllers/UserController/Handlers/HandleUpdateUser';
 import { IUserService } from 'apps/backend/src/models/interfaces/services/IUserService';
 import { FastifyInstance } from 'fastify';
 import {
@@ -19,10 +19,6 @@ const userService = container.get<IUserService>(
 );
 
 export const UserRoutes = (fastify: FastifyInstance) => {
-    const handleGetUser = createHandleGetUser(userService);
-    const handleUpdateUser = createHandleUpdateUser(userService);
-    const handleDeleteUser = createHandleDeleteUser(userService);
-
     // Get user info
     fastify.get<{ Querystring: UserIdParams }>(
         BASE_USER_ROUTE,
@@ -33,7 +29,7 @@ export const UserRoutes = (fastify: FastifyInstance) => {
                 querystring: userIdSchema,
             },
         },
-        handleGetUser
+        handleGetUser(userService)
     );
 
     // Update
@@ -43,13 +39,13 @@ export const UserRoutes = (fastify: FastifyInstance) => {
             preHandler: [fastify.authenticate],
             schema: { tags: ['user'], body: updateUserSchema },
         },
-        handleUpdateUser
+        handleUpdateUser(userService)
     );
 
     // Delete
     fastify.delete(
         BASE_USER_ROUTE,
         { preHandler: [fastify.authenticate], schema: { tags: ['user'] } },
-        handleDeleteUser
+        handleDeleteUser(userService)
     );
 };

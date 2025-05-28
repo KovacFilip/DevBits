@@ -1,9 +1,9 @@
 import { container } from 'apps/backend/src/config/inversify.config';
 import { SERVICE_IDENTIFIER } from 'apps/backend/src/constants/identifiers';
-import { createHandleCreateComment } from 'apps/backend/src/controllers/CommentController/Factories/CreateHandleCreateComment';
-import { createHandleDeleteComment } from 'apps/backend/src/controllers/CommentController/Factories/CreateHandleDeleteComment';
-import { createHandleGetComment } from 'apps/backend/src/controllers/CommentController/Factories/CreateHandleGetComment';
-import { createHandleUpdateComment } from 'apps/backend/src/controllers/CommentController/Factories/CreateHandleUpdateComment';
+import { handleCreateComment } from 'apps/backend/src/controllers/CommentController/Handlers/HandleCreateComment';
+import { handleDeleteComment } from 'apps/backend/src/controllers/CommentController/Handlers/HandleDeleteComment';
+import { handleGetComment } from 'apps/backend/src/controllers/CommentController/Handlers/HandleGetComment';
+import { handleUpdateComment } from 'apps/backend/src/controllers/CommentController/Handlers/HandleUpdateComment';
 import { ICommentService } from 'apps/backend/src/models/interfaces/services/ICommentService';
 import { FastifyInstance } from 'fastify';
 import {
@@ -24,11 +24,6 @@ const commentService = container.get<ICommentService>(
 );
 
 export const commentRoutes = (fastify: FastifyInstance) => {
-    const handleCreateComment = createHandleCreateComment(commentService);
-    const handleGetComment = createHandleGetComment(commentService);
-    const handleUpdateComment = createHandleUpdateComment(commentService);
-    const handleDeleteComment = createHandleDeleteComment(commentService);
-
     // Create Comment
     fastify.post<{ Body: CreateCommentRequest }>(
         BASE_COMMENT_ROUTE,
@@ -39,7 +34,7 @@ export const commentRoutes = (fastify: FastifyInstance) => {
                 body: createCommentSchema,
             },
         },
-        handleCreateComment
+        handleCreateComment(commentService)
     );
 
     // Get Comment
@@ -52,7 +47,7 @@ export const commentRoutes = (fastify: FastifyInstance) => {
                 querystring: getCommentSchema,
             },
         },
-        handleGetComment
+        handleGetComment(commentService)
     );
 
     // Update Comment
@@ -69,7 +64,7 @@ export const commentRoutes = (fastify: FastifyInstance) => {
                 body: updateCommentBodySchema,
             },
         },
-        handleUpdateComment
+        handleUpdateComment(commentService)
     );
 
     // Delete Comment
@@ -82,6 +77,6 @@ export const commentRoutes = (fastify: FastifyInstance) => {
                 querystring: commentIdSchema,
             },
         },
-        handleDeleteComment
+        handleDeleteComment(commentService)
     );
 };
