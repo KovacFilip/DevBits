@@ -1,4 +1,6 @@
 import { PrismaClient } from 'apps/backend/prisma/generated/client';
+import { UserController } from 'apps/backend/src/controllers/UserController';
+import { IUserController } from 'apps/backend/src/models/interfaces/controllers/IUserController';
 import { ICommentRepository } from 'apps/backend/src/models/interfaces/repositories/ICommentRepository';
 import { ILikeRepository } from 'apps/backend/src/models/interfaces/repositories/ILikeRepository';
 import { IPostRepository } from 'apps/backend/src/models/interfaces/repositories/IPostRepository';
@@ -6,6 +8,7 @@ import { IUserRepository } from 'apps/backend/src/models/interfaces/repositories
 import { Container } from 'inversify';
 import 'reflect-metadata';
 import {
+    CONTROLLER_IDENTIFIER,
     DATABASE_IDENTIFIER,
     REPOSITORY_IDENTIFIER,
     SERVICE_IDENTIFIER,
@@ -55,5 +58,10 @@ container
     .bind<ICommentService>(SERVICE_IDENTIFIER.COMMENT_SERVICE)
     .to(CommentService);
 container.bind<ILikeService>(SERVICE_IDENTIFIER.LIKE_SERVICE).to(LikeService);
+
+// Controllers
+container
+    .bind<IUserController>(CONTROLLER_IDENTIFIER.USER_CONTROLLER)
+    .to(UserController);
 
 export { container };

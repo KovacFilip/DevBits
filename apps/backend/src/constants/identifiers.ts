@@ -12,6 +12,13 @@ export const SERVICE_IDENTIFIER = {
     COMMENT_SERVICE: Symbol.for('ICommentService'),
 };
 
+export const CONTROLLER_IDENTIFIER = {
+    USER_CONTROLLER: Symbol.for('IUserController'),
+    POST_CONTROLLER: Symbol.for('IPostController'),
+    LIKE_CONTROLLER: Symbol.for('ILikeController'),
+    COMMENT_CONTROLLER: Symbol.for('ICommentController'),
+};
+
 export const DATABASE_IDENTIFIER = {
     PRISMA: Symbol.for('PrismaClient'),
 };

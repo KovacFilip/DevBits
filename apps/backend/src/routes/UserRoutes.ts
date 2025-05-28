@@ -1,9 +1,6 @@
 import { container } from 'apps/backend/src/config/inversify.config';
-import { SERVICE_IDENTIFIER } from 'apps/backend/src/constants/identifiers';
-import { handleDeleteUser } from 'apps/backend/src/controllers/UserController/Handlers/HandleDeleteUser';
-import { handleGetUser } from 'apps/backend/src/controllers/UserController/Handlers/HandleGetUser';
-import { handleUpdateUser } from 'apps/backend/src/controllers/UserController/Handlers/HandleUpdateUser';
-import { IUserService } from 'apps/backend/src/models/interfaces/services/IUserService';
+import { CONTROLLER_IDENTIFIER } from 'apps/backend/src/constants/identifiers';
+import { IUserController } from 'apps/backend/src/models/interfaces/controllers/IUserController';
 import { FastifyInstance } from 'fastify';
 import {
     UpdateUserRequest,
@@ -14,12 +11,12 @@ import {
 
 export const BASE_USER_ROUTE = '/user';
 
-const userService = container.get<IUserService>(
-    SERVICE_IDENTIFIER.USER_SERVICE
-);
-
 export const UserRoutes = (fastify: FastifyInstance) => {
-    // Get user info
+    const userController = container.get<IUserController>(
+        CONTROLLER_IDENTIFIER.USER_CONTROLLER
+    );
+
+    // Read
     fastify.get<{ Querystring: UserIdParams }>(
         BASE_USER_ROUTE,
         {
@@ -29,7 +26,7 @@ export const UserRoutes = (fastify: FastifyInstance) => {
                 querystring: userIdSchema,
             },
         },
-        handleGetUser(userService)
+        userController.getUser.bind(userController)
     );
 
     // Update
@@ -39,13 +36,13 @@ export const UserRoutes = (fastify: FastifyInstance) => {
             preHandler: [fastify.authenticate],
             schema: { tags: ['user'], body: updateUserSchema },
         },
-        handleUpdateUser(userService)
+        userController.updateUser.bind(userController)
     );
 
     // Delete
     fastify.delete(
         BASE_USER_ROUTE,
         { preHandler: [fastify.authenticate], schema: { tags: ['user'] } },
-        handleDeleteUser(userService)
+        userController.deleteUser.bind(userController)
     );
 };

@@ -6,9 +6,9 @@ import { googleAuthRoutes } from 'apps/backend/src/controllers/auth/GoogleAuthCo
 import { commentRoutes } from 'apps/backend/src/controllers/CommentController/CommentController';
 import { likeRoutes } from 'apps/backend/src/controllers/LikeController';
 import { postRoutes } from 'apps/backend/src/controllers/PostController';
-import { UserRoutes } from 'apps/backend/src/controllers/UserController/UserController';
 import { ErrorHandler } from 'apps/backend/src/errors/ErrorHandler';
 import { UnauthorizedError } from 'apps/backend/src/errors/UnauthorizedError';
+import { UserRoutes } from 'apps/backend/src/routes/UserRoutes';
 import * as dotenv from 'dotenv';
 import fastify, { FastifyRequest } from 'fastify';
 import {
@@ -103,6 +103,7 @@ server.register(googleAuthRoutes);
 server.register(postRoutes);
 server.register(commentRoutes);
 server.register(likeRoutes);
+// server.register(UserRoutes);
 server.register(UserRoutes);
 
 // Custom error handling middleware
