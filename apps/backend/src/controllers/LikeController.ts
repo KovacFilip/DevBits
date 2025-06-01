@@ -1,143 +1,110 @@
-import { container } from 'apps/backend/src/config/inversify.config';
 import { SERVICE_IDENTIFIER } from 'apps/backend/src/constants/identifiers';
+import { ILikeController } from 'apps/backend/src/models/interfaces/controllers/ILikeController';
 import { ILikeService } from 'apps/backend/src/models/interfaces/services/ILikeService';
-import { FastifyInstance } from 'fastify';
+import { FastifyReply, FastifyRequest } from 'fastify';
 import { StatusCodes } from 'http-status-codes';
+import { inject, injectable } from 'inversify';
 import {
+    createLikeRequest,
     GetCountOfLikesRequest,
-    getCountOfLikesSchema,
     GetLikeRequest,
-    getLikeSchema,
     LikeIdRequest,
-    likeIdSchema,
 } from 'packages/shared';
 
-export const BASE_LIKE_ROUTE = '/like';
+@injectable()
+export class LikeController implements ILikeController {
+    constructor(
+        @inject(SERVICE_IDENTIFIER.LIKE_SERVICE)
+        readonly likeService: ILikeService
+    ) {}
 
-const likeService = container.get<ILikeService>(
-    SERVICE_IDENTIFIER.LIKE_SERVICE
-);
+    async createLike(
+        request: FastifyRequest<{ Querystring: createLikeRequest }>,
+        response: FastifyReply
+    ): Promise<void> {
+        const { commentId, postId } = request.query;
+        const user = request.user;
 
-export const likeRoutes = (fastify: FastifyInstance) => {
-    // Create Like
-    fastify.post<{ Querystring: GetCountOfLikesRequest }>(
-        BASE_LIKE_ROUTE,
-        {
-            preHandler: [fastify.authenticate],
-            schema: {
-                tags: ['like'],
-                querystring: getCountOfLikesSchema,
-            },
-        },
-        async (request, response) => {
-            const { commentId, postId } = request.query;
-            const user = request.user;
-
-            if (commentId) {
-                const like = await likeService.likeComment({
-                    userId: user.userId,
-                    entity: { commentId },
-                });
-                return response.code(StatusCodes.OK).send({ like });
-            }
-
-            if (postId) {
-                const like = await likeService.likePost({
-                    userId: user.userId,
-                    entity: { postId },
-                });
-                return response.code(StatusCodes.OK).send({ like });
-            }
-
-            return response.code(400).send({
-                message: 'Missing required query parameter.',
+        if (commentId) {
+            const like = await this.likeService.likeComment({
+                userId: user.userId,
+                entity: { commentId },
             });
+            return response.code(StatusCodes.OK).send({ like });
         }
-    );
 
-    // Get Like
-    fastify.get<{ Querystring: GetLikeRequest }>(
-        BASE_LIKE_ROUTE,
-        {
-            preHandler: [fastify.authenticate],
-            schema: {
-                tags: ['like'],
-                querystring: getLikeSchema,
-            },
-        },
-        async (request, response) => {
-            const { likeId, commentId, postId } = request.query;
-
-            if (likeId) {
-                const like = await likeService.getLike({ likeId });
-                return response.code(StatusCodes.OK).send({ like });
-            }
-
-            if (commentId) {
-                const likes = await likeService.getLikesForComment({
-                    commentId,
-                });
-                return response.code(StatusCodes.OK).send({ likes });
-            }
-
-            if (postId) {
-                const likes = await likeService.getLikesForPost({ postId });
-                return response.code(StatusCodes.OK).send({ likes });
-            }
-
-            return response.code(400).send({
-                message: 'Missing required query parameter.',
+        if (postId) {
+            const like = await this.likeService.likePost({
+                userId: user.userId,
+                entity: { postId },
             });
+            return response.code(StatusCodes.OK).send({ like });
         }
-    );
 
-    // Get Count Of Likes
-    fastify.get<{ Querystring: GetCountOfLikesRequest }>(
-        BASE_LIKE_ROUTE + '/count',
-        {
-            preHandler: [fastify.authenticate],
-            schema: {
-                tags: ['like'],
-                querystring: getCountOfLikesSchema,
-            },
-        },
-        async (request, response) => {
-            const { commentId, postId } = request.query;
+        return response.code(400).send({
+            message: 'Missing required query parameter.',
+        });
+    }
 
-            if (commentId) {
-                const count = await likeService.getNumberOfLikesOfComment({
-                    commentId,
-                });
-                return response.code(StatusCodes.OK).send({ count });
-            }
+    async getLike(
+        request: FastifyRequest<{ Querystring: GetLikeRequest }>,
+        response: FastifyReply
+    ): Promise<void> {
+        const { likeId, commentId, postId } = request.query;
 
-            if (postId) {
-                const count = await likeService.getNumberOfLikesOfPost({
-                    postId,
-                });
-                return response.code(StatusCodes.OK).send({ count });
-            }
+        if (likeId) {
+            const like = await this.likeService.getLike({ likeId });
+            return response.code(StatusCodes.OK).send({ like });
+        }
 
-            return response.code(400).send({
-                message: 'Missing required query parameter.',
+        if (commentId) {
+            const likes = await this.likeService.getLikesForComment({
+                commentId,
             });
+            return response.code(StatusCodes.OK).send({ likes });
         }
-    );
 
-    // Remove Like
-    fastify.delete<{ Querystring: LikeIdRequest }>(
-        BASE_LIKE_ROUTE,
-        {
-            preHandler: [fastify.authenticate],
-            schema: {
-                tags: ['like'],
-                querystring: likeIdSchema,
-            },
-        },
-        async (request, response) => {
-            const deletedLike = await likeService.removeLike(request.query);
-
-            return response.code(StatusCodes.OK).send({ deletedLike });
+        if (postId) {
+            const likes = await this.likeService.getLikesForPost({ postId });
+            return response.code(StatusCodes.OK).send({ likes });
         }
-    );
-};
+
+        return response.code(400).send({
+            message: 'Missing required query parameter.',
+        });
+    }
+
+    async getLikesCount(
+        request: FastifyRequest<{ Querystring: GetCountOfLikesRequest }>,
+        response: FastifyReply
+    ): Promise<void> {
+        const { commentId, postId } = request.query;
+
+        if (commentId) {
+            const count = await this.likeService.getNumberOfLikesOfComment({
+                commentId,
+            });
+            return response.code(StatusCodes.OK).send({ count });
+        }
+
+        if (postId) {
+            const count = await this.likeService.getNumberOfLikesOfPost({
+                postId,
+            });
+            return response.code(StatusCodes.OK).send({ count });
+        }
+
+        return response.code(400).send({
+            message: 'Missing required query parameter.',
+        });
+    }
+
+    async deleteLike(
+        request: FastifyRequest<{ Querystring: LikeIdRequest }>,
+        response: FastifyReply
+    ): Promise<void> {
+        const deletedLike = await this.likeService.removeLike(request.query);
+
+        return response.code(StatusCodes.OK).send({ deletedLike });
+    }
+}

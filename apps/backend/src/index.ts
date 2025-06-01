@@ -3,12 +3,12 @@ import fjwt, { FastifyJWT } from '@fastify/jwt';
 import fastifySwagger from '@fastify/swagger';
 import fastifySwaggerUi from '@fastify/swagger-ui';
 import { googleAuthRoutes } from 'apps/backend/src/controllers/auth/GoogleAuthController';
-import { commentRoutes } from 'apps/backend/src/controllers/CommentController';
-import { likeRoutes } from 'apps/backend/src/controllers/LikeController';
-import { postRoutes } from 'apps/backend/src/controllers/PostController';
-import { UserRoutes } from 'apps/backend/src/controllers/UserController';
 import { ErrorHandler } from 'apps/backend/src/errors/ErrorHandler';
 import { UnauthorizedError } from 'apps/backend/src/errors/UnauthorizedError';
+import { CommentRoutes } from 'apps/backend/src/routes/CommentRoutes';
+import { likeRoutes } from 'apps/backend/src/routes/LikeRoutes';
+import { PostRoutes } from 'apps/backend/src/routes/PostRoutes';
+import { UserRoutes } from 'apps/backend/src/routes/UserRoutes';
 import * as dotenv from 'dotenv';
 import fastify, { FastifyRequest } from 'fastify';
 import {
@@ -94,14 +94,18 @@ server.decorate('authenticate', async (request: FastifyRequest) => {
         throw new UnauthorizedError('Authentication required');
     }
 
-    const decoded = request.jwt.verify<FastifyJWT['user']>(token);
-
-    request.user = decoded;
+    try {
+        const decoded = request.jwt.verify<FastifyJWT['user']>(token);
+        request.user = decoded;
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } catch (err: any) {
+        throw new UnauthorizedError(err.message);
+    }
 });
 
 server.register(googleAuthRoutes);
-server.register(postRoutes);
-server.register(commentRoutes);
+server.register(PostRoutes);
+server.register(CommentRoutes);
 server.register(likeRoutes);
 server.register(UserRoutes);
 

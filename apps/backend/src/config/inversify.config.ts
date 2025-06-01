@@ -1,4 +1,12 @@
 import { PrismaClient } from 'apps/backend/prisma/generated/client';
+import { CommentController } from 'apps/backend/src/controllers/CommentController';
+import { LikeController } from 'apps/backend/src/controllers/LikeController';
+import { PostController } from 'apps/backend/src/controllers/PostController';
+import { UserController } from 'apps/backend/src/controllers/UserController';
+import { ICommentController } from 'apps/backend/src/models/interfaces/controllers/ICommentController';
+import { ILikeController } from 'apps/backend/src/models/interfaces/controllers/ILikeController';
+import { IPostController } from 'apps/backend/src/models/interfaces/controllers/IPostController';
+import { IUserController } from 'apps/backend/src/models/interfaces/controllers/IUserController';
 import { ICommentRepository } from 'apps/backend/src/models/interfaces/repositories/ICommentRepository';
 import { ILikeRepository } from 'apps/backend/src/models/interfaces/repositories/ILikeRepository';
 import { IPostRepository } from 'apps/backend/src/models/interfaces/repositories/IPostRepository';
@@ -6,6 +14,7 @@ import { IUserRepository } from 'apps/backend/src/models/interfaces/repositories
 import { Container } from 'inversify';
 import 'reflect-metadata';
 import {
+    CONTROLLER_IDENTIFIER,
     DATABASE_IDENTIFIER,
     REPOSITORY_IDENTIFIER,
     SERVICE_IDENTIFIER,
@@ -55,5 +64,22 @@ container
     .bind<ICommentService>(SERVICE_IDENTIFIER.COMMENT_SERVICE)
     .to(CommentService);
 container.bind<ILikeService>(SERVICE_IDENTIFIER.LIKE_SERVICE).to(LikeService);
+
+// Controllers
+container
+    .bind<IUserController>(CONTROLLER_IDENTIFIER.USER_CONTROLLER)
+    .to(UserController);
+
+container
+    .bind<ICommentController>(CONTROLLER_IDENTIFIER.COMMENT_CONTROLLER)
+    .to(CommentController);
+
+container
+    .bind<ILikeController>(CONTROLLER_IDENTIFIER.LIKE_CONTROLLER)
+    .to(LikeController);
+
+container
+    .bind<IPostController>(CONTROLLER_IDENTIFIER.POST_CONTROLLER)
+    .to(PostController);
 
 export { container };

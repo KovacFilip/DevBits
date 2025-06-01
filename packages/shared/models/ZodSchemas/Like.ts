@@ -3,6 +3,24 @@ import { z } from 'zod';
 // ===================
 // Like (postId or userId)
 // ===================
+export const createLikeSchema = z
+    .strictObject({
+        postId: z.string().uuid().optional(),
+        commentId: z.string().uuid().optional(),
+    })
+    .refine(
+        (data) =>
+            (data.postId && !data.commentId) ||
+            (!data.postId && data.commentId),
+        {
+            message: "Exactly one of 'postId' or 'commentId' must be provided",
+        }
+    );
+export type createLikeRequest = z.infer<typeof createLikeSchema>;
+
+// ===================
+// Like (postId or userId)
+// ===================
 export const getCountOfLikesSchema = z
     .strictObject({
         postId: z.string().uuid().optional(),
