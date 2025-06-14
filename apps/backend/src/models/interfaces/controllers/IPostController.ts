@@ -1,32 +1,39 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import {
     CreatePostRequest,
-    GetPostRequest,
-    PostIdParams,
-    UpdatePostRequest,
+    PostIdDTO,
+    PostSimpleDTO,
+    PostWithContentDTO,
+    UpdatePostDTO,
+    UserIdDTO,
 } from 'packages/shared';
 
 export interface IPostController {
     createPost(
         request: FastifyRequest<{ Body: CreatePostRequest }>,
-        response: FastifyReply
+        response: FastifyReply<{ Reply: PostWithContentDTO }>
     ): Promise<void>;
 
     getPost(
-        request: FastifyRequest<{ Querystring: GetPostRequest }>,
-        response: FastifyReply
+        request: FastifyRequest<{ Querystring: PostIdDTO }>,
+        response: FastifyReply<{ Reply: PostWithContentDTO }>
+    ): Promise<void>;
+
+    getPostByUserId(
+        request: FastifyRequest<{ Params: UserIdDTO }>,
+        response: FastifyReply<{ Reply: PostSimpleDTO[] }>
     ): Promise<void>;
 
     updatePost(
         request: FastifyRequest<{
-            Body: UpdatePostRequest;
-            Querystring: PostIdParams;
+            Body: UpdatePostDTO;
+            Querystring: PostIdDTO;
         }>,
-        response: FastifyReply
+        response: FastifyReply<{ Reply: PostWithContentDTO }>
     ): Promise<void>;
 
     deletePost(
-        request: FastifyRequest<{ Querystring: PostIdParams }>,
-        response: FastifyReply
+        request: FastifyRequest<{ Querystring: PostIdDTO }>,
+        response: FastifyReply<{ Reply: PostSimpleDTO }>
     ): Promise<void>;
 }

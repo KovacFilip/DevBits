@@ -5,12 +5,14 @@ import { FastifyInstance } from 'fastify';
 import {
     CreatePostRequest,
     createPostSchema,
-    GetPostRequest,
-    getPostSchema,
-    PostIdParams,
+    PostIdDTO,
     postIdSchema,
-    UpdatePostRequest,
+    PostSimpleDTO,
+    PostWithContentDTO,
+    UpdatePostDTO,
     updatePostSchema,
+    UserIdDTO,
+    userIdSchema,
 } from 'packages/shared';
 
 export const BASE_POST_ROUTE = '/post';
@@ -21,7 +23,7 @@ export const PostRoutes = (fastify: FastifyInstance) => {
     );
 
     // Create New Post
-    fastify.post<{ Body: CreatePostRequest }>(
+    fastify.post<{ Body: CreatePostRequest; Reply: PostWithContentDTO }>(
         BASE_POST_ROUTE,
         {
             preHandler: [fastify.authenticate],
@@ -31,20 +33,37 @@ export const PostRoutes = (fastify: FastifyInstance) => {
     );
 
     // Get Post By ID
-    fastify.get<{ Querystring: GetPostRequest }>(
+    fastify.get<{ Querystring: PostIdDTO; Reply: PostWithContentDTO }>(
         BASE_POST_ROUTE,
         {
             preHandler: [fastify.authenticate],
             schema: {
                 tags: ['post'],
-                querystring: getPostSchema,
+                querystring: postIdSchema,
             },
         },
         postController.getPost.bind(postController)
     );
 
+    // Get Posts By UserID
+    fastify.get<{ Params: UserIdDTO; Reply: PostSimpleDTO[] }>(
+        '/user/:userId/posts',
+        {
+            preHandler: [fastify.authenticate],
+            schema: {
+                tags: ['post'],
+                params: userIdSchema,
+            },
+        },
+        postController.getPostByUserId.bind(postController)
+    );
+
     // Update Post
-    fastify.put<{ Body: UpdatePostRequest; Querystring: PostIdParams }>(
+    fastify.put<{
+        Body: UpdatePostDTO;
+        Querystring: PostIdDTO;
+        Reply: PostWithContentDTO;
+    }>(
         BASE_POST_ROUTE,
         {
             preHandler: [fastify.authenticate],
@@ -58,7 +77,7 @@ export const PostRoutes = (fastify: FastifyInstance) => {
     );
 
     // Delete Post
-    fastify.delete<{ Querystring: PostIdParams }>(
+    fastify.delete<{ Querystring: PostIdDTO; Reply: PostSimpleDTO }>(
         BASE_POST_ROUTE,
         {
             preHandler: [fastify.authenticate],
