@@ -1,15 +1,16 @@
 import { Prisma } from 'apps/backend/prisma/generated/client';
 import { REPOSITORY_IDENTIFIER } from 'apps/backend/src/constants/identifiers';
 import { NotFoundError } from 'apps/backend/src/errors/NotFoundError';
-import {
-    CreateUserDTO,
-    UpdateUserDTO,
-    UserIdDTO,
-    UserResponseDTO,
-} from 'apps/backend/src/models/DTOs/UserDTO';
 import { IUserRepository } from 'apps/backend/src/models/interfaces/repositories/IUserRepository';
 import { IUserService } from 'apps/backend/src/models/interfaces/services/IUserService';
 import { inject, injectable } from 'inversify';
+import {
+    CreateUserDTO,
+    UpdateUserDTO,
+    UserDetailDTO,
+    UserIdDTO,
+    UserSimpleDTO,
+} from 'packages/shared';
 
 @injectable()
 export class UserService implements IUserService {
@@ -18,7 +19,7 @@ export class UserService implements IUserService {
         private readonly userRepository: IUserRepository
     ) {}
 
-    async registerUser(dto: CreateUserDTO): Promise<UserResponseDTO> {
+    async registerUser(dto: CreateUserDTO): Promise<UserDetailDTO> {
         let user = await this.userRepository.readUserByProvider({
             provider: dto.provider,
             providerUserId: dto.providerUserId,
@@ -42,11 +43,11 @@ export class UserService implements IUserService {
             userId: user.userId,
             email: user.email,
             profilePicture: user.profilePicture,
-            username: user.username,
+            name: user.username,
         };
     }
 
-    async getUser(dto: UserIdDTO): Promise<UserResponseDTO> {
+    async getUser(dto: UserIdDTO): Promise<UserDetailDTO> {
         const userWhereInput: Prisma.UserWhereUniqueInput = {
             userId: dto.userId,
         };
@@ -59,25 +60,26 @@ export class UserService implements IUserService {
             );
         }
 
-        const result: UserResponseDTO = {
+        return {
             userId: user.userId,
             email: user.email,
             profilePicture: user.profilePicture,
-            username: user.username,
+            name: user.username,
         };
-
-        return result;
     }
 
-    async updateUser(dto: UpdateUserDTO): Promise<UserResponseDTO> {
+    async updateUser(
+        userIdDto: UserIdDTO,
+        updateUserDto: UpdateUserDTO
+    ): Promise<UserDetailDTO> {
         const userWhereInput: Prisma.UserWhereUniqueInput = {
-            userId: dto.userId,
+            userId: userIdDto.userId,
         };
 
         const updateData: Prisma.UserUpdateInput = {
-            email: dto.updateData.email,
-            username: dto.updateData.name,
-            profilePicture: dto.updateData.profilePicture,
+            email: updateUserDto.email,
+            username: updateUserDto.name,
+            profilePicture: updateUserDto.profilePicture,
         };
 
         const updatedUser = await this.userRepository.updateUser(
@@ -88,12 +90,12 @@ export class UserService implements IUserService {
         return {
             userId: updatedUser.userId,
             email: updatedUser.email,
-            username: updatedUser.username,
+            name: updatedUser.username,
             profilePicture: updatedUser.profilePicture,
         };
     }
 
-    async deleteUser(dto: UserIdDTO): Promise<UserResponseDTO> {
+    async deleteUser(dto: UserIdDTO): Promise<UserSimpleDTO> {
         const userWhereInput: Prisma.UserWhereUniqueInput = {
             userId: dto.userId,
         };
@@ -103,9 +105,6 @@ export class UserService implements IUserService {
 
         return {
             userId: deletedUser.userId,
-            email: deletedUser.email,
-            username: deletedUser.username,
-            profilePicture: deletedUser.profilePicture,
         };
     }
 }

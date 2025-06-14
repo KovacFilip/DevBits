@@ -1,11 +1,11 @@
 import oauthPlugin from '@fastify/oauth2';
 import { container } from 'apps/backend/src/config/inversify.config';
 import { SERVICE_IDENTIFIER } from 'apps/backend/src/constants/identifiers';
-import { CreateUserDTO } from 'apps/backend/src/models/DTOs/UserDTO';
 import { IUserService } from 'apps/backend/src/models/interfaces/services/IUserService';
 import { FastifyInstance } from 'fastify';
 import { OAuth2Client } from 'google-auth-library';
 import { StatusCodes } from 'http-status-codes';
+import { CreateUserDTO } from 'packages/shared';
 
 const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
 const userService = container.get<IUserService>(

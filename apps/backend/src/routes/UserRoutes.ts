@@ -3,10 +3,12 @@ import { CONTROLLER_IDENTIFIER } from 'apps/backend/src/constants/identifiers';
 import { IUserController } from 'apps/backend/src/models/interfaces/controllers/IUserController';
 import { FastifyInstance } from 'fastify';
 import {
-    UpdateUserRequest,
+    UpdateUserDTO,
     updateUserSchema,
-    UserIdParams,
+    UserDetailDTO,
+    UserIdDTO,
     userIdSchema,
+    UserSimpleDTO,
 } from 'packages/shared';
 
 export const BASE_USER_ROUTE = '/user';
@@ -17,7 +19,7 @@ export const UserRoutes = (fastify: FastifyInstance) => {
     );
 
     // Read
-    fastify.get<{ Querystring: UserIdParams }>(
+    fastify.get<{ Querystring: UserIdDTO; Reply: UserDetailDTO }>(
         BASE_USER_ROUTE,
         {
             preHandler: [fastify.authenticate],
@@ -30,7 +32,7 @@ export const UserRoutes = (fastify: FastifyInstance) => {
     );
 
     // Update
-    fastify.put<{ Body: UpdateUserRequest }>(
+    fastify.put<{ Body: UpdateUserDTO; Reply: UserDetailDTO }>(
         BASE_USER_ROUTE,
         {
             preHandler: [fastify.authenticate],
@@ -40,7 +42,7 @@ export const UserRoutes = (fastify: FastifyInstance) => {
     );
 
     // Delete
-    fastify.delete(
+    fastify.delete<{ Reply: UserSimpleDTO }>(
         BASE_USER_ROUTE,
         { preHandler: [fastify.authenticate], schema: { tags: ['user'] } },
         userController.deleteUser.bind(userController)

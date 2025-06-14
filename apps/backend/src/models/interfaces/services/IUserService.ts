@@ -1,16 +1,20 @@
 import {
     CreateUserDTO,
     UpdateUserDTO,
+    UserDetailDTO,
     UserIdDTO,
-    UserResponseDTO,
-} from 'apps/backend/src/models/DTOs/UserDTO';
+    UserSimpleDTO,
+} from 'packages/shared';
 
 export interface IUserService {
-    registerUser(dto: CreateUserDTO): Promise<UserResponseDTO>;
+    registerUser(dto: CreateUserDTO): Promise<UserDetailDTO>;
 
-    getUser(dto: UserIdDTO): Promise<UserResponseDTO>;
+    getUser(dto: UserIdDTO): Promise<UserDetailDTO>;
 
-    updateUser(dto: UpdateUserDTO): Promise<UserResponseDTO>;
+    updateUser(
+        userIdDto: UserIdDTO,
+        updateUserDto: UpdateUserDTO
+    ): Promise<UserDetailDTO>;
 
-    deleteUser(dto: UserIdDTO): Promise<UserResponseDTO>;
+    deleteUser(dto: UserIdDTO): Promise<UserSimpleDTO>;
 }
