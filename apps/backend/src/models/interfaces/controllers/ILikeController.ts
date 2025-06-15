@@ -1,29 +1,50 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import {
-    createLikeRequest,
-    GetCountOfLikesRequest,
-    GetLikeRequest,
-    LikeIdRequest,
+    CommentIdDTO,
+    LikeCommentDTO,
+    LikeIdDTO,
+    LikePostDTO,
+    PostIdDTO,
 } from 'packages/shared';
 
 export interface ILikeController {
-    createLike(
-        request: FastifyRequest<{ Querystring: createLikeRequest }>,
-        response: FastifyReply
+    likePost(
+        request: FastifyRequest<{ Params: PostIdDTO }>,
+        response: FastifyReply<{ Reply: LikeIdDTO }>
+    ): Promise<void>;
+
+    likeComment(
+        request: FastifyRequest<{ Params: CommentIdDTO }>,
+        response: FastifyReply<{ Reply: LikeIdDTO }>
     ): Promise<void>;
 
     getLike(
-        request: FastifyRequest<{ Querystring: GetLikeRequest }>,
-        response: FastifyReply
+        request: FastifyRequest<{ Params: LikeIdDTO }>,
+        response: FastifyReply<{ Reply: LikePostDTO | LikeCommentDTO }>
     ): Promise<void>;
 
-    getLikesCount(
-        request: FastifyRequest<{ Querystring: GetCountOfLikesRequest }>,
-        response: FastifyReply
+    getLikesForPost(
+        request: FastifyRequest<{ Params: PostIdDTO }>,
+        response: FastifyReply<{ Reply: LikeIdDTO[] }>
+    ): Promise<void>;
+
+    getLikesForComment(
+        request: FastifyRequest<{ Params: CommentIdDTO }>,
+        response: FastifyReply<{ Reply: LikeIdDTO[] }>
+    ): Promise<void>;
+
+    getPostLikesCount(
+        request: FastifyRequest<{ Params: PostIdDTO }>,
+        response: FastifyReply<{ Reply: number }>
+    ): Promise<void>;
+
+    getCommentLikesCount(
+        request: FastifyRequest<{ Params: CommentIdDTO }>,
+        response: FastifyReply<{ Reply: number }>
     ): Promise<void>;
 
     deleteLike(
-        request: FastifyRequest<{ Querystring: LikeIdRequest }>,
-        response: FastifyReply
+        request: FastifyRequest<{ Params: LikeIdDTO }>,
+        response: FastifyReply<{ Reply: LikeIdDTO }>
     ): Promise<void>;
 }

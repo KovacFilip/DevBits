@@ -1,22 +1,21 @@
-import { CommentIdDTO } from 'apps/backend/src/models/DTOs/CommentDTO';
 import {
-    CreateCommentLikeDTO,
-    CreatePostLikeDTO,
+    CommentIdDTO,
     LikeCommentDTO,
     LikeIdDTO,
     LikePostDTO,
-} from 'apps/backend/src/models/DTOs/LikeDTO';
-import { PostIdDTO } from 'apps/backend/src/models/DTOs/PostDTO';
+    PostIdDTO,
+    UserIdDTO,
+} from 'packages/shared';
 
 export interface ILikeService {
-    likePost(dto: CreatePostLikeDTO): Promise<LikePostDTO>;
-    likeComment(dto: CreateCommentLikeDTO): Promise<LikeCommentDTO>;
+    likePost(user: UserIdDTO, post: PostIdDTO): Promise<LikeIdDTO>;
+    likeComment(user: UserIdDTO, comment: CommentIdDTO): Promise<LikeIdDTO>;
 
     getLike(dto: LikeIdDTO): Promise<LikePostDTO | LikeCommentDTO>;
-    getLikesForPost(dto: PostIdDTO): Promise<LikePostDTO[]>;
-    getLikesForComment(dto: CommentIdDTO): Promise<LikeCommentDTO[]>;
+    getLikesForPost(dto: PostIdDTO): Promise<LikeIdDTO[]>;
+    getLikesForComment(dto: CommentIdDTO): Promise<LikeIdDTO[]>;
     getNumberOfLikesOfPost(dto: PostIdDTO): Promise<number>;
     getNumberOfLikesOfComment(dto: CommentIdDTO): Promise<number>;
 
-    removeLike(dto: LikeIdDTO): Promise<LikePostDTO | LikeCommentDTO>;
+    removeLike(dto: LikeIdDTO): Promise<LikeIdDTO>;
 }

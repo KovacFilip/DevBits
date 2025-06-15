@@ -1,18 +1,17 @@
 import { Prisma } from 'apps/backend/prisma/generated/client';
 import { REPOSITORY_IDENTIFIER } from 'apps/backend/src/constants/identifiers';
 import { NotFoundError } from 'apps/backend/src/errors/NotFoundError';
-import { CommentIdDTO } from 'apps/backend/src/models/DTOs/CommentDTO';
-import {
-    CreateCommentLikeDTO,
-    CreatePostLikeDTO,
-    LikeCommentDTO,
-    LikeIdDTO,
-    LikePostDTO,
-} from 'apps/backend/src/models/DTOs/LikeDTO';
-import { PostIdDTO } from 'apps/backend/src/models/DTOs/PostDTO';
 import { ILikeRepository } from 'apps/backend/src/models/interfaces/repositories/ILikeRepository';
 import { ILikeService } from 'apps/backend/src/models/interfaces/services/ILikeService';
 import { inject, injectable } from 'inversify';
+import {
+    CommentIdDTO,
+    LikeCommentDTO,
+    LikeIdDTO,
+    LikePostDTO,
+    PostIdDTO,
+    UserIdDTO,
+} from 'packages/shared';
 
 @injectable()
 export class LikeService implements ILikeService {
@@ -21,16 +20,16 @@ export class LikeService implements ILikeService {
         private readonly likeRepository: ILikeRepository
     ) {}
 
-    async likePost(dto: CreatePostLikeDTO): Promise<LikePostDTO> {
+    async likePost(user: UserIdDTO, post: PostIdDTO): Promise<LikeIdDTO> {
         const createLikeInput: Prisma.LikeCreateInput = {
             user: {
                 connect: {
-                    userId: dto.userId,
+                    userId: user.userId,
                 },
             },
             post: {
                 connect: {
-                    postId: dto.entity.postId,
+                    postId: post.postId,
                 },
             },
         };
@@ -39,23 +38,22 @@ export class LikeService implements ILikeService {
 
         return {
             likeId: like.likeId,
-            userId: like.userId,
-            post: {
-                postId: like.postId!,
-            },
         };
     }
 
-    async likeComment(dto: CreateCommentLikeDTO): Promise<LikeCommentDTO> {
+    async likeComment(
+        user: UserIdDTO,
+        comment: CommentIdDTO
+    ): Promise<LikeIdDTO> {
         const createLikeInput: Prisma.LikeCreateInput = {
             user: {
                 connect: {
-                    userId: dto.userId,
+                    userId: user.userId,
                 },
             },
             comment: {
                 connect: {
-                    commentId: dto.entity.commentId,
+                    commentId: comment.commentId,
                 },
             },
         };
@@ -64,10 +62,6 @@ export class LikeService implements ILikeService {
 
         return {
             likeId: like.likeId,
-            userId: like.userId,
-            comment: {
-                commentId: like.commentId!, // Here it should be ok with the '!', since the like is going to a post
-            },
         };
     }
 
@@ -87,7 +81,9 @@ export class LikeService implements ILikeService {
         if (like.postId) {
             return {
                 likeId: like.likeId,
-                userId: like.userId,
+                user: {
+                    userId: like.userId,
+                },
                 post: {
                     postId: like.postId!,
                 },
@@ -96,14 +92,16 @@ export class LikeService implements ILikeService {
 
         return {
             likeId: like.likeId,
-            userId: like.userId,
+            user: {
+                userId: like.userId,
+            },
             comment: {
                 commentId: like.commentId!,
             },
         };
     }
 
-    async removeLike(dto: LikeIdDTO): Promise<LikePostDTO | LikeCommentDTO> {
+    async removeLike(dto: LikeIdDTO): Promise<LikeIdDTO> {
         const likeUniqueInput: Prisma.LikeWhereUniqueInput = {
             likeId: dto.likeId,
         };
@@ -111,26 +109,12 @@ export class LikeService implements ILikeService {
         const removedLike =
             await this.likeRepository.softDeleteLike(likeUniqueInput);
 
-        if (removedLike.postId) {
-            return {
-                likeId: removedLike.likeId,
-                userId: removedLike.userId,
-                post: {
-                    postId: removedLike.postId!,
-                },
-            };
-        }
-
         return {
             likeId: removedLike.likeId,
-            userId: removedLike.userId,
-            comment: {
-                commentId: removedLike.commentId!,
-            },
         };
     }
 
-    async getLikesForPost(dto: PostIdDTO): Promise<LikePostDTO[]> {
+    async getLikesForPost(dto: PostIdDTO): Promise<LikeIdDTO[]> {
         const postUniqueInput: Prisma.PostWhereUniqueInput = {
             postId: dto.postId,
         };
@@ -141,15 +125,11 @@ export class LikeService implements ILikeService {
         return likes.map((like) => {
             return {
                 likeId: like.likeId,
-                userId: like.userId,
-                post: {
-                    postId: like.postId!,
-                },
             };
         });
     }
 
-    async getLikesForComment(dto: CommentIdDTO): Promise<LikeCommentDTO[]> {
+    async getLikesForComment(dto: CommentIdDTO): Promise<LikeIdDTO[]> {
         const commentUniqueInput: Prisma.CommentWhereUniqueInput = {
             commentId: dto.commentId,
         };
@@ -160,10 +140,6 @@ export class LikeService implements ILikeService {
         return likes.map((like) => {
             return {
                 likeId: like.likeId,
-                userId: like.userId,
-                comment: {
-                    commentId: like.commentId!,
-                },
             };
         });
     }
