@@ -1,6 +1,8 @@
 import {
     updateUserSchema,
+    userDetailSchema,
     userIdSchema,
+    userSimpleSchema,
 } from 'packages/shared/models/ZodSchemas';
 import { z } from 'zod';
 
@@ -22,13 +24,5 @@ export type UserJWTPayload = {
 };
 
 // USER RESPONSE DTOs
-export type UserSimpleDTO = {
-    userId: string;
-};
-
-export type UserDetailDTO = {
-    userId: string;
-    name: string | null;
-    email: string | null;
-    profilePicture: string | null;
-};
+export type UserSimpleDTO = z.infer<typeof userSimpleSchema>;
+export type UserDetailDTO = z.infer<typeof userDetailSchema>;

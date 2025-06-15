@@ -6,9 +6,11 @@ import {
     UpdateUserDTO,
     updateUserSchema,
     UserDetailDTO,
+    userDetailSchema,
     UserIdDTO,
     userIdSchema,
     UserSimpleDTO,
+    userSimpleSchema,
 } from 'packages/shared';
 
 export const BASE_USER_ROUTE = '/user';
@@ -19,13 +21,16 @@ export const UserRoutes = (fastify: FastifyInstance) => {
     );
 
     // Read
-    fastify.get<{ Querystring: UserIdDTO; Reply: UserDetailDTO }>(
-        BASE_USER_ROUTE,
+    fastify.get<{ Params: UserIdDTO; Reply: UserDetailDTO }>(
+        '/user/:userId',
         {
             preHandler: [fastify.authenticate],
             schema: {
                 tags: ['user'],
-                querystring: userIdSchema,
+                params: userIdSchema,
+                response: {
+                    200: userDetailSchema,
+                },
             },
         },
         userController.getUser.bind(userController)
@@ -36,7 +41,13 @@ export const UserRoutes = (fastify: FastifyInstance) => {
         BASE_USER_ROUTE,
         {
             preHandler: [fastify.authenticate],
-            schema: { tags: ['user'], body: updateUserSchema },
+            schema: {
+                tags: ['user'],
+                body: updateUserSchema,
+                response: {
+                    200: userDetailSchema,
+                },
+            },
         },
         userController.updateUser.bind(userController)
     );
@@ -44,7 +55,15 @@ export const UserRoutes = (fastify: FastifyInstance) => {
     // Delete
     fastify.delete<{ Reply: UserSimpleDTO }>(
         BASE_USER_ROUTE,
-        { preHandler: [fastify.authenticate], schema: { tags: ['user'] } },
+        {
+            preHandler: [fastify.authenticate],
+            schema: {
+                tags: ['user'],
+                response: {
+                    200: userSimpleSchema,
+                },
+            },
+        },
         userController.deleteUser.bind(userController)
     );
 };

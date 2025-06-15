@@ -19,10 +19,10 @@ export class UserController implements IUserController {
     ) {}
 
     async getUser(
-        request: FastifyRequest<{ Querystring: UserIdDTO }>,
+        request: FastifyRequest<{ Params: UserIdDTO }>,
         response: FastifyReply<{ Reply: UserDetailDTO }>
     ): Promise<void> {
-        const user = await this.userService.getUser(request.query);
+        const user = await this.userService.getUser(request.params);
 
         return response.code(StatusCodes.OK).send(user);
     }
@@ -31,13 +31,9 @@ export class UserController implements IUserController {
         request: FastifyRequest<{ Body: UpdateUserDTO }>,
         response: FastifyReply<{ Reply: UserDetailDTO }>
     ): Promise<void> {
-        const user = request.user;
-
         const updatedUser = await this.userService.updateUser(
-            { userId: user.userId },
-            {
-                ...request.body,
-            }
+            request.user,
+            request.body
         );
 
         return response.code(StatusCodes.OK).send(updatedUser);
@@ -47,9 +43,7 @@ export class UserController implements IUserController {
         request: FastifyRequest,
         response: FastifyReply<{ Reply: UserSimpleDTO }>
     ): Promise<void> {
-        const deletedUser = await this.userService.deleteUser({
-            userId: request.user.userId,
-        });
+        const deletedUser = await this.userService.deleteUser(request.user);
 
         return response.code(StatusCodes.OK).send(deletedUser);
     }

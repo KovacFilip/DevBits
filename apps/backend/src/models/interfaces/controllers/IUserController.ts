@@ -8,7 +8,7 @@ import {
 
 export interface IUserController {
     getUser(
-        request: FastifyRequest<{ Querystring: UserIdDTO }>,
+        request: FastifyRequest<{ Params: UserIdDTO }>,
         response: FastifyReply<{ Reply: UserDetailDTO }>
     ): Promise<void>;
 
