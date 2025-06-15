@@ -3,14 +3,21 @@ import { CONTROLLER_IDENTIFIER } from 'apps/backend/src/constants/identifiers';
 import { ICommentController } from 'apps/backend/src/models/interfaces/controllers/ICommentController';
 import { FastifyInstance } from 'fastify';
 import {
-    CommentIdParams,
+    CommentDTO,
+    CommentIdDTO,
     commentIdSchema,
-    CreateCommentRequest,
+    commentSchema,
+    CreateCommentDTO,
     createCommentSchema,
-    GetCommentRequest,
-    getCommentSchema,
+    PostIdDTO,
+    postIdSchema,
+    simpleCommentArraySchema,
+    SimpleCommentDTO,
+    simpleCommentSchema,
     updateCommentBodySchema,
-    UpdateCommentRequestBody,
+    UpdateCommentDTO,
+    UserIdDTO,
+    userIdSchema,
 } from 'packages/shared';
 
 export const BASE_COMMENT_ROUTE = '/comment';
@@ -21,56 +28,101 @@ export const CommentRoutes = (fastify: FastifyInstance) => {
     );
 
     // Create Comment
-    fastify.post<{ Body: CreateCommentRequest }>(
+    fastify.post<{ Body: CreateCommentDTO; Reply: CommentDTO }>(
         BASE_COMMENT_ROUTE,
         {
             preHandler: [fastify.authenticate],
             schema: {
                 tags: ['comment'],
                 body: createCommentSchema,
+                response: {
+                    200: commentSchema,
+                },
             },
         },
         commentController.createComment.bind(commentController)
     );
 
-    // Get Comment
-    fastify.get<{ Querystring: GetCommentRequest }>(
-        BASE_COMMENT_ROUTE,
+    // Get Comment By Comment ID
+    fastify.get<{ Params: CommentIdDTO; Reply: CommentDTO }>(
+        '/comment/:commentId',
         {
             preHandler: [fastify.authenticate],
             schema: {
                 tags: ['comment'],
-                querystring: getCommentSchema,
+                params: commentIdSchema,
+                response: {
+                    200: commentSchema,
+                },
             },
         },
         commentController.getComment.bind(commentController)
     );
 
-    // Update Comment
-    fastify.put<{
-        Body: UpdateCommentRequestBody;
-        Querystring: CommentIdParams;
-    }>(
-        BASE_COMMENT_ROUTE,
+    // Get Comments For Post By Post ID
+    fastify.get<{ Params: PostIdDTO; Reply: SimpleCommentDTO[] }>(
+        '/post/:postId/comments',
         {
             preHandler: [fastify.authenticate],
             schema: {
                 tags: ['comment'],
-                querystring: commentIdSchema,
+                params: postIdSchema,
+                response: {
+                    200: simpleCommentArraySchema,
+                },
+            },
+        },
+        commentController.getCommentsForPost.bind(commentController)
+    );
+
+    // Get Comments Created by user with UserId
+    fastify.get<{ Params: UserIdDTO; Reply: SimpleCommentDTO[] }>(
+        '/user/:userId/comments',
+        {
+            preHandler: [fastify.authenticate],
+            schema: {
+                tags: ['comment'],
+                params: userIdSchema,
+                response: {
+                    200: simpleCommentArraySchema,
+                },
+            },
+        },
+        commentController.getCommentsByUser.bind(commentController)
+    );
+
+    // Update Comment
+    fastify.put<{
+        Body: UpdateCommentDTO;
+        Params: CommentIdDTO;
+        Reply: CommentDTO;
+    }>(
+        BASE_COMMENT_ROUTE + '/:commentId',
+        {
+            preHandler: [fastify.authenticate],
+            schema: {
+                tags: ['comment'],
+                params: commentIdSchema,
                 body: updateCommentBodySchema,
+                response: {
+                    200: commentSchema,
+                },
             },
         },
         commentController.updateComment.bind(commentController)
     );
 
     // Delete Comment
-    fastify.delete<{ Querystring: CommentIdParams }>(
-        BASE_COMMENT_ROUTE,
+    fastify.delete<{ Params: CommentIdDTO; Reply: SimpleCommentDTO }>(
+        BASE_COMMENT_ROUTE + '/:commentId',
         {
             preHandler: [fastify.authenticate],
             schema: {
                 tags: ['comment'],
-                querystring: commentIdSchema,
+                params: commentIdSchema,
+                response: {
+                    200: simpleCommentSchema,
+                },
             },
         },
         commentController.deleteComment.bind(commentController)

@@ -2,19 +2,26 @@ import {
     CommentDTO,
     CommentIdDTO,
     CreateCommentDTO,
+    PostIdDTO,
+    SimpleCommentDTO,
     UpdateCommentDTO,
-} from 'apps/backend/src/models/DTOs/CommentDTO';
-import { PostIdDTO } from 'apps/backend/src/models/DTOs/PostDTO';
-import { UserIdDTO } from 'apps/backend/src/models/DTOs/UserDTO';
+    UserIdDTO,
+} from 'packages/shared';
 
 export interface ICommentService {
-    createComment(dto: CreateCommentDTO): Promise<CommentDTO>;
+    createComment(
+        UserIdDTO: UserIdDTO,
+        dto: CreateCommentDTO
+    ): Promise<CommentDTO>;
 
     getComment(dto: CommentIdDTO): Promise<CommentDTO>;
-    getCommentsForPost(dto: PostIdDTO): Promise<CommentDTO[]>;
-    getCommentsByUser(dto: UserIdDTO): Promise<CommentDTO[]>;
+    getCommentsForPost(dto: PostIdDTO): Promise<SimpleCommentDTO[]>;
+    getCommentsByUser(dto: UserIdDTO): Promise<SimpleCommentDTO[]>;
 
-    updateComment(dto: UpdateCommentDTO): Promise<CommentDTO>;
+    updateComment(
+        commentIdDto: CommentIdDTO,
+        newCommentData: UpdateCommentDTO
+    ): Promise<CommentDTO>;
 
-    deleteComment(dto: CommentIdDTO): Promise<CommentDTO>;
+    deleteComment(dto: CommentIdDTO): Promise<SimpleCommentDTO>;
 }
