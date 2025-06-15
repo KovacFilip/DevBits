@@ -3,12 +3,15 @@ import { CONTROLLER_IDENTIFIER } from 'apps/backend/src/constants/identifiers';
 import { IPostController } from 'apps/backend/src/models/interfaces/controllers/IPostController';
 import { FastifyInstance } from 'fastify';
 import {
-    CreatePostRequest,
+    CreatePostDTO,
     createPostSchema,
     PostIdDTO,
     postIdSchema,
     PostSimpleDTO,
     PostWithContentDTO,
+    postWithContentSchema,
+    simplePostArraySchema,
+    simplePostSchema,
     UpdatePostDTO,
     updatePostSchema,
     UserIdDTO,
@@ -23,23 +26,32 @@ export const PostRoutes = (fastify: FastifyInstance) => {
     );
 
     // Create New Post
-    fastify.post<{ Body: CreatePostRequest; Reply: PostWithContentDTO }>(
+    fastify.post<{ Body: CreatePostDTO; Reply: PostWithContentDTO }>(
         BASE_POST_ROUTE,
         {
             preHandler: [fastify.authenticate],
-            schema: { body: createPostSchema, tags: ['post'] },
+            schema: {
+                body: createPostSchema,
+                tags: ['post'],
+                response: {
+                    200: postWithContentSchema,
+                },
+            },
         },
         postController.createPost.bind(postController)
     );
 
     // Get Post By ID
-    fastify.get<{ Querystring: PostIdDTO; Reply: PostWithContentDTO }>(
-        BASE_POST_ROUTE,
+    fastify.get<{ Params: PostIdDTO; Reply: PostWithContentDTO }>(
+        '/post/:postId',
         {
             preHandler: [fastify.authenticate],
             schema: {
                 tags: ['post'],
-                querystring: postIdSchema,
+                params: postIdSchema,
+                response: {
+                    200: postWithContentSchema,
+                },
             },
         },
         postController.getPost.bind(postController)
@@ -53,6 +65,9 @@ export const PostRoutes = (fastify: FastifyInstance) => {
             schema: {
                 tags: ['post'],
                 params: userIdSchema,
+                response: {
+                    200: simplePostArraySchema,
+                },
             },
         },
         postController.getPostByUserId.bind(postController)
@@ -61,29 +76,35 @@ export const PostRoutes = (fastify: FastifyInstance) => {
     // Update Post
     fastify.put<{
         Body: UpdatePostDTO;
-        Querystring: PostIdDTO;
+        Params: PostIdDTO;
         Reply: PostWithContentDTO;
     }>(
-        BASE_POST_ROUTE,
+        '/post/:postId',
         {
             preHandler: [fastify.authenticate],
             schema: {
                 body: updatePostSchema,
                 tags: ['post'],
-                querystring: postIdSchema,
+                params: postIdSchema,
+                response: {
+                    200: postWithContentSchema,
+                },
             },
         },
         postController.updatePost.bind(postController)
     );
 
     // Delete Post
-    fastify.delete<{ Querystring: PostIdDTO; Reply: PostSimpleDTO }>(
-        BASE_POST_ROUTE,
+    fastify.delete<{ Params: PostIdDTO; Reply: PostSimpleDTO }>(
+        '/post/:postId',
         {
             preHandler: [fastify.authenticate],
             schema: {
                 tags: ['post'],
-                querystring: postIdSchema,
+                params: postIdSchema,
+                response: {
+                    200: simplePostSchema,
+                },
             },
         },
         postController.deletePost.bind(postController)

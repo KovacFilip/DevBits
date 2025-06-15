@@ -5,7 +5,7 @@ import { FastifyReply, FastifyRequest } from 'fastify';
 import { StatusCodes } from 'http-status-codes';
 import { inject, injectable } from 'inversify';
 import {
-    CreatePostRequest,
+    CreatePostDTO,
     PostIdDTO,
     PostSimpleDTO,
     PostWithContentDTO,
@@ -21,26 +21,25 @@ export class PostController implements IPostController {
     ) {}
 
     async createPost(
-        request: FastifyRequest<{ Body: CreatePostRequest }>,
+        request: FastifyRequest<{ Body: CreatePostDTO }>,
         response: FastifyReply<{ Reply: PostWithContentDTO }>
     ): Promise<void> {
         const user = request.user;
 
-        const newPost = await this.postService.createPost({
-            userId: user.userId,
-            ...request.body,
-        });
+        const newPost = await this.postService.createPost(
+            request.user,
+            request.body
+        );
 
         response.code(StatusCodes.OK).send(newPost);
     }
 
     async getPost(
-        request: FastifyRequest<{ Querystring: PostIdDTO }>,
+        request: FastifyRequest<{ Params: PostIdDTO }>,
         response: FastifyReply<{ Reply: PostWithContentDTO }>
     ): Promise<void> {
-        const { postId } = request.query;
+        const post = await this.postService.getPostById(request.params);
 
-        const post = await this.postService.getPostById({ postId });
         return response.code(StatusCodes.OK).send(post);
     }
 
@@ -48,9 +47,7 @@ export class PostController implements IPostController {
         request: FastifyRequest<{ Params: UserIdDTO }>,
         response: FastifyReply<{ Reply: PostSimpleDTO[] }>
     ): Promise<void> {
-        const { userId } = request.params;
-
-        const posts = await this.postService.getPostsByUser({ userId });
+        const posts = await this.postService.getPostsByUser(request.params);
 
         response.code(StatusCodes.OK).send(posts);
     }
@@ -58,24 +55,24 @@ export class PostController implements IPostController {
     async updatePost(
         request: FastifyRequest<{
             Body: UpdatePostDTO;
-            Querystring: PostIdDTO;
+            Params: PostIdDTO;
         }>,
-        response: FastifyReply
+        response: FastifyReply<{ Reply: PostWithContentDTO }>
     ): Promise<void> {
         const updatedPost = await this.postService.updatePost(
-            request.query,
+            request.params,
             request.body
         );
 
-        response.code(StatusCodes.OK).send({ updatedPost });
+        response.code(StatusCodes.OK).send(updatedPost);
     }
 
     async deletePost(
-        request: FastifyRequest<{ Querystring: PostIdDTO }>,
-        response: FastifyReply
+        request: FastifyRequest<{ Params: PostIdDTO }>,
+        response: FastifyReply<{ Reply: PostSimpleDTO }>
     ): Promise<void> {
-        const deletedPost = await this.postService.deletePost(request.query);
+        const deletedPost = await this.postService.deletePost(request.params);
 
-        response.code(StatusCodes.OK).send({ deletedPost });
+        response.code(StatusCodes.OK).send(deletedPost);
     }
 }

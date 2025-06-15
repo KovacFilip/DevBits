@@ -9,7 +9,10 @@ import {
 
 export interface IPostService {
     // Create
-    createPost(dto: CreatePostDTO): Promise<PostWithContentDTO>;
+    createPost(
+        user: UserIdDTO,
+        createPost: CreatePostDTO
+    ): Promise<PostWithContentDTO>;
 
     // Read
     getPostById(dto: PostIdDTO): Promise<PostWithContentDTO>;

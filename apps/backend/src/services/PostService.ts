@@ -20,13 +20,16 @@ export class PostService implements IPostService {
         private readonly postRepository: IPostRepository
     ) {}
 
-    async createPost(dto: CreatePostDTO): Promise<PostWithContentDTO> {
+    async createPost(
+        user: UserIdDTO,
+        createPost: CreatePostDTO
+    ): Promise<PostWithContentDTO> {
         const postToCreate: Prisma.PostCreateInput = {
-            title: dto.title,
-            content: dto.content,
+            title: createPost.title,
+            content: createPost.content,
             user: {
                 connect: {
-                    userId: dto.userId,
+                    userId: user.userId,
                 },
             },
         };

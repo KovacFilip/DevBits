@@ -22,3 +22,18 @@ export const updatePostSchema = z.strictObject({
     title: z.string().optional(),
     content: z.string().optional(),
 });
+
+export const simplePostSchema = z.strictObject({
+    postId: z.string().uuid(),
+    userId: z.string().uuid(),
+    title: z.string(),
+});
+
+export const postWithContentSchema = z.strictObject({
+    postId: z.string().uuid(),
+    userId: z.string().uuid(),
+    title: z.string(),
+    content: z.string(),
+});
+
+export const simplePostArraySchema = z.array(simplePostSchema);

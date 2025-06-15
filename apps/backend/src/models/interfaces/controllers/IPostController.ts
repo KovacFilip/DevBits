@@ -1,6 +1,6 @@
 import { FastifyReply, FastifyRequest } from 'fastify';
 import {
-    CreatePostRequest,
+    CreatePostDTO,
     PostIdDTO,
     PostSimpleDTO,
     PostWithContentDTO,
@@ -10,12 +10,12 @@ import {
 
 export interface IPostController {
     createPost(
-        request: FastifyRequest<{ Body: CreatePostRequest }>,
+        request: FastifyRequest<{ Body: CreatePostDTO }>,
         response: FastifyReply<{ Reply: PostWithContentDTO }>
     ): Promise<void>;
 
     getPost(
-        request: FastifyRequest<{ Querystring: PostIdDTO }>,
+        request: FastifyRequest<{ Params: PostIdDTO }>,
         response: FastifyReply<{ Reply: PostWithContentDTO }>
     ): Promise<void>;
 
@@ -27,13 +27,13 @@ export interface IPostController {
     updatePost(
         request: FastifyRequest<{
             Body: UpdatePostDTO;
-            Querystring: PostIdDTO;
+            Params: PostIdDTO;
         }>,
         response: FastifyReply<{ Reply: PostWithContentDTO }>
     ): Promise<void>;
 
     deletePost(
-        request: FastifyRequest<{ Querystring: PostIdDTO }>,
+        request: FastifyRequest<{ Params: PostIdDTO }>,
         response: FastifyReply<{ Reply: PostSimpleDTO }>
     ): Promise<void>;
 }
