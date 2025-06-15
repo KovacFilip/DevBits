@@ -24,8 +24,6 @@ export class PostController implements IPostController {
         request: FastifyRequest<{ Body: CreatePostDTO }>,
         response: FastifyReply<{ Reply: PostWithContentDTO }>
     ): Promise<void> {
-        const user = request.user;
-
         const newPost = await this.postService.createPost(
             request.user,
             request.body
