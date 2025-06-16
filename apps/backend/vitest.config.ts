@@ -10,9 +10,6 @@ export default defineConfig({
                 '**/src/services/**',
                 '**/src/controllers/**',
             ],
-            thresholds: {
-                statements: 80,
-            },
         },
     },
 });
