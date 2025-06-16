@@ -45,6 +45,9 @@ jobs:
       - name: Run tests
         run: pnpm test
 
+      - name: Create test coverage
+        run: pnpm test:coverage
+
       - name: Upload coverage reports to Codecov
         uses: codecov/codecov-action@v5
         with:
