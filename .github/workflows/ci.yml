@@ -27,3 +27,23 @@ jobs:
 
       - name: Run Prettier Check
         run: pnpm format:check
+
+  tests:
+    name: Testing
+    needs: lint-and-format
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: true
+
+      - name: Run tests
+        run: pnpm test
+
+      - name: Check tests coverage
+        run: pnpm test:coverage
