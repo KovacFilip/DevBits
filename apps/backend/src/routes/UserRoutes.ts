@@ -3,10 +3,14 @@ import { CONTROLLER_IDENTIFIER } from 'apps/backend/src/constants/identifiers';
 import { IUserController } from 'apps/backend/src/models/interfaces/controllers/IUserController';
 import { FastifyInstance } from 'fastify';
 import {
-    UpdateUserRequest,
+    UpdateUserDTO,
     updateUserSchema,
-    UserIdParams,
+    UserDetailDTO,
+    userDetailSchema,
+    UserIdDTO,
     userIdSchema,
+    UserSimpleDTO,
+    userSimpleSchema,
 } from 'packages/shared';
 
 export const BASE_USER_ROUTE = '/user';
@@ -17,32 +21,49 @@ export const UserRoutes = (fastify: FastifyInstance) => {
     );
 
     // Read
-    fastify.get<{ Querystring: UserIdParams }>(
-        BASE_USER_ROUTE,
+    fastify.get<{ Params: UserIdDTO; Reply: UserDetailDTO }>(
+        '/user/:userId',
         {
             preHandler: [fastify.authenticate],
             schema: {
                 tags: ['user'],
-                querystring: userIdSchema,
+                params: userIdSchema,
+                response: {
+                    200: userDetailSchema,
+                },
             },
         },
         userController.getUser.bind(userController)
     );
 
     // Update
-    fastify.put<{ Body: UpdateUserRequest }>(
+    fastify.put<{ Body: UpdateUserDTO; Reply: UserDetailDTO }>(
         BASE_USER_ROUTE,
         {
             preHandler: [fastify.authenticate],
-            schema: { tags: ['user'], body: updateUserSchema },
+            schema: {
+                tags: ['user'],
+                body: updateUserSchema,
+                response: {
+                    200: userDetailSchema,
+                },
+            },
         },
         userController.updateUser.bind(userController)
     );
 
     // Delete
-    fastify.delete(
+    fastify.delete<{ Reply: UserSimpleDTO }>(
         BASE_USER_ROUTE,
-        { preHandler: [fastify.authenticate], schema: { tags: ['user'] } },
+        {
+            preHandler: [fastify.authenticate],
+            schema: {
+                tags: ['user'],
+                response: {
+                    200: userSimpleSchema,
+                },
+            },
+        },
         userController.deleteUser.bind(userController)
     );
 };

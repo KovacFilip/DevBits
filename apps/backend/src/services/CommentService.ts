@@ -1,17 +1,18 @@
 import { Prisma } from 'apps/backend/prisma/generated/client';
 import { REPOSITORY_IDENTIFIER } from 'apps/backend/src/constants/identifiers';
 import { NotFoundError } from 'apps/backend/src/errors/NotFoundError';
+import { ICommentRepository } from 'apps/backend/src/models/interfaces/repositories/ICommentRepository';
+import { ICommentService } from 'apps/backend/src/models/interfaces/services/ICommentService';
+import { inject, injectable } from 'inversify';
 import {
     CommentDTO,
     CommentIdDTO,
     CreateCommentDTO,
+    PostIdDTO,
+    SimpleCommentDTO,
     UpdateCommentDTO,
-} from 'apps/backend/src/models/DTOs/CommentDTO';
-import { PostIdDTO } from 'apps/backend/src/models/DTOs/PostDTO';
-import { UserIdDTO } from 'apps/backend/src/models/DTOs/UserDTO';
-import { ICommentRepository } from 'apps/backend/src/models/interfaces/repositories/ICommentRepository';
-import { ICommentService } from 'apps/backend/src/models/interfaces/services/ICommentService';
-import { inject, injectable } from 'inversify';
+    UserIdDTO,
+} from 'packages/shared';
 
 @injectable()
 export class CommentService implements ICommentService {
@@ -20,14 +21,17 @@ export class CommentService implements ICommentService {
         private readonly commentRepository: ICommentRepository
     ) {}
 
-    async createComment(dto: CreateCommentDTO): Promise<CommentDTO> {
+    async createComment(
+        userIdDTO: UserIdDTO,
+        createCommentDto: CreateCommentDTO
+    ): Promise<CommentDTO> {
         const commentToCreate: Prisma.CommentCreateInput = {
-            user: { connect: { userId: dto.userId } },
-            post: { connect: { postId: dto.postId } },
-            content: dto.content,
-            ...(dto.parentCommentId && {
+            user: { connect: { userId: userIdDTO.userId } },
+            post: { connect: { postId: createCommentDto.postId } },
+            content: createCommentDto.content,
+            ...(createCommentDto.parentCommentId && {
                 parentComment: {
-                    connect: { commentId: dto.parentCommentId },
+                    connect: { commentId: createCommentDto.parentCommentId },
                 },
             }),
         };
@@ -67,7 +71,7 @@ export class CommentService implements ICommentService {
         };
     }
 
-    async getCommentsForPost(dto: PostIdDTO): Promise<CommentDTO[]> {
+    async getCommentsForPost(dto: PostIdDTO): Promise<SimpleCommentDTO[]> {
         const uniquePostInput: Prisma.PostWhereUniqueInput = {
             postId: dto.postId,
         };
@@ -84,15 +88,12 @@ export class CommentService implements ICommentService {
         return comments.map((comment) => {
             return {
                 commentId: comment.commentId,
-                postId: comment.postId,
-                userId: comment.userId,
                 content: comment.content,
-                parentCommentId: comment.parentCommentId ?? undefined,
             };
         });
     }
 
-    async getCommentsByUser(dto: UserIdDTO): Promise<CommentDTO[]> {
+    async getCommentsByUser(dto: UserIdDTO): Promise<SimpleCommentDTO[]> {
         const uniqueUserInput: Prisma.UserWhereUniqueInput = {
             userId: dto.userId,
         };
@@ -109,21 +110,21 @@ export class CommentService implements ICommentService {
         return comments.map((comment) => {
             return {
                 commentId: comment.commentId,
-                postId: comment.postId,
-                userId: comment.userId,
                 content: comment.content,
-                parentCommentId: comment.parentCommentId ?? undefined,
             };
         });
     }
 
-    async updateComment(dto: UpdateCommentDTO): Promise<CommentDTO> {
+    async updateComment(
+        commentIdDto: CommentIdDTO,
+        newCommentData: UpdateCommentDTO
+    ): Promise<CommentDTO> {
         const where: Prisma.CommentWhereUniqueInput = {
-            commentId: dto.commentId,
+            commentId: commentIdDto.commentId,
         };
 
         const data: Prisma.CommentUpdateInput = {
-            content: dto.updateData.content,
+            content: newCommentData.content,
         };
 
         const updatedComment = await this.commentRepository.updateComment(
@@ -140,7 +141,7 @@ export class CommentService implements ICommentService {
         };
     }
 
-    async deleteComment(dto: CommentIdDTO): Promise<CommentDTO> {
+    async deleteComment(dto: CommentIdDTO): Promise<SimpleCommentDTO> {
         const commentUniqueInput: Prisma.CommentWhereUniqueInput = {
             commentId: dto.commentId,
         };
@@ -150,10 +151,7 @@ export class CommentService implements ICommentService {
 
         return {
             commentId: deletedComment.commentId,
-            userId: deletedComment.userId,
-            postId: deletedComment.postId,
             content: deletedComment.content,
-            parentCommentId: deletedComment.parentCommentId ?? undefined,
         };
     }
 }

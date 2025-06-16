@@ -1,17 +1,17 @@
 import { Prisma } from 'apps/backend/prisma/generated/client';
 import { REPOSITORY_IDENTIFIER } from 'apps/backend/src/constants/identifiers';
 import { NotFoundError } from 'apps/backend/src/errors/NotFoundError';
+import { IPostRepository } from 'apps/backend/src/models/interfaces/repositories/IPostRepository';
+import { IPostService } from 'apps/backend/src/models/interfaces/services/IPostService';
+import { inject, injectable } from 'inversify';
 import {
     CreatePostDTO,
     PostIdDTO,
     PostSimpleDTO,
     PostWithContentDTO,
     UpdatePostDTO,
-} from 'apps/backend/src/models/DTOs/PostDTO';
-import { UserIdDTO } from 'apps/backend/src/models/DTOs/UserDTO';
-import { IPostRepository } from 'apps/backend/src/models/interfaces/repositories/IPostRepository';
-import { IPostService } from 'apps/backend/src/models/interfaces/services/IPostService';
-import { inject, injectable } from 'inversify';
+    UserIdDTO,
+} from 'packages/shared';
 
 @injectable()
 export class PostService implements IPostService {
@@ -20,13 +20,16 @@ export class PostService implements IPostService {
         private readonly postRepository: IPostRepository
     ) {}
 
-    async createPost(dto: CreatePostDTO): Promise<PostSimpleDTO> {
+    async createPost(
+        user: UserIdDTO,
+        createPost: CreatePostDTO
+    ): Promise<PostWithContentDTO> {
         const postToCreate: Prisma.PostCreateInput = {
-            title: dto.title,
-            content: dto.content,
+            title: createPost.title,
+            content: createPost.content,
             user: {
                 connect: {
-                    userId: dto.userId,
+                    userId: user.userId,
                 },
             },
         };
@@ -36,6 +39,7 @@ export class PostService implements IPostService {
         return {
             postId: createdPost.postId,
             title: createdPost.title,
+            content: createdPost.content,
             userId: createdPost.userId,
         };
     }
@@ -83,14 +87,17 @@ export class PostService implements IPostService {
         });
     }
 
-    async updatePost(dto: UpdatePostDTO): Promise<PostWithContentDTO> {
+    async updatePost(
+        postIdDto: PostIdDTO,
+        updatePostDto: UpdatePostDTO
+    ): Promise<PostWithContentDTO> {
         const where: Prisma.PostWhereUniqueInput = {
-            postId: dto.postId,
+            postId: postIdDto.postId,
         };
 
         const data: Prisma.PostUpdateInput = {
-            title: dto.updateData.title,
-            content: dto.updateData.content,
+            title: updatePostDto.title,
+            content: updatePostDto.content,
         };
 
         const updatedPost = await this.postRepository.updatePost(where, data);

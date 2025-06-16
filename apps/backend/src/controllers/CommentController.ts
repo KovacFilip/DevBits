@@ -1,16 +1,17 @@
-import { MISSING_REQUIRED_QUERY_PARAMS } from 'apps/backend/src/constants/errorMessages';
 import { SERVICE_IDENTIFIER } from 'apps/backend/src/constants/identifiers';
-import { UpdateCommentDTO } from 'apps/backend/src/models/DTOs/CommentDTO';
 import { ICommentController } from 'apps/backend/src/models/interfaces/controllers/ICommentController';
 import { ICommentService } from 'apps/backend/src/models/interfaces/services/ICommentService';
 import { FastifyReply, FastifyRequest } from 'fastify';
 import { StatusCodes } from 'http-status-codes';
 import { inject, injectable } from 'inversify';
 import {
-    CommentIdParams,
-    CreateCommentRequest,
-    GetCommentRequest,
-    UpdateCommentRequestBody,
+    CommentDTO,
+    CommentIdDTO,
+    CreateCommentDTO,
+    PostIdDTO,
+    SimpleCommentDTO,
+    UpdateCommentDTO,
+    UserIdDTO,
 } from 'packages/shared';
 
 @injectable()
@@ -21,77 +22,80 @@ export class CommentController implements ICommentController {
     ) {}
 
     async createComment(
-        request: FastifyRequest<{ Body: CreateCommentRequest }>,
-        response: FastifyReply
+        request: FastifyRequest<{ Body: CreateCommentDTO }>,
+        response: FastifyReply<{ Reply: CommentDTO }>
     ): Promise<void> {
         const user = request.user;
-        const newComment = await this.commentService.createComment({
-            userId: user.userId,
-            ...request.body,
-        });
+        const newComment = await this.commentService.createComment(
+            { userId: user.userId },
+            {
+                ...request.body,
+            }
+        );
 
-        return response.code(StatusCodes.OK).send({ newComment });
+        return response.code(StatusCodes.OK).send(newComment);
     }
 
     async getComment(
-        request: FastifyRequest<{ Querystring: GetCommentRequest }>,
-        response: FastifyReply
+        request: FastifyRequest<{ Params: CommentIdDTO }>,
+        response: FastifyReply<{ Reply: CommentDTO }>
     ): Promise<void> {
-        const { commentId, postId, userId } = request.query;
+        const { commentId } = request.params;
 
-        if (commentId) {
-            const comment = await this.commentService.getComment({ commentId });
-            return response.code(StatusCodes.OK).send({ comment });
-        }
+        const comment = await this.commentService.getComment({ commentId });
 
-        if (postId) {
-            const comments = await this.commentService.getCommentsForPost({
-                postId,
-            });
-            return response.code(StatusCodes.OK).send({ comments });
-        }
+        return response.code(StatusCodes.OK).send(comment);
+    }
 
-        if (userId) {
-            const comments = await this.commentService.getCommentsByUser({
-                userId,
-            });
-            return response.code(StatusCodes.OK).send({ comments });
-        }
+    async getCommentsForPost(
+        request: FastifyRequest<{ Params: PostIdDTO }>,
+        response: FastifyReply<{ Reply: SimpleCommentDTO[] }>
+    ): Promise<void> {
+        const { postId } = request.params;
 
-        // Should be a dead code due to validation
-        return response.code(StatusCodes.BAD_REQUEST).send({
-            message: MISSING_REQUIRED_QUERY_PARAMS,
+        const comments = await this.commentService.getCommentsForPost({
+            postId,
         });
+
+        return response.code(StatusCodes.OK).send(comments);
+    }
+
+    async getCommentsByUser(
+        request: FastifyRequest<{ Params: UserIdDTO }>,
+        response: FastifyReply<{ Reply: SimpleCommentDTO[] }>
+    ): Promise<void> {
+        const { userId } = request.params;
+
+        const comments = await this.commentService.getCommentsByUser({
+            userId,
+        });
+
+        return response.code(StatusCodes.OK).send(comments);
     }
 
     async updateComment(
         request: FastifyRequest<{
-            Body: UpdateCommentRequestBody;
-            Querystring: CommentIdParams;
+            Body: UpdateCommentDTO;
+            Params: CommentIdDTO;
         }>,
-        response: FastifyReply
+        response: FastifyReply<{ Reply: CommentDTO }>
     ): Promise<void> {
-        const updateCommentDTO: UpdateCommentDTO = {
-            commentId: request.query.commentId,
-            updateData: {
-                content: request.body.content,
-            },
-        };
+        const updatedComment = await this.commentService.updateComment(
+            request.params,
+            request.body
+        );
 
-        const updatedComment =
-            await this.commentService.updateComment(updateCommentDTO);
-
-        return response.code(StatusCodes.OK).send({ updatedComment });
+        return response.code(StatusCodes.OK).send(updatedComment);
     }
 
     async deleteComment(
-        request: FastifyRequest<{ Querystring: CommentIdParams }>,
-        response: FastifyReply
+        request: FastifyRequest<{ Params: CommentIdDTO }>,
+        response: FastifyReply<{ Reply: SimpleCommentDTO }>
     ): Promise<void> {
         const deletedComment = await this.commentService.deleteComment(
-            request.query
+            request.params
         );
 
-        return response.code(StatusCodes.OK).send({ deletedComment });
+        return response.code(StatusCodes.OK).send(deletedComment);
     }
 }

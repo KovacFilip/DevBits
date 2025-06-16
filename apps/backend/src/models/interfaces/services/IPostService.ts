@@ -4,19 +4,25 @@ import {
     PostSimpleDTO,
     PostWithContentDTO,
     UpdatePostDTO,
-} from 'apps/backend/src/models/DTOs/PostDTO';
-import { UserIdDTO } from 'apps/backend/src/models/DTOs/UserDTO';
+    UserIdDTO,
+} from 'packages/shared';
 
 export interface IPostService {
     // Create
-    createPost(dto: CreatePostDTO): Promise<PostSimpleDTO>;
+    createPost(
+        user: UserIdDTO,
+        createPost: CreatePostDTO
+    ): Promise<PostWithContentDTO>;
 
     // Read
     getPostById(dto: PostIdDTO): Promise<PostWithContentDTO>;
     getPostsByUser(dto: UserIdDTO): Promise<PostSimpleDTO[]>;
 
     // Update
-    updatePost(dto: UpdatePostDTO): Promise<PostWithContentDTO>;
+    updatePost(
+        postIdDto: PostIdDTO,
+        updatePostDto: UpdatePostDTO
+    ): Promise<PostWithContentDTO>;
 
     // Delete
     deletePost(dto: PostIdDTO): Promise<PostSimpleDTO>;

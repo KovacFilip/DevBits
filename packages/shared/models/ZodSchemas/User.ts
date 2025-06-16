@@ -6,7 +6,6 @@ import { z } from 'zod';
 export const userIdSchema = z.strictObject({
     userId: z.string().uuid(),
 });
-export type UserIdParams = z.infer<typeof userIdSchema>;
 
 // ===================
 // Update User
@@ -16,4 +15,14 @@ export const updateUserSchema = z.strictObject({
     name: z.string().optional(),
     profilePicture: z.string().optional(),
 });
-export type UpdateUserRequest = z.infer<typeof updateUserSchema>;
+
+export const userSimpleSchema = z.strictObject({
+    userId: z.string().uuid(),
+});
+
+export const userDetailSchema = z.strictObject({
+    userId: z.string().uuid(),
+    name: z.string().nullable(),
+    email: z.string().email().nullable(),
+    profilePicture: z.string().nullable(),
+});
