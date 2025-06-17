@@ -24,14 +24,18 @@ export class PostRepository implements IPostRepository {
 
     async readPost(post: Prisma.PostWhereUniqueInput): Promise<Post | null> {
         return this.prisma.post.findUnique({
-            where: post,
+            where: {
+                ...post,
+                deletedAt: null,
+            },
         });
     }
 
     async readUsersPosts(user: Prisma.UserWhereUniqueInput): Promise<Post[]> {
         return this.prisma.post.findMany({
             where: {
-                user,
+                user: user,
+                deletedAt: null,
             },
         });
     }
@@ -40,27 +44,33 @@ export class PostRepository implements IPostRepository {
         where: Prisma.PostWhereUniqueInput,
         data: Prisma.PostUpdateInput
     ): Promise<Post> {
-        const existingPost = await this.prisma.post.findUnique({ where });
+        return this.prisma.$transaction(async (tx) => {
+            const existingPost = await tx.post.findUnique({
+                where: { ...where, deletedAt: null },
+            });
 
-        if (!existingPost) {
-            throw new EntityNotFoundError('Post', where.postId as string);
-        }
+            if (!existingPost) {
+                throw new EntityNotFoundError('Post', where.postId as string);
+            }
 
-        return this.prisma.post.update({
-            where,
-            data,
+            return tx.post.update({
+                where,
+                data,
+            });
         });
     }
 
     async hardDeletePost(post: Prisma.PostWhereUniqueInput): Promise<Post> {
-        const existingPost = await this.prisma.post.findUnique({ where: post });
+        return this.prisma.$transaction(async (tx) => {
+            const existingPost = await tx.post.findUnique({ where: post });
 
-        if (!existingPost) {
-            throw new EntityNotFoundError('Post', post.postId as string);
-        }
+            if (!existingPost) {
+                throw new EntityNotFoundError('Post', post.postId as string);
+            }
 
-        return this.prisma.post.delete({
-            where: post,
+            return tx.post.delete({
+                where: post,
+            });
         });
     }
 

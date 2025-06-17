@@ -4,6 +4,8 @@ import {
     PrismaClient,
 } from 'apps/backend/prisma/generated/client';
 import { DATABASE_IDENTIFIER } from 'apps/backend/src/constants/identifiers';
+import { EntityAlreadyDeletedError } from 'apps/backend/src/errors/RepositoryErrors/EntityAlreadyDeletedError';
+import { EntityNotFoundError } from 'apps/backend/src/errors/RepositoryErrors/EntityNotFoundError';
 import { ILikeRepository } from 'apps/backend/src/models/interfaces/repositories/ILikeRepository';
 import { inject, injectable } from 'inversify';
 
@@ -22,7 +24,10 @@ export class LikeRepository implements ILikeRepository {
 
     readLike(like: Prisma.LikeWhereUniqueInput): Promise<Like | null> {
         return this.prisma.like.findUnique({
-            where: like,
+            where: {
+                ...like,
+                deletedAt: null,
+            },
         });
     }
 
@@ -30,6 +35,7 @@ export class LikeRepository implements ILikeRepository {
         return this.prisma.like.findMany({
             where: {
                 post,
+                deletedAt: null,
             },
         });
     }
@@ -40,6 +46,7 @@ export class LikeRepository implements ILikeRepository {
         return this.prisma.like.count({
             where: {
                 post,
+                deletedAt: null,
             },
         });
     }
@@ -50,6 +57,7 @@ export class LikeRepository implements ILikeRepository {
         return this.prisma.like.findMany({
             where: {
                 comment,
+                deletedAt: null,
             },
         });
     }
@@ -60,6 +68,7 @@ export class LikeRepository implements ILikeRepository {
         return this.prisma.like.count({
             where: {
                 comment,
+                deletedAt: null,
             },
         });
     }
@@ -68,6 +77,7 @@ export class LikeRepository implements ILikeRepository {
         return this.prisma.like.findMany({
             where: {
                 user,
+                deletedAt: null,
             },
         });
     }
@@ -76,25 +86,62 @@ export class LikeRepository implements ILikeRepository {
         where: Prisma.LikeWhereUniqueInput,
         data: Prisma.LikeUpdateInput
     ): Promise<Like> {
-        return this.prisma.like.update({
-            where,
-            data,
+        return this.prisma.$transaction(async (tx) => {
+            const existingLike = await tx.like.findUnique({
+                where: { ...where, deletedAt: null },
+            });
+
+            if (!existingLike) {
+                throw new EntityNotFoundError('Like', where.likeId as string);
+            }
+
+            return tx.like.update({
+                where,
+                data,
+            });
         });
     }
 
     hardDeleteLike(like: Prisma.LikeWhereUniqueInput): Promise<Like> {
-        return this.prisma.like.delete({
-            where: like,
+        return this.prisma.$transaction(async (tx) => {
+            const existingLike = await tx.like.findUnique({
+                where: { ...like, deletedAt: null },
+            });
+
+            if (!existingLike) {
+                throw new EntityNotFoundError('Like', like.likeId as string);
+            }
+
+            return this.prisma.like.delete({
+                where: like,
+            });
         });
     }
 
     softDeleteLike(like: Prisma.LikeWhereUniqueInput): Promise<Like> {
-        return this.prisma.like.update({
-            where: like,
-            data: {
-                deletedAt: new Date(),
-                updatedAt: new Date(),
-            },
+        return this.prisma.$transaction(async (tx) => {
+            const existingLike = await tx.like.findUnique({
+                where: { ...like, deletedAt: null },
+            });
+
+            if (!existingLike) {
+                throw new EntityNotFoundError('Like', like.likeId as string);
+            }
+
+            if (existingLike.deletedAt !== null) {
+                throw new EntityAlreadyDeletedError(
+                    'Like',
+                    like.likeId as string
+                );
+            }
+
+            return this.prisma.like.update({
+                where: like,
+                data: {
+                    deletedAt: new Date(),
+                    updatedAt: new Date(),
+                },
+            });
         });
     }
 }

@@ -118,6 +118,12 @@ describe('PostRepository', () => {
     });
 
     describe('updatePost', () => {
+        beforeEach(() => {
+            prisma.$transaction.mockImplementationOnce((callback) =>
+                callback(prisma)
+            );
+        });
+
         it('Should update existing posts content', async () => {
             const uniquePostWhere: Prisma.PostWhereUniqueInput = {
                 postId: '6a601143-58c9-48b1-bc59-2271e3a6f60c',
@@ -169,6 +175,12 @@ describe('PostRepository', () => {
     });
 
     describe('hardDeletePost', () => {
+        beforeEach(() => {
+            prisma.$transaction.mockImplementationOnce((callback) =>
+                callback(prisma)
+            );
+        });
+
         it('Should delete an existing post', async () => {
             const uniquePostWhere: Prisma.PostWhereUniqueInput = {
                 postId: '6a601143-58c9-48b1-bc59-2271e3a6f60c',
@@ -198,20 +210,20 @@ describe('PostRepository', () => {
 
             expect(prisma.post.delete).not.toHaveBeenCalled();
         });
-    });
 
-    it('Should throw EntityNotFoundError when trying to hard delete a non-existent post', async () => {
-        const uniquePostWhere: Prisma.PostWhereUniqueInput = {
-            postId: 'non-existent-id',
-        };
+        it('Should throw EntityNotFoundError when trying to hard delete a non-existent post', async () => {
+            const uniquePostWhere: Prisma.PostWhereUniqueInput = {
+                postId: 'non-existent-id',
+            };
 
-        prisma.post.findUnique.mockResolvedValue(null);
+            prisma.post.findUnique.mockResolvedValue(null);
 
-        await expect(
-            postRepository.hardDeletePost(uniquePostWhere)
-        ).rejects.toThrow(EntityNotFoundError);
+            await expect(
+                postRepository.hardDeletePost(uniquePostWhere)
+            ).rejects.toThrow(EntityNotFoundError);
 
-        expect(prisma.post.delete).not.toHaveBeenCalled();
+            expect(prisma.post.delete).not.toHaveBeenCalled();
+        });
     });
 
     describe('softDeletePost', () => {
