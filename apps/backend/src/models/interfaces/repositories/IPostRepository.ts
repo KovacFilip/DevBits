@@ -6,7 +6,7 @@ export interface IPostRepository {
 
     // Read
     readPost(post: Prisma.PostWhereUniqueInput): Promise<Post | null>;
-    readUsersPosts(user: Prisma.UserWhereUniqueInput): Promise<Post[] | null>;
+    readUsersPosts(user: Prisma.UserWhereUniqueInput): Promise<Post[]>;
 
     // Update
     updatePost(

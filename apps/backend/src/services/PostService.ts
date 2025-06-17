@@ -72,12 +72,6 @@ export class PostService implements IPostService {
 
         const posts = await this.postRepository.readUsersPosts(uniqueUserInput);
 
-        if (!posts) {
-            throw new NotFoundError(
-                `Unable to find posts of user ${dto.userId}`
-            );
-        }
-
         return posts.map((post) => {
             return {
                 postId: post.postId,
