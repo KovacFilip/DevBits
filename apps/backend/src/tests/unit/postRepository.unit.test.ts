@@ -19,6 +19,7 @@ describe('PostRepository', () => {
     };
 
     beforeEach(() => {
+        prisma.$transaction.mockImplementation((callback) => callback(prisma));
         postRepository = new PostRepository(prisma);
     });
 
@@ -54,7 +55,10 @@ describe('PostRepository', () => {
             const result = await postRepository.readPost(existingPostIdInput);
 
             expect(prisma.post.findUnique).toHaveBeenCalledWith({
-                where: existingPostIdInput,
+                where: {
+                    ...existingPostIdInput,
+                    deletedAt: null,
+                },
             });
 
             expect(result).toBe(examplePost);
@@ -70,7 +74,10 @@ describe('PostRepository', () => {
             const result = await postRepository.readPost(existingPostIdInput);
 
             expect(prisma.post.findUnique).toHaveBeenCalledWith({
-                where: existingPostIdInput,
+                where: {
+                    ...existingPostIdInput,
+                    deletedAt: null,
+                },
             });
 
             expect(result).toBe(null);
@@ -92,6 +99,7 @@ describe('PostRepository', () => {
             expect(prisma.post.findMany).toHaveBeenCalledWith({
                 where: {
                     user: userInput,
+                    deletedAt: null,
                 },
             });
 
@@ -110,6 +118,7 @@ describe('PostRepository', () => {
             expect(prisma.post.findMany).toHaveBeenCalledWith({
                 where: {
                     user: userInput,
+                    deletedAt: null,
                 },
             });
 
@@ -118,12 +127,6 @@ describe('PostRepository', () => {
     });
 
     describe('updatePost', () => {
-        beforeEach(() => {
-            prisma.$transaction.mockImplementationOnce((callback) =>
-                callback(prisma)
-            );
-        });
-
         it('Should update existing posts content', async () => {
             const uniquePostWhere: Prisma.PostWhereUniqueInput = {
                 postId: '6a601143-58c9-48b1-bc59-2271e3a6f60c',
@@ -175,12 +178,6 @@ describe('PostRepository', () => {
     });
 
     describe('hardDeletePost', () => {
-        beforeEach(() => {
-            prisma.$transaction.mockImplementationOnce((callback) =>
-                callback(prisma)
-            );
-        });
-
         it('Should delete an existing post', async () => {
             const uniquePostWhere: Prisma.PostWhereUniqueInput = {
                 postId: '6a601143-58c9-48b1-bc59-2271e3a6f60c',
@@ -210,29 +207,9 @@ describe('PostRepository', () => {
 
             expect(prisma.post.delete).not.toHaveBeenCalled();
         });
-
-        it('Should throw EntityNotFoundError when trying to hard delete a non-existent post', async () => {
-            const uniquePostWhere: Prisma.PostWhereUniqueInput = {
-                postId: 'non-existent-id',
-            };
-
-            prisma.post.findUnique.mockResolvedValue(null);
-
-            await expect(
-                postRepository.hardDeletePost(uniquePostWhere)
-            ).rejects.toThrow(EntityNotFoundError);
-
-            expect(prisma.post.delete).not.toHaveBeenCalled();
-        });
     });
 
     describe('softDeletePost', () => {
-        beforeEach(() => {
-            prisma.$transaction.mockImplementationOnce((callback) =>
-                callback(prisma)
-            );
-        });
-
         it('Should soft delete an existing post', async () => {
             const uniquePostWhere: Prisma.PostWhereUniqueInput = {
                 postId: '276efe85-a684-4550-94dc-33150c7d173a',
