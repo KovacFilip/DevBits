@@ -29,7 +29,7 @@ export class PostController implements IPostController {
             request.body
         );
 
-        response.code(StatusCodes.OK).send(newPost);
+        return response.code(StatusCodes.OK).send(newPost);
     }
 
     async getPost(
@@ -47,7 +47,7 @@ export class PostController implements IPostController {
     ): Promise<void> {
         const posts = await this.postService.getPostsByUser(request.params);
 
-        response.code(StatusCodes.OK).send(posts);
+        return response.code(StatusCodes.OK).send(posts);
     }
 
     async updatePost(
@@ -62,7 +62,7 @@ export class PostController implements IPostController {
             request.body
         );
 
-        response.code(StatusCodes.OK).send(updatedPost);
+        return response.code(StatusCodes.OK).send(updatedPost);
     }
 
     async deletePost(
@@ -71,6 +71,6 @@ export class PostController implements IPostController {
     ): Promise<void> {
         const deletedPost = await this.postService.deletePost(request.params);
 
-        response.code(StatusCodes.OK).send(deletedPost);
+        return response.code(StatusCodes.OK).send(deletedPost);
     }
 }
