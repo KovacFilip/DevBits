@@ -1,4 +1,7 @@
-import { Post } from 'apps/backend/prisma/generated/client';
+import {
+    defaultPostId,
+    defaultUserId,
+} from 'apps/backend/src/tests/unit/utils/post/commonUtils';
 import {
     CreatePostDTO,
     PostIdDTO,
@@ -8,21 +11,7 @@ import {
     UserIdDTO,
 } from 'packages/shared';
 
-export const defaultPostId = '276efe85-a684-4550-94dc-33150c7d173a';
-export const defaultUserId = '6a601143-58c9-48b1-bc59-2271e3a6f60c';
-export const now = new Date();
-
-export const getMockPost = (overrides: Partial<Post> = {}): Post => ({
-    postId: defaultPostId,
-    userId: defaultUserId,
-    title: 'test new post',
-    content: 'This is a test new post',
-    createdAt: now,
-    updatedAt: now,
-    deletedAt: null,
-    ...overrides,
-});
-
+// DTOs
 export const getMockUserIdDTO = (
     userId: string = defaultUserId
 ): UserIdDTO => ({

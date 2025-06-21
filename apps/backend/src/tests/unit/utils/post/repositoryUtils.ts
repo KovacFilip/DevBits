@@ -1,15 +1,18 @@
 import { Post, Prisma } from 'apps/backend/prisma/generated/client';
+import {
+    defaultPostId,
+    defaultUserId,
+    now,
+} from 'apps/backend/src/tests/unit/utils/post/commonUtils';
 
-export const defaultPostId = '276efe85-a684-4550-94dc-33150c7d173a';
-export const defaultUserId = '6a601143-58c9-48b1-bc59-2271e3a6f60c';
-
+// Repository layer
 export const getMockPost = (overrides: Partial<Post> = {}): Post => ({
     postId: defaultPostId,
     userId: defaultUserId,
-    title: 'Default Title',
-    content: 'Default Content',
-    createdAt: new Date(),
-    updatedAt: new Date(),
+    title: 'test new post',
+    content: 'This is a test new post',
+    createdAt: now,
+    updatedAt: now,
     deletedAt: null,
     ...overrides,
 });

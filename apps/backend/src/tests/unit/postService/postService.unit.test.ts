@@ -4,13 +4,13 @@ import { PostService } from 'apps/backend/src/services/PostService';
 import { postRepository } from 'apps/backend/src/tests/unit/__mocks__/postRepository';
 import {
     getMockCreatePostDTO,
-    getMockPost,
     getMockPostIdDTO,
     getMockPostSimpleDTO,
     getMockPostWithContentDTO,
     getMockUpdatePostDTO,
     getMockUserIdDTO,
-} from 'apps/backend/src/tests/unit/postService.ts/utils';
+} from 'apps/backend/src/tests/unit/utils/post/dtoUtils';
+import { getMockPost } from 'apps/backend/src/tests/unit/utils/post/repositoryUtils';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 describe('PostService', () => {

@@ -9,7 +9,7 @@ import {
     getMockPostWhereUnique,
     getMockUpdateInput,
     getMockUserWhereUnique,
-} from 'apps/backend/src/tests/unit/postRepository/utils';
+} from 'apps/backend/src/tests/unit/utils/post/repositoryUtils';
 import { beforeEach, describe, expect, it } from 'vitest';
 
 describe('PostRepository', () => {
