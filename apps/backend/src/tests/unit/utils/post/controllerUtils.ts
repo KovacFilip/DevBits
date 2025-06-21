@@ -11,10 +11,12 @@ export const getMockFastifyRequest = <T extends RequestGenericInterface>({
 }: T): DeepMockProxy<FastifyRequest<T>> => {
     const request = mockDeep<FastifyRequest<T>>();
 
+    /* eslint-disable @typescript-eslint/no-explicit-any */
     request.body = Body as any;
     request.headers = Headers as any;
     request.params = Params as any;
     request.query = Querystring as any;
+    /* eslint-enable @typescript-eslint/no-explicit-any */
 
     return request;
 };
@@ -29,10 +31,12 @@ export const getMockFastifyRequestAuthenticated = <
 }: T): DeepMockProxy<FastifyRequest<T>> => {
     const request = mockDeep<FastifyRequest<T>>();
 
+    /* eslint-disable @typescript-eslint/no-explicit-any */
     request.body = Body as any;
     request.headers = Headers as any;
     request.params = Params as any;
     request.query = Querystring as any;
+    /* eslint-enable @typescript-eslint/no-explicit-any */
 
     request.user = getDefaultUserJwt();
 
