@@ -11,8 +11,9 @@
         "db:studio": "dotenv -e ../../.env -- prisma studio",
         "db:reset": "dotenv -e ../../.env -- prisma migrate reset",
         "dev": "dotenv -e ../../.env -- tsx --watch src/index.ts",
-        "test": "vitest --config ./vitest.config.mts --reporter verbose",
-        "test:coverage": "vitest run --config ./vitest.config.mts --coverage"
+        "test:unit": "vitest --config ./vitest.unit.config.mts --reporter verbose",
+        "test:unit:coverage": "vitest run --config ./vitest.unit.config.mts --coverage",
+        "test:integration": "dotenv -e ../../.env -- vitest --config ./vitest.integration.config.mts --reporter verbose"
     },
     "keywords": [],
     "author": "",
