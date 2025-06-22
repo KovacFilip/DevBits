@@ -52,3 +52,52 @@ jobs:
         uses: codecov/codecov-action@v5
         with:
           token: ${{ secrets.CODECOV_TOKEN }}
+    
+  integration-tests:
+    name: Integration Tests
+    needs: tests
+    runs-on: ubuntu-latest
+    services:
+      postgres:
+        image: postgres
+        ports:
+          - 5432:5432
+        env:
+          POSTGRES_USER: username
+          POSTGRES_PASSWORD: password
+          POSTGRES_DB: integration
+        options: >-
+          --health-cmd="pg_isready -U username"
+          --health-interval=1s
+          --health-timeout=5s
+          --health-retries=20
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: pnpm/action-setup@v4
+        with:
+          run_install: true
+
+      - name: Setup .env for integration test
+        run: cp ./src/tests/integration/.env.test.integration .env
+
+      - name: Wait for Postgres to be ready
+        run: |
+          until pg_isready -h localhost -p 5432 -U username; do
+            echo "Waiting for postgres..."
+            sleep 1
+          done
+
+      - name: Run Prisma migrations
+        run: npx prisma migrate deploy --schema=./prisma/schema.prisma
+        env:
+          POSTGRES_DB_CONNECTION_STRING: postgresql://username:password@localhost:5432/integration
+
+      - name: Run Integration Tests
+        run: pnpm test:integration
+        env:
+          POSTGRES_DB_CONNECTION_STRING: postgresql://username:password@localhost:5432/integration
+          JWT_SECRET: jwt-integration-secret
