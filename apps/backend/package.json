@@ -13,7 +13,8 @@
         "dev": "dotenv -e ../../.env -- tsx --watch src/index.ts",
         "test:unit": "vitest --config ./vitest.unit.config.mts --reporter verbose",
         "test:unit:coverage": "vitest run --config ./vitest.unit.config.mts --coverage",
-        "test:integration": "./src/tests/integration/run-integration-tests.sh"
+        "test:integration": "./src/tests/integration/run-integration-tests.sh",
+        "test:integration:ci": "vitest run --config ./vitest.integration.config.mts --reporter verbose"
     },
     "keywords": [],
     "author": "",

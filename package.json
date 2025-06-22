@@ -9,6 +9,7 @@
         "test:unit": "pnpm -r run test:unit",
         "test:unit:coverage": "pnpm -r run test:unit:coverage",
         "test:integration": "pnpm -r run test:integration",
+        "test:integration:ci": "pnpm -r run test:integration:ci",
         "lint": "npx eslint .",
         "format:write": "prettier --write .",
         "format:check": "prettier --check ."

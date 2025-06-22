@@ -2,7 +2,9 @@ import { buildServer } from 'apps/backend/src/server/buildServer';
 import * as dotenv from 'dotenv';
 import path from 'path';
 
-dotenv.config({ path: path.resolve(__dirname, '../../.env') });
+if (process.env.NODE_ENV !== 'ci') {
+    dotenv.config({ path: path.resolve(__dirname, '../../.env') });
+}
 
 const start = async () => {
     try {
