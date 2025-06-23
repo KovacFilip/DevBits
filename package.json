@@ -6,7 +6,10 @@
         "build": "pnpm -r run build",
         "dev": "pnpm -r run dev",
         "test": "pnpm -r run test",
-        "test:coverage": "pnpm -r run test:coverage",
+        "test:unit": "pnpm -r run test:unit",
+        "test:unit:coverage": "pnpm -r run test:unit:coverage",
+        "test:integration": "pnpm -r run test:integration",
+        "test:integration:ci": "pnpm -r run test:integration:ci",
         "lint": "npx eslint .",
         "format:write": "prettier --write .",
         "format:check": "prettier --check ."

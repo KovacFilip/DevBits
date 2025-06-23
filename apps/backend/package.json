@@ -10,9 +10,12 @@
         "db:deploy": "dotenv -e ../../.env -- prisma migrate deploy",
         "db:studio": "dotenv -e ../../.env -- prisma studio",
         "db:reset": "dotenv -e ../../.env -- prisma migrate reset",
+        "db:seed": "dotenv -e ../../.env -- tsx ./prisma/seed/seed.ts",
         "dev": "dotenv -e ../../.env -- tsx --watch src/index.ts",
-        "test": "vitest --config ./vitest.config.mts --reporter verbose",
-        "test:coverage": "vitest run --config ./vitest.config.mts --coverage"
+        "test:unit": "vitest --config ./vitest.unit.config.mts --reporter verbose",
+        "test:unit:coverage": "vitest run --config ./vitest.unit.config.mts --coverage",
+        "test:integration": "./src/tests/integration/run-integration-tests.sh",
+        "test:integration:ci": "vitest run --config ./vitest.integration.config.mts --reporter verbose"
     },
     "keywords": [],
     "author": "",
@@ -39,7 +42,7 @@
     "devDependencies": {
         "@types/jsonwebtoken": "^9.0.9",
         "@vitest/coverage-v8": "^3.2.3",
-        "ts-node": "^10.9.2",
+        "tsx": "^4.19.4",
         "vite-tsconfig-paths": "^5.1.4",
         "vitest": "^3.2.3",
         "vitest-mock-extended": "^3.1.0"

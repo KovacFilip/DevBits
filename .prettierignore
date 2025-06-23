@@ -1,7 +1,9 @@
 pnpm-lock.yaml
 eslint.config.mjs
 docker-compose.yml
+docker-compose.integration.yml
 ci.yml
+action.yml
 README.md
 
 pg/
@@ -9,3 +11,4 @@ pg/
 **/pg/**
 dist/
 **/dist/**
+**/coverage/**
