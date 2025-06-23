@@ -16,7 +16,7 @@ $DIR/wait-for-it.sh -h 0.0.0.0 -p 5432 -- echo 'Database is ready!'
 
 npx prisma migrate dev
 
-tsx ./prisma/seed/seed.ts
+npx tsx ./prisma/seed/seed.ts
 
 vitest -c ./vitest.integration.config.mts
 
