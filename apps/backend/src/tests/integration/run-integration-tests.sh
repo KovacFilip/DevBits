@@ -16,9 +16,12 @@ $DIR/wait-for-it.sh -h 0.0.0.0 -p 5432 -- echo 'Database is ready!'
 
 npx prisma migrate dev
 
-npx tsx ./prisma/seed/seed.ts
+pnpm tsx ./prisma/seed/seed.ts
 
 vitest -c ./vitest.integration.config.mts
+TEST_EXIT_CODE=$?
 
 echo "===> Cleaning up..."
 docker compose -f ./src/tests/integration/docker-compose.integration.yml down
+
+exit $TEST_EXIT_CODE
