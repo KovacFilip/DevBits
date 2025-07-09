@@ -1,4 +1,8 @@
-import { SERVICE_IDENTIFIER } from 'apps/backend/src/constants/identifiers';
+import {
+    LOGGER,
+    SERVICE_IDENTIFIER,
+} from 'apps/backend/src/constants/identifiers';
+import { logControllerErrorTrace } from 'apps/backend/src/helpers/loggingHelpers';
 import { IUserController } from 'apps/backend/src/models/interfaces/controllers/IUserController';
 import { IUserService } from 'apps/backend/src/models/interfaces/services/IUserService';
 import { FastifyReply, FastifyRequest } from 'fastify';
@@ -10,41 +14,76 @@ import {
     UserIdDTO,
     UserSimpleDTO,
 } from 'packages/shared';
+import { Logger } from 'pino';
 
 @injectable()
 export class UserController implements IUserController {
     constructor(
         @inject(SERVICE_IDENTIFIER.USER_SERVICE)
-        readonly userService: IUserService
+        readonly userService: IUserService,
+        @inject(LOGGER.LOGGER) readonly logger: Logger
     ) {}
 
     async getUser(
         request: FastifyRequest<{ Params: UserIdDTO }>,
         response: FastifyReply<{ Reply: UserDetailDTO }>
     ): Promise<void> {
-        const user = await this.userService.getUser(request.params);
+        try {
+            const user = await this.userService.getUser(request.params);
 
-        return response.code(StatusCodes.OK).send(user);
+            return response.code(StatusCodes.OK).send(user);
+        } catch (err) {
+            logControllerErrorTrace({
+                logger: this.logger,
+                request,
+                controller: 'UserController',
+                method: 'getUser',
+            });
+
+            throw err;
+        }
     }
 
     async updateUser(
         request: FastifyRequest<{ Body: UpdateUserDTO }>,
         response: FastifyReply<{ Reply: UserDetailDTO }>
     ): Promise<void> {
-        const updatedUser = await this.userService.updateUser(
-            request.user,
-            request.body
-        );
+        try {
+            const updatedUser = await this.userService.updateUser(
+                request.user,
+                request.body
+            );
 
-        return response.code(StatusCodes.OK).send(updatedUser);
+            return response.code(StatusCodes.OK).send(updatedUser);
+        } catch (err) {
+            logControllerErrorTrace({
+                logger: this.logger,
+                request,
+                controller: 'UserController',
+                method: 'updateUser',
+            });
+
+            throw err;
+        }
     }
 
     async deleteUser(
         request: FastifyRequest,
         response: FastifyReply<{ Reply: UserSimpleDTO }>
     ): Promise<void> {
-        const deletedUser = await this.userService.deleteUser(request.user);
+        try {
+            const deletedUser = await this.userService.deleteUser(request.user);
 
-        return response.code(StatusCodes.OK).send(deletedUser);
+            return response.code(StatusCodes.OK).send(deletedUser);
+        } catch (err) {
+            logControllerErrorTrace({
+                logger: this.logger,
+                request,
+                controller: 'UserController',
+                method: 'deleteUser',
+            });
+
+            throw err;
+        }
     }
 }
