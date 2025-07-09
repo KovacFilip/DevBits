@@ -2,20 +2,28 @@ import fCookie from '@fastify/cookie';
 import fjwt, { FastifyJWT } from '@fastify/jwt';
 import fastifySwagger from '@fastify/swagger';
 import fastifySwaggerUi from '@fastify/swagger-ui';
-import { FastifyInstance, FastifyRequest, fastify } from 'fastify';
+import { container } from 'apps/backend/src/config/inversify.config';
+import { LOGGER } from 'apps/backend/src/constants/identifiers';
+import { googleAuthRoutes } from 'apps/backend/src/controllers/auth/GoogleAuthController';
+import { ErrorHandler } from 'apps/backend/src/errors/ErrorHandler';
+import { UnauthorizedError } from 'apps/backend/src/errors/UnauthorizedError';
+import { CommentRoutes } from 'apps/backend/src/routes/CommentRoutes';
+import { likeRoutes } from 'apps/backend/src/routes/LikeRoutes';
+import { PostRoutes } from 'apps/backend/src/routes/PostRoutes';
+import { UserRoutes } from 'apps/backend/src/routes/UserRoutes';
+import {
+    FastifyBaseLogger,
+    FastifyInstance,
+    FastifyRequest,
+    fastify,
+} from 'fastify';
 import {
     ZodTypeProvider,
     jsonSchemaTransform,
     serializerCompiler,
     validatorCompiler,
 } from 'fastify-type-provider-zod';
-import { googleAuthRoutes } from '../controllers/auth/GoogleAuthController';
-import { ErrorHandler } from '../errors/ErrorHandler';
-import { UnauthorizedError } from '../errors/UnauthorizedError';
-import { CommentRoutes } from '../routes/CommentRoutes';
-import { likeRoutes } from '../routes/LikeRoutes';
-import { PostRoutes } from '../routes/PostRoutes';
-import { UserRoutes } from '../routes/UserRoutes';
+import { type Logger as PinoLogger } from 'pino';
 
 export const buildServer = async (): Promise<FastifyInstance> => {
     const JWT_SECRET = process.env.JWT_SECRET;
@@ -23,8 +31,10 @@ export const buildServer = async (): Promise<FastifyInstance> => {
         throw new Error('The `JWT_SECRET` environment variable must be set');
     }
 
+    const logger = container.get<PinoLogger>(LOGGER.LOGGER);
+
     const server = fastify({
-        logger: true,
+        loggerInstance: logger as FastifyBaseLogger,
     }).withTypeProvider<ZodTypeProvider>();
 
     server.setValidatorCompiler(validatorCompiler);

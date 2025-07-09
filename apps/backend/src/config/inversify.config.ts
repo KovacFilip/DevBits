@@ -1,8 +1,16 @@
 import { PrismaClient } from 'apps/backend/prisma/generated/client';
+import {
+    CONTROLLER_IDENTIFIER,
+    DATABASE_IDENTIFIER,
+    LOGGER,
+    REPOSITORY_IDENTIFIER,
+    SERVICE_IDENTIFIER,
+} from 'apps/backend/src/constants/identifiers';
 import { CommentController } from 'apps/backend/src/controllers/CommentController';
 import { LikeController } from 'apps/backend/src/controllers/LikeController';
 import { PostController } from 'apps/backend/src/controllers/PostController';
 import { UserController } from 'apps/backend/src/controllers/UserController';
+import { pinoLogger } from 'apps/backend/src/logger/pino';
 import { ICommentController } from 'apps/backend/src/models/interfaces/controllers/ICommentController';
 import { ILikeController } from 'apps/backend/src/models/interfaces/controllers/ILikeController';
 import { IPostController } from 'apps/backend/src/models/interfaces/controllers/IPostController';
@@ -11,26 +19,21 @@ import { ICommentRepository } from 'apps/backend/src/models/interfaces/repositor
 import { ILikeRepository } from 'apps/backend/src/models/interfaces/repositories/ILikeRepository';
 import { IPostRepository } from 'apps/backend/src/models/interfaces/repositories/IPostRepository';
 import { IUserRepository } from 'apps/backend/src/models/interfaces/repositories/IUserRepository';
+import { ICommentService } from 'apps/backend/src/models/interfaces/services/ICommentService';
+import { ILikeService } from 'apps/backend/src/models/interfaces/services/ILikeService';
+import { IPostService } from 'apps/backend/src/models/interfaces/services/IPostService';
+import { IUserService } from 'apps/backend/src/models/interfaces/services/IUserService';
+import { CommentRepository } from 'apps/backend/src/repositories/CommentRepository';
+import { LikeRepository } from 'apps/backend/src/repositories/LikeRepository';
+import { PostRepository } from 'apps/backend/src/repositories/PostRepository';
+import { UserRepository } from 'apps/backend/src/repositories/UserRepository';
+import { CommentService } from 'apps/backend/src/services/CommentService';
+import { LikeService } from 'apps/backend/src/services/LikeService';
+import { PostService } from 'apps/backend/src/services/PostService';
+import { UserService } from 'apps/backend/src/services/UserService';
 import { Container } from 'inversify';
+import { Logger } from 'pino';
 import 'reflect-metadata';
-import {
-    CONTROLLER_IDENTIFIER,
-    DATABASE_IDENTIFIER,
-    REPOSITORY_IDENTIFIER,
-    SERVICE_IDENTIFIER,
-} from '../constants/identifiers';
-import { ICommentService } from '../models/interfaces/services/ICommentService';
-import { ILikeService } from '../models/interfaces/services/ILikeService';
-import { IPostService } from '../models/interfaces/services/IPostService';
-import { IUserService } from '../models/interfaces/services/IUserService';
-import { CommentRepository } from '../repositories/CommentRepository';
-import { LikeRepository } from '../repositories/LikeRepository';
-import { PostRepository } from '../repositories/PostRepository';
-import { UserRepository } from '../repositories/UserRepository';
-import { CommentService } from '../services/CommentService';
-import { LikeService } from '../services/LikeService';
-import { PostService } from '../services/PostService';
-import { UserService } from '../services/UserService';
 
 const container = new Container();
 
@@ -81,5 +84,7 @@ container
 container
     .bind<IPostController>(CONTROLLER_IDENTIFIER.POST_CONTROLLER)
     .to(PostController);
+
+container.bind<Logger>(LOGGER.LOGGER).toConstantValue(pinoLogger);
 
 export { container };

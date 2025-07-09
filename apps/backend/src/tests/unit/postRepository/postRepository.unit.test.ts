@@ -1,5 +1,6 @@
 import { EntityAlreadyDeletedError } from 'apps/backend/src/errors/RepositoryErrors/EntityAlreadyDeletedError';
 import { EntityNotFoundError } from 'apps/backend/src/errors/RepositoryErrors/EntityNotFoundError';
+import { pinoLogger } from 'apps/backend/src/logger/pino';
 import { IPostRepository } from 'apps/backend/src/models/interfaces/repositories/IPostRepository';
 import { PostRepository } from 'apps/backend/src/repositories/PostRepository';
 import prisma from 'apps/backend/src/tests/unit/__mocks__/prisma';
@@ -17,7 +18,7 @@ describe('PostRepository', () => {
 
     beforeEach(() => {
         prisma.$transaction.mockImplementation((callback) => callback(prisma));
-        postRepository = new PostRepository(prisma);
+        postRepository = new PostRepository(prisma, pinoLogger);
     });
 
     describe('createPost', () => {

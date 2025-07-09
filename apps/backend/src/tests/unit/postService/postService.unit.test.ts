@@ -1,4 +1,5 @@
 import { NotFoundError } from 'apps/backend/src/errors/NotFoundError';
+import { pinoLogger } from 'apps/backend/src/logger/pino';
 import { IPostService } from 'apps/backend/src/models/interfaces/services/IPostService';
 import { PostService } from 'apps/backend/src/services/PostService';
 import { postRepository } from 'apps/backend/src/tests/unit/__mocks__/postRepository';
@@ -18,7 +19,7 @@ describe('PostService', () => {
 
     beforeEach(() => {
         vi.clearAllMocks();
-        postService = new PostService(postRepository);
+        postService = new PostService(postRepository, pinoLogger);
     });
 
     describe('createPost', () => {

@@ -1,4 +1,5 @@
 import { PostController } from 'apps/backend/src/controllers/PostController';
+import { pinoLogger } from 'apps/backend/src/logger/pino';
 import { IPostController } from 'apps/backend/src/models/interfaces/controllers/IPostController';
 import { postService } from 'apps/backend/src/tests/unit/__mocks__/postService';
 import {
@@ -19,7 +20,7 @@ describe('PostController', () => {
     let postController: IPostController;
 
     beforeEach(() => {
-        postController = new PostController(postService);
+        postController = new PostController(postService, pinoLogger);
     });
 
     describe('createPost', () => {

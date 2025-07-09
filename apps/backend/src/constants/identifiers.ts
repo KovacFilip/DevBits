@@ -22,3 +22,7 @@ export const CONTROLLER_IDENTIFIER = {
 export const DATABASE_IDENTIFIER = {
     PRISMA: Symbol.for('PrismaClient'),
 };
+
+export const LOGGER = {
+    LOGGER: Symbol.for('Logger'),
+};
