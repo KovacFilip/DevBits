@@ -1,20 +1,19 @@
-import { Post, Prisma } from 'apps/backend/prisma/generated/client';
+import {
+    CreatePostModel,
+    PostIdModel,
+    PostModel,
+    UpdatePostModel,
+} from 'apps/backend/src/models/models/Post';
+import { UserIdModel } from 'apps/backend/src/models/models/User';
 
 export interface IPostRepository {
-    // Create
-    createPost(post: Prisma.PostCreateInput): Promise<Post>;
+    createPost(post: CreatePostModel): Promise<PostModel>;
 
-    // Read
-    readPost(post: Prisma.PostWhereUniqueInput): Promise<Post | null>;
-    readUsersPosts(user: Prisma.UserWhereUniqueInput): Promise<Post[]>;
+    readPost(postId: PostIdModel): Promise<PostModel | null>;
+    readUsersPosts(userId: UserIdModel): Promise<PostModel[]>;
 
-    // Update
-    updatePost(
-        where: Prisma.PostWhereUniqueInput,
-        data: Prisma.PostUpdateInput
-    ): Promise<Post>;
+    updatePost(postId: PostIdModel, data: UpdatePostModel): Promise<PostModel>;
 
-    // Delete
-    hardDeletePost(post: Prisma.PostWhereUniqueInput): Promise<Post>;
-    softDeletePost(post: Prisma.PostWhereUniqueInput): Promise<Post>;
+    hardDeletePost(postId: PostIdModel): Promise<PostModel>;
+    softDeletePost(postId: PostIdModel): Promise<PostModel>;
 }

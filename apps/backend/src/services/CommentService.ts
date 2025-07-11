@@ -1,4 +1,3 @@
-import { Prisma } from 'apps/backend/prisma/generated/client';
 import {
     LOGGER,
     REPOSITORY_IDENTIFIER,
@@ -32,24 +31,15 @@ export class CommentService implements ICommentService {
         createCommentDto: CreateCommentDTO
     ): Promise<CommentDTO> {
         try {
-            const commentToCreate: Prisma.CommentCreateInput = {
-                user: { connect: { userId: userIdDTO.userId } },
-                post: { connect: { postId: createCommentDto.postId } },
+            const comment = await this.commentRepository.createComment({
                 content: createCommentDto.content,
-                ...(createCommentDto.parentCommentId && {
-                    parentComment: {
-                        connect: {
-                            commentId: createCommentDto.parentCommentId,
-                        },
-                    },
-                }),
-            };
-
-            const comment =
-                await this.commentRepository.createComment(commentToCreate);
+                postId: createCommentDto.postId,
+                userId: userIdDTO.userId,
+                parentCommentId: createCommentDto.parentCommentId,
+            });
 
             return {
-                commentId: comment.commentId,
+                commentId: comment.id,
                 postId: comment.postId,
                 userId: comment.userId,
                 content: comment.content,
@@ -69,12 +59,9 @@ export class CommentService implements ICommentService {
 
     async getComment(dto: CommentIdDTO): Promise<CommentDTO> {
         try {
-            const commentUniqueInput: Prisma.CommentWhereUniqueInput = {
-                commentId: dto.commentId,
-            };
-
-            const comment =
-                await this.commentRepository.readComment(commentUniqueInput);
+            const comment = await this.commentRepository.readComment(
+                dto.commentId
+            );
 
             if (!comment) {
                 throw new NotFoundError(
@@ -83,7 +70,7 @@ export class CommentService implements ICommentService {
             }
 
             return {
-                commentId: comment.commentId,
+                commentId: comment.id,
                 postId: comment.postId,
                 userId: comment.userId,
                 content: comment.content,
@@ -103,14 +90,9 @@ export class CommentService implements ICommentService {
 
     async getCommentsForPost(dto: PostIdDTO): Promise<SimpleCommentDTO[]> {
         try {
-            const uniquePostInput: Prisma.PostWhereUniqueInput = {
-                postId: dto.postId,
-            };
-
-            const comments =
-                await this.commentRepository.readCommentForPost(
-                    uniquePostInput
-                );
+            const comments = await this.commentRepository.readCommentForPost(
+                dto.postId
+            );
 
             if (!comments) {
                 throw new Error(
@@ -120,7 +102,7 @@ export class CommentService implements ICommentService {
 
             return comments.map((comment) => {
                 return {
-                    commentId: comment.commentId,
+                    commentId: comment.id,
                     content: comment.content,
                 };
             });
@@ -138,14 +120,9 @@ export class CommentService implements ICommentService {
 
     async getCommentsByUser(dto: UserIdDTO): Promise<SimpleCommentDTO[]> {
         try {
-            const uniqueUserInput: Prisma.UserWhereUniqueInput = {
-                userId: dto.userId,
-            };
-
-            const comments =
-                await this.commentRepository.readCommentForUser(
-                    uniqueUserInput
-                );
+            const comments = await this.commentRepository.readCommentForUser(
+                dto.userId
+            );
 
             if (!comments) {
                 throw new Error(
@@ -155,7 +132,7 @@ export class CommentService implements ICommentService {
 
             return comments.map((comment) => {
                 return {
-                    commentId: comment.commentId,
+                    commentId: comment.id,
                     content: comment.content,
                 };
             });
@@ -176,21 +153,15 @@ export class CommentService implements ICommentService {
         newCommentData: UpdateCommentDTO
     ): Promise<CommentDTO> {
         try {
-            const where: Prisma.CommentWhereUniqueInput = {
-                commentId: commentIdDto.commentId,
-            };
-
-            const data: Prisma.CommentUpdateInput = {
-                content: newCommentData.content,
-            };
-
             const updatedComment = await this.commentRepository.updateComment(
-                where,
-                data
+                commentIdDto.commentId,
+                {
+                    content: newCommentData.content,
+                }
             );
 
             return {
-                commentId: updatedComment.commentId,
+                commentId: updatedComment.id,
                 userId: updatedComment.userId,
                 postId: updatedComment.postId,
                 content: updatedComment.content,
@@ -210,17 +181,11 @@ export class CommentService implements ICommentService {
 
     async deleteComment(dto: CommentIdDTO): Promise<SimpleCommentDTO> {
         try {
-            const commentUniqueInput: Prisma.CommentWhereUniqueInput = {
-                commentId: dto.commentId,
-            };
-
             const deletedComment =
-                await this.commentRepository.softDeleteComment(
-                    commentUniqueInput
-                );
+                await this.commentRepository.softDeleteComment(dto.commentId);
 
             return {
-                commentId: deletedComment.commentId,
+                commentId: deletedComment.id,
                 content: deletedComment.content,
             };
         } catch (err) {

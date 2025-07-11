@@ -1,4 +1,11 @@
-import { Post, Prisma } from 'apps/backend/prisma/generated/client';
+import { Post } from 'apps/backend/prisma/generated/client';
+import {
+    CreatePostModel,
+    PostIdModel,
+    PostModel,
+    UpdatePostModel,
+} from 'apps/backend/src/models/models/Post';
+import { UserIdModel } from 'apps/backend/src/models/models/User';
 import {
     defaultPostId,
     defaultUserId,
@@ -6,7 +13,7 @@ import {
 } from 'apps/backend/src/tests/unit/utils/post/commonUtils';
 
 // Repository layer
-export const getMockPost = (overrides: Partial<Post> = {}): Post => ({
+export const getMockPrismaPost = (overrides: Partial<Post> = {}): Post => ({
     postId: defaultPostId,
     userId: defaultUserId,
     title: 'test new post',
@@ -17,34 +24,36 @@ export const getMockPost = (overrides: Partial<Post> = {}): Post => ({
     ...overrides,
 });
 
+export const getMockPostModel = (
+    overrides: Partial<PostModel> = {}
+): PostModel => ({
+    id: defaultPostId,
+    userId: defaultUserId,
+    title: 'test new post',
+    content: 'This is a test new post',
+    ...overrides,
+});
+
 export const getMockCreateInput = (
-    overrides: Partial<Prisma.PostCreateInput> = {}
-): Prisma.PostCreateInput => ({
+    overrides: Partial<CreatePostModel> = {}
+): CreatePostModel => ({
     title: 'Default Title',
     content: 'Default Content',
-    user: {
-        connect: {
-            userId: defaultUserId,
-        },
-    },
+    userId: defaultUserId,
     ...overrides,
 });
 
 export const getMockUpdateInput = (
-    overrides: Partial<Prisma.PostUpdateInput> = {}
-): Prisma.PostUpdateInput => ({
+    overrides: UpdatePostModel = {}
+): UpdatePostModel => ({
     content: 'Updated Content',
     ...overrides,
 });
 
 export const getMockPostWhereUnique = (
     postId: string = defaultPostId
-): Prisma.PostWhereUniqueInput => ({
-    postId,
-});
+): PostIdModel => postId;
 
 export const getMockUserWhereUnique = (
     userId: string = defaultUserId
-): Prisma.UserWhereUniqueInput => ({
-    userId,
-});
+): UserIdModel => userId;

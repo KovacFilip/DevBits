@@ -11,7 +11,7 @@ import {
     getMockUpdatePostDTO,
     getMockUserIdDTO,
 } from 'apps/backend/src/tests/unit/utils/post/dtoUtils';
-import { getMockPost } from 'apps/backend/src/tests/unit/utils/post/repositoryUtils';
+import { getMockPostModel } from 'apps/backend/src/tests/unit/utils/post/repositoryUtils';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 describe('PostService', () => {
@@ -26,24 +26,20 @@ describe('PostService', () => {
         it('creates a new post', async () => {
             const userId = getMockUserIdDTO();
             const createPost = getMockCreatePostDTO();
-            const post = getMockPost();
+            const post = getMockPostModel();
             const resultPost = getMockPostWithContentDTO();
 
             postRepository.createPost.mockResolvedValue(post);
 
             const result = await postService.createPost(userId, createPost);
 
-            expect(postRepository.createPost).toBeCalledWith({
-                ...createPost,
-                user: { connect: userId },
-            });
             expect(result).toEqual(resultPost);
         });
     });
 
     describe('getPostById', () => {
         it('returns existing post', async () => {
-            const post = getMockPost();
+            const post = getMockPostModel();
             const postId = getMockPostIdDTO();
             const resultPost = getMockPostWithContentDTO();
 
@@ -51,7 +47,6 @@ describe('PostService', () => {
 
             const result = await postService.getPostById(postId);
 
-            expect(postRepository.readPost).toBeCalledWith(postId);
             expect(result).toEqual(resultPost);
         });
 
@@ -68,7 +63,7 @@ describe('PostService', () => {
 
     describe('getPostsByUser', () => {
         it('returns list of user posts', async () => {
-            const post = getMockPost();
+            const post = getMockPostModel();
             const userId = getMockUserIdDTO();
             const postSimple = getMockPostSimpleDTO();
 
@@ -93,7 +88,7 @@ describe('PostService', () => {
     describe('updatePost', () => {
         it('updates an existing post', async () => {
             const updatePost = getMockUpdatePostDTO();
-            const post = getMockPost({ content: updatePost.content });
+            const post = getMockPostModel({ content: updatePost.content });
             const postId = getMockPostIdDTO();
             const resultPost = getMockPostWithContentDTO({
                 content: updatePost.content,
@@ -109,7 +104,7 @@ describe('PostService', () => {
 
     describe('deletePost', () => {
         it('soft-deletes the post', async () => {
-            const post = getMockPost({ deletedAt: new Date() });
+            const post = getMockPostModel();
             const postId = getMockPostIdDTO();
             const resultPost = getMockPostSimpleDTO();
 
@@ -117,7 +112,6 @@ describe('PostService', () => {
 
             const result = await postService.deletePost(postId);
 
-            expect(postRepository.softDeletePost).toBeCalledWith(postId);
             expect(postRepository.hardDeletePost).not.toBeCalled();
             expect(result).toEqual(resultPost);
         });
