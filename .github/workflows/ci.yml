@@ -28,7 +28,7 @@ jobs:
       - name: Run Prettier Check
         run: pnpm format:check
 
-  tests:
+  unit-tests:
     name: Unit tests
     needs: lint-and-format
     runs-on: ubuntu-latest

@@ -26,7 +26,7 @@ describe('post integration tests', () => {
         await app.close();
     });
 
-    it('request get post by id', async () => {
+    it('request get post by non-existing id', async () => {
         const res = await app.inject({
             method: 'GET',
             url: '/post/276efe85-a684-4550-94dc-33150c7d173a',
@@ -54,7 +54,7 @@ describe('post integration tests', () => {
     it('request get post by id', async () => {
         const res = await app.inject({
             method: 'GET',
-            url: `/post/76a2ebfe-6513-466d-b73d-68abbaf9cce2`,
+            url: `/post/${mikesPost.postId}`,
             cookies: {
                 access_token: jwtToken,
             },
