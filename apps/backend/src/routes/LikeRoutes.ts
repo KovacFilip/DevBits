@@ -16,8 +16,6 @@ import {
 } from 'packages/shared';
 import { z } from 'zod';
 
-export const BASE_LIKE_ROUTE = '/like';
-
 export const likeRoutes = (fastify: FastifyInstance) => {
     const likeController = container.get<ILikeController>(
         CONTROLLER_IDENTIFIER.LIKE_CONTROLLER
@@ -25,7 +23,7 @@ export const likeRoutes = (fastify: FastifyInstance) => {
 
     // Like a post
     fastify.post<{ Params: PostIdDTO; Reply: LikeIdDTO }>(
-        '/post/:postId/like',
+        '/post/:postId',
         {
             preHandler: [fastify.authenticate],
             schema: {
@@ -41,7 +39,7 @@ export const likeRoutes = (fastify: FastifyInstance) => {
 
     // Like a comment
     fastify.post<{ Params: CommentIdDTO; Reply: LikeIdDTO }>(
-        '/comment/:commentId/like',
+        '/comment/:commentId',
         {
             preHandler: [fastify.authenticate],
             schema: {
@@ -57,7 +55,7 @@ export const likeRoutes = (fastify: FastifyInstance) => {
 
     // Get Like
     fastify.get<{ Params: LikeIdDTO; Reply: LikePostDTO | LikeCommentDTO }>(
-        '/like/:likeId',
+        '/:likeId',
         {
             preHandler: [fastify.authenticate],
             schema: {
@@ -73,7 +71,7 @@ export const likeRoutes = (fastify: FastifyInstance) => {
 
     // Get Likes for post
     fastify.get<{ Params: PostIdDTO; Reply: LikeIdDTO[] }>(
-        '/post/:postId/likes',
+        '/post/:postId',
         {
             preHandler: [fastify.authenticate],
             schema: {
@@ -89,7 +87,7 @@ export const likeRoutes = (fastify: FastifyInstance) => {
 
     // Get likes for comment
     fastify.get<{ Params: CommentIdDTO; Reply: LikeIdDTO[] }>(
-        '/comment/:commentId/likes',
+        '/comment/:commentId',
         {
             preHandler: [fastify.authenticate],
             schema: {
@@ -105,7 +103,7 @@ export const likeRoutes = (fastify: FastifyInstance) => {
 
     // Get Count Of Likes For Post
     fastify.get<{ Params: PostIdDTO; Reply: number }>(
-        '/post/:postId/likes/count',
+        '/post/:postId/count',
         {
             preHandler: [fastify.authenticate],
             schema: {
@@ -121,7 +119,7 @@ export const likeRoutes = (fastify: FastifyInstance) => {
 
     // Get Count Of Likes For Comment
     fastify.get<{ Params: CommentIdDTO; Reply: number }>(
-        '/comment/:commentId/likes/count',
+        '/comment/:commentId/count',
         {
             preHandler: [fastify.authenticate],
             schema: {
@@ -137,7 +135,7 @@ export const likeRoutes = (fastify: FastifyInstance) => {
 
     // Remove Like
     fastify.delete<{ Params: LikeIdDTO; Reply: LikeIdDTO }>(
-        '/like/:likeId',
+        '/:likeId',
         {
             preHandler: [fastify.authenticate],
             schema: {
