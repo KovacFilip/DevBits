@@ -1,19 +1,21 @@
-import { Prisma, User } from 'apps/backend/prisma/generated/client';
+import {
+    CreateUserModel,
+    OAuthAccountModel,
+    UpdateUserModel,
+    UserIdModel,
+    UserModel,
+} from 'apps/backend/src/models/models/User';
 
 export interface IUserRepository {
-    createUser(createUser: Prisma.UserCreateInput): Promise<User>;
+    createUser(createUser: CreateUserModel): Promise<UserModel>;
 
-    readUserById(userId: string): Promise<User | null>;
+    readUserById(userId: UserIdModel): Promise<UserModel | null>;
+
     readUserByProvider(
-        providerInfo: Prisma.OAuthAccountProviderProviderUserIdCompoundUniqueInput
-    ): Promise<User | null>;
-    readUser(user: Prisma.UserWhereUniqueInput): Promise<User | null>;
+        providerInfo: OAuthAccountModel
+    ): Promise<UserModel | null>;
+    updateUser(where: UserIdModel, data: UpdateUserModel): Promise<UserModel>;
 
-    updateUser(
-        where: Prisma.UserWhereUniqueInput,
-        data: Prisma.UserUpdateInput
-    ): Promise<User>;
-
-    hardDeleteUser(user: Prisma.UserWhereUniqueInput): Promise<User>;
-    softDeleteUser(user: Prisma.UserWhereUniqueInput): Promise<User>;
+    hardDeleteUser(user: UserIdModel): Promise<UserModel>;
+    softDeleteUser(user: UserIdModel): Promise<UserModel>;
 }
