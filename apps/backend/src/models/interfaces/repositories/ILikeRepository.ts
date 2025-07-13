@@ -1,35 +1,31 @@
-import { Like, Prisma } from 'apps/backend/prisma/generated/client';
+import { CommentIdModel } from 'apps/backend/src/models/models/Comment';
+import {
+    CreateLikeOnCommentModel,
+    CreateLikeOnPostModel,
+    LikeCommentModel,
+    LikeIdModel,
+    LikeModel,
+    LikePostModel,
+} from 'apps/backend/src/models/models/Like';
+import { PostIdModel } from 'apps/backend/src/models/models/Post';
+import { UserIdModel } from 'apps/backend/src/models/models/User';
 
 export interface ILikeRepository {
-    // Create
-    createLike(like: Prisma.LikeCreateInput): Promise<Like>;
+    createLikeOnPost(like: CreateLikeOnPostModel): Promise<LikeIdModel>;
+    createLikeOnComment(like: CreateLikeOnCommentModel): Promise<LikeIdModel>;
 
-    // Read
-    readLike(like: Prisma.LikeWhereUniqueInput): Promise<Like | null>;
+    readLike(like: LikeIdModel): Promise<LikeModel | null>;
 
-    readLikesPerPost(post: Prisma.PostWhereUniqueInput): Promise<Like[]>;
+    readLikesPerPost(post: PostIdModel): Promise<LikePostModel[]>;
 
-    readNumberOfLikesPerPost(
-        post: Prisma.PostWhereUniqueInput
-    ): Promise<number>;
+    readNumberOfLikesPerPost(post: PostIdModel): Promise<number>;
 
-    readLikesPerComment(
-        comment: Prisma.CommentWhereUniqueInput
-    ): Promise<Like[]>;
+    readLikesPerComment(comment: CommentIdModel): Promise<LikeCommentModel[]>;
 
-    readNumberOfLikesPerComment(
-        comment: Prisma.CommentWhereUniqueInput
-    ): Promise<number>;
+    readNumberOfLikesPerComment(comment: CommentIdModel): Promise<number>;
 
-    readLikesByUser(user: Prisma.UserWhereUniqueInput): Promise<Like[]>;
+    readLikesByUser(user: UserIdModel): Promise<LikeIdModel[]>;
 
-    // Update
-    updateLike(
-        where: Prisma.LikeWhereUniqueInput,
-        data: Prisma.LikeUpdateInput
-    ): Promise<Like>;
-
-    // Delete
-    hardDeleteLike(like: Prisma.LikeWhereUniqueInput): Promise<Like>;
-    softDeleteLike(like: Prisma.LikeWhereUniqueInput): Promise<Like>;
+    hardDeleteLike(like: LikeIdModel): Promise<LikeIdModel>;
+    softDeleteLike(like: LikeIdModel): Promise<LikeIdModel>;
 }

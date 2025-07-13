@@ -1,10 +1,10 @@
-import { Prisma } from 'apps/backend/prisma/generated/client';
 import {
     LOGGER,
     REPOSITORY_IDENTIFIER,
 } from 'apps/backend/src/constants/identifiers';
 import { NotFoundError } from 'apps/backend/src/errors/NotFoundError';
 import { logServiceErrorTrace } from 'apps/backend/src/helpers/loggingHelpers';
+import { mapUserModelToUserDetailDTO } from 'apps/backend/src/mappers/modelsToDtos/User';
 import { IUserRepository } from 'apps/backend/src/models/interfaces/repositories/IUserRepository';
 import { IUserService } from 'apps/backend/src/models/interfaces/services/IUserService';
 import { inject, injectable } from 'inversify';
@@ -35,23 +35,16 @@ export class UserService implements IUserService {
             if (!user) {
                 user = await this.userRepository.createUser({
                     email: dto.email,
-                    profilePicture: dto.profilePicture,
-                    username: dto.name,
-                    accounts: {
-                        create: {
-                            provider: dto.provider,
-                            providerUserId: dto.providerUserId,
-                        },
+                    oAuthAccount: {
+                        provider: dto.provider,
+                        providerUserId: dto.providerUserId,
                     },
+                    username: dto.name,
+                    profilePicture: dto.profilePicture,
                 });
             }
 
-            return {
-                userId: user.userId,
-                email: user.email,
-                profilePicture: user.profilePicture,
-                name: user.username,
-            };
+            return mapUserModelToUserDetailDTO(user);
         } catch (err) {
             logServiceErrorTrace({
                 logger: this.logger,
@@ -66,11 +59,7 @@ export class UserService implements IUserService {
 
     async getUser(dto: UserIdDTO): Promise<UserDetailDTO> {
         try {
-            const userWhereInput: Prisma.UserWhereUniqueInput = {
-                userId: dto.userId,
-            };
-
-            const user = await this.userRepository.readUser(userWhereInput);
+            const user = await this.userRepository.readUserById(dto.userId);
 
             if (!user) {
                 throw new NotFoundError(
@@ -78,12 +67,7 @@ export class UserService implements IUserService {
                 );
             }
 
-            return {
-                userId: user.userId,
-                email: user.email,
-                profilePicture: user.profilePicture,
-                name: user.username,
-            };
+            return mapUserModelToUserDetailDTO(user);
         } catch (err) {
             logServiceErrorTrace({
                 logger: this.logger,
@@ -101,27 +85,16 @@ export class UserService implements IUserService {
         updateUserDto: UpdateUserDTO
     ): Promise<UserDetailDTO> {
         try {
-            const userWhereInput: Prisma.UserWhereUniqueInput = {
-                userId: userIdDto.userId,
-            };
-
-            const updateData: Prisma.UserUpdateInput = {
-                email: updateUserDto.email,
-                username: updateUserDto.name,
-                profilePicture: updateUserDto.profilePicture,
-            };
-
             const updatedUser = await this.userRepository.updateUser(
-                userWhereInput,
-                updateData
+                userIdDto.userId,
+                {
+                    email: updateUserDto.email,
+                    username: updateUserDto.name,
+                    profilePicture: updateUserDto.profilePicture,
+                }
             );
 
-            return {
-                userId: updatedUser.userId,
-                email: updatedUser.email,
-                name: updatedUser.username,
-                profilePicture: updatedUser.profilePicture,
-            };
+            return mapUserModelToUserDetailDTO(updatedUser);
         } catch (err) {
             logServiceErrorTrace({
                 logger: this.logger,
@@ -136,15 +109,12 @@ export class UserService implements IUserService {
 
     async deleteUser(dto: UserIdDTO): Promise<UserSimpleDTO> {
         try {
-            const userWhereInput: Prisma.UserWhereUniqueInput = {
-                userId: dto.userId,
-            };
-
-            const deletedUser =
-                await this.userRepository.softDeleteUser(userWhereInput);
+            const deletedUser = await this.userRepository.softDeleteUser(
+                dto.userId
+            );
 
             return {
-                userId: deletedUser.userId,
+                userId: deletedUser.id,
             };
         } catch (err) {
             logServiceErrorTrace({

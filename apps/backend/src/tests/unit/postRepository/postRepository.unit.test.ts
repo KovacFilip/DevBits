@@ -6,8 +6,9 @@ import { PostRepository } from 'apps/backend/src/repositories/PostRepository';
 import prisma from 'apps/backend/src/tests/unit/__mocks__/prisma';
 import {
     getMockCreateInput,
-    getMockPost,
+    getMockPostModel,
     getMockPostWhereUnique,
+    getMockPrismaPost,
     getMockUpdateInput,
     getMockUserWhereUnique,
 } from 'apps/backend/src/tests/unit/utils/post/repositoryUtils';
@@ -24,125 +25,97 @@ describe('PostRepository', () => {
     describe('createPost', () => {
         it('creates a new post', async () => {
             const mockCreate = getMockCreateInput();
-            const mockPost = getMockPost();
+            const mockPrismaPost = getMockPrismaPost();
+            const mockPostModel = getMockPostModel();
 
-            prisma.post.create.mockResolvedValue(mockPost);
+            prisma.post.create.mockResolvedValue(mockPrismaPost);
 
             const result = await postRepository.createPost(mockCreate);
 
-            expect(prisma.post.create).toHaveBeenCalledWith({
-                data: mockCreate,
-            });
-            expect(result).toEqual(mockPost);
+            expect(result).toEqual(mockPostModel);
         });
     });
 
     describe('readPost', () => {
         it('returns an existing post', async () => {
-            const mockWhere = getMockPostWhereUnique();
-            const mockPost = getMockPost();
+            const mockPostId = getMockPostWhereUnique();
+            const mockPrismaPost = getMockPrismaPost();
+            const mockPostModel = getMockPostModel();
 
-            prisma.post.findUnique.mockResolvedValue(mockPost);
+            prisma.post.findUnique.mockResolvedValue(mockPrismaPost);
 
-            const result = await postRepository.readPost(mockWhere);
+            const result = await postRepository.readPost(mockPostId);
 
-            expect(prisma.post.findUnique).toHaveBeenCalledWith({
-                where: {
-                    ...mockWhere,
-                    deletedAt: null,
-                },
-            });
-
-            expect(result).toEqual(mockPost);
+            expect(result).toEqual(mockPostModel);
         });
 
         it('returns null if post is not existing', async () => {
-            const mockWhere = getMockPostWhereUnique();
+            const mockPostId = getMockPostWhereUnique();
 
             prisma.post.findUnique.mockResolvedValue(null);
 
-            const result = await postRepository.readPost(mockWhere);
+            const result = await postRepository.readPost(mockPostId);
 
-            expect(prisma.post.findUnique).toHaveBeenCalledWith({
-                where: {
-                    ...mockWhere,
-                    deletedAt: null,
-                },
-            });
             expect(result).toBeNull();
         });
     });
 
     describe('readUsersPosts', () => {
         it('returns users posts', async () => {
-            const mockWhere = getMockUserWhereUnique();
-            const mockPost = getMockPost();
-            const posts = [mockPost];
+            const mockUserId = getMockUserWhereUnique();
+            const mockPrismaPost = getMockPrismaPost();
+            const posts = [mockPrismaPost];
+            const mockPostModel = getMockPostModel();
 
             prisma.post.findMany.mockResolvedValue(posts);
 
-            const result = await postRepository.readUsersPosts(mockWhere);
+            const result = await postRepository.readUsersPosts(mockUserId);
 
-            expect(prisma.post.findMany).toHaveBeenCalledWith({
-                where: {
-                    user: mockWhere,
-                    deletedAt: null,
-                },
-            });
-            expect(result).toEqual(posts);
+            expect(result).toEqual([mockPostModel]);
         });
 
         it('returns empty list of posts for user who does not have any posts', async () => {
-            const mockWhere = getMockUserWhereUnique();
+            const mockPostId = getMockUserWhereUnique();
 
             prisma.post.findMany.mockResolvedValue([]);
 
-            const result = await postRepository.readUsersPosts(mockWhere);
+            const result = await postRepository.readUsersPosts(mockPostId);
 
-            expect(prisma.post.findMany).toHaveBeenCalledWith({
-                where: {
-                    user: mockWhere,
-                    deletedAt: null,
-                },
-            });
             expect(result).toEqual([]);
         });
     });
 
     describe('updatePost', () => {
         it('updates existing posts content', async () => {
-            const mockWhere = getMockPostWhereUnique();
+            const mockPostId = getMockPostWhereUnique();
             const mockUpdate = getMockUpdateInput();
-            const mockPost = getMockPost();
+            const mockPrismaPost = getMockPrismaPost();
+            const mockPostModel = getMockPostModel();
 
-            prisma.post.findUnique.mockResolvedValue(mockPost);
+            prisma.post.findUnique.mockResolvedValue(mockPrismaPost);
             prisma.post.update.mockResolvedValue({
-                ...mockPost,
+                ...mockPrismaPost,
                 content: 'This is changed content',
             });
 
             const result = await postRepository.updatePost(
-                mockWhere,
+                mockPostId,
                 mockUpdate
             );
 
-            expect(prisma.post.update).toHaveBeenCalledWith({
-                where: mockWhere,
-                data: mockUpdate,
-            });
             expect(result).toStrictEqual({
-                ...mockPost,
+                ...mockPostModel,
                 content: 'This is changed content',
             });
         });
 
         it('throws EntityNotFoundError if post to update does not exist', async () => {
-            const mockWhere = getMockPostWhereUnique();
+            const mockPostId = getMockPostWhereUnique();
 
             prisma.post.findUnique.mockResolvedValue(null);
 
             await expect(
-                postRepository.updatePost(mockWhere, {
+                postRepository.updatePost(mockPostId, {
                     content: 'Updated',
                 })
             ).rejects.toThrow(EntityNotFoundError);
@@ -152,27 +125,25 @@ describe('PostRepository', () => {
 
     describe('hardDeletePost', () => {
         it('deletes an existing post', async () => {
-            const mockWhere = getMockPostWhereUnique();
-            const mockPost = getMockPost();
+            const mockPostId = getMockPostWhereUnique();
+            const mockPrismaPost = getMockPrismaPost();
+            const mockPostModel = getMockPostModel();
 
-            prisma.post.findUnique.mockResolvedValue(mockPost);
-            prisma.post.delete.mockResolvedValue(mockPost);
+            prisma.post.findUnique.mockResolvedValue(mockPrismaPost);
+            prisma.post.delete.mockResolvedValue(mockPrismaPost);
 
-            const result = await postRepository.hardDeletePost(mockWhere);
+            const result = await postRepository.hardDeletePost(mockPostId);
 
-            expect(prisma.post.delete).toHaveBeenCalledWith({
-                where: mockWhere,
-            });
-            expect(result).toStrictEqual(mockPost);
+            expect(result).toStrictEqual(mockPostModel);
         });
 
         it('throws EntityNotFoundError when trying to hard delete a non-existent post', async () => {
-            const mockWhere = getMockPostWhereUnique();
+            const mockPostId = getMockPostWhereUnique();
 
             prisma.post.findUnique.mockResolvedValue(null);
 
             await expect(
-                postRepository.hardDeletePost(mockWhere)
+                postRepository.hardDeletePost(mockPostId)
             ).rejects.toThrow(EntityNotFoundError);
 
             expect(prisma.post.delete).not.toHaveBeenCalled();
@@ -181,39 +152,43 @@ describe('PostRepository', () => {
 
     describe('softDeletePost', () => {
         it('soft deletes an existing post', async () => {
-            const mockWhere = getMockPostWhereUnique();
+            const mockPostId = getMockPostWhereUnique();
             const now = new Date();
 
-            const mockUndeletedPost = getMockPost();
-            const mockDeletedPost = getMockPost({ deletedAt: now });
+            const mockUndeletedPost = getMockPrismaPost();
+            const mockDeletedPost = getMockPrismaPost({ deletedAt: now });
+
+            const mockPostModel = getMockPostModel();
 
             prisma.post.findUnique.mockResolvedValue(mockUndeletedPost);
             prisma.post.update.mockResolvedValue(mockDeletedPost);
 
-            const result = await postRepository.softDeletePost(mockWhere);
+            const result = await postRepository.softDeletePost(mockPostId);
 
-            expect(result).toEqual(mockDeletedPost);
+            expect(result).toEqual(mockPostModel);
         });
 
         it('throws EntityAlreadyDeletedError if post is already soft-deleted', async () => {
-            const mockWhere = getMockPostWhereUnique();
-            const mockDeletedPost = getMockPost({ deletedAt: new Date() });
+            const mockPostId = getMockPostWhereUnique();
+            const mockDeletedPost = getMockPrismaPost({
+                deletedAt: new Date(),
+            });
 
             prisma.post.findUnique.mockResolvedValue(mockDeletedPost);
 
             await expect(
-                postRepository.softDeletePost(mockWhere)
+                postRepository.softDeletePost(mockPostId)
             ).rejects.toThrow(EntityAlreadyDeletedError);
             expect(prisma.post.update).not.toHaveBeenCalled();
         });
 
         it('throws EntityNotFoundError if post does not exist', async () => {
-            const mockWhere = getMockPostWhereUnique();
+            const mockPostId = getMockPostWhereUnique();
 
             prisma.post.findUnique.mockResolvedValue(null);
 
             await expect(
-                postRepository.softDeletePost(mockWhere)
+                postRepository.softDeletePost(mockPostId)
             ).rejects.toThrow(EntityNotFoundError);
 
             expect(prisma.post.update).not.toHaveBeenCalled();

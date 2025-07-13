@@ -1,33 +1,26 @@
-import { Comment, Prisma } from 'apps/backend/prisma/generated/client';
+import {
+    CommentIdModel,
+    CommentModel,
+    CreateCommentModel,
+    UpdateCommentModel,
+} from 'apps/backend/src/models/models/Comment';
+import { PostIdModel } from 'apps/backend/src/models/models/Post';
+import { UserIdModel } from 'apps/backend/src/models/models/User';
 
 export interface ICommentRepository {
-    // Create
-    createComment(comment: Prisma.CommentCreateInput): Promise<Comment>;
+    createComment(comment: CreateCommentModel): Promise<CommentModel>;
 
-    // Read
-    readComment(
-        comment: Prisma.CommentWhereUniqueInput
-    ): Promise<Comment | null>;
+    readComment(commentId: CommentIdModel): Promise<CommentModel | null>;
 
-    readCommentForPost(
-        post: Prisma.PostWhereUniqueInput
-    ): Promise<Comment[] | null>;
+    readCommentForPost(postId: PostIdModel): Promise<CommentModel[] | null>;
 
-    readCommentForUser(
-        user: Prisma.UserWhereUniqueInput
-    ): Promise<Comment[] | null>;
+    readCommentForUser(userId: UserIdModel): Promise<CommentModel[] | null>;
 
-    // Update
     updateComment(
-        where: Prisma.CommentWhereUniqueInput,
-        data: Prisma.CommentUpdateInput
-    ): Promise<Comment>;
+        commentId: CommentIdModel,
+        data: UpdateCommentModel
+    ): Promise<CommentModel>;
 
-    // Delete
-    hardDeleteComment(
-        comment: Prisma.CommentWhereUniqueInput
-    ): Promise<Comment>;
-    softDeleteComment(
-        comment: Prisma.CommentWhereUniqueInput
-    ): Promise<Comment>;
+    hardDeleteComment(commentId: CommentIdModel): Promise<CommentModel>;
+    softDeleteComment(commentId: CommentIdModel): Promise<CommentModel>;
 }
