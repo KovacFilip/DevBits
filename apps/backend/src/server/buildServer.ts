@@ -94,7 +94,7 @@ export const buildServer = async (): Promise<FastifyInstance> => {
 
     // Register routes
     server.register(googleAuthRoutes);
-    server.register(PostRoutes);
+    server.register(PostRoutes, { prefix: '/v1/posts' });
     server.register(CommentRoutes);
     server.register(likeRoutes);
     server.register(UserRoutes);
