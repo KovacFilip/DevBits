@@ -18,8 +18,6 @@ import {
     userIdSchema,
 } from 'packages/shared';
 
-const postId = `post-id`;
-
 export const PostRoutes = (fastify: FastifyInstance) => {
     const postController = container.get<IPostController>(
         CONTROLLER_IDENTIFIER.POST_CONTROLLER
