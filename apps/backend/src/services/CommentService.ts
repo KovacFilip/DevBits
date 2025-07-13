@@ -4,6 +4,7 @@ import {
 } from 'apps/backend/src/constants/identifiers';
 import { NotFoundError } from 'apps/backend/src/errors/NotFoundError';
 import { logServiceErrorTrace } from 'apps/backend/src/helpers/loggingHelpers';
+import { mapCommentModelToCommentDTO } from 'apps/backend/src/mappers/modelsToDtos/Comment';
 import { ICommentRepository } from 'apps/backend/src/models/interfaces/repositories/ICommentRepository';
 import { ICommentService } from 'apps/backend/src/models/interfaces/services/ICommentService';
 import { inject, injectable } from 'inversify';
@@ -38,13 +39,7 @@ export class CommentService implements ICommentService {
                 parentCommentId: createCommentDto.parentCommentId,
             });
 
-            return {
-                commentId: comment.id,
-                postId: comment.postId,
-                userId: comment.userId,
-                content: comment.content,
-                parentCommentId: comment.parentCommentId ?? undefined,
-            };
+            return mapCommentModelToCommentDTO(comment);
         } catch (err) {
             logServiceErrorTrace({
                 logger: this.logger,
@@ -69,13 +64,7 @@ export class CommentService implements ICommentService {
                 );
             }
 
-            return {
-                commentId: comment.id,
-                postId: comment.postId,
-                userId: comment.userId,
-                content: comment.content,
-                parentCommentId: comment.parentCommentId ?? undefined,
-            };
+            return mapCommentModelToCommentDTO(comment);
         } catch (err) {
             logServiceErrorTrace({
                 logger: this.logger,
@@ -160,13 +149,7 @@ export class CommentService implements ICommentService {
                 }
             );
 
-            return {
-                commentId: updatedComment.id,
-                userId: updatedComment.userId,
-                postId: updatedComment.postId,
-                content: updatedComment.content,
-                parentCommentId: updatedComment.parentCommentId ?? undefined,
-            };
+            return mapCommentModelToCommentDTO(updatedComment);
         } catch (err) {
             logServiceErrorTrace({
                 logger: this.logger,
