@@ -5,7 +5,7 @@ export const mapPrismaCommentToCommentModel = (
     prismaComment: Comment
 ): CommentModel => {
     return {
-        id: prismaComment.postId,
+        id: prismaComment.commentId,
         userId: prismaComment.userId,
         postId: prismaComment.postId,
         parentCommentId: prismaComment.parentCommentId ?? undefined,

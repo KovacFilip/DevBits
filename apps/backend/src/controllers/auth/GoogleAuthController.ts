@@ -23,8 +23,8 @@ export const googleAuthRoutes = (fastify: FastifyInstance) => {
             auth: oauthPlugin.GOOGLE_CONFIGURATION,
         },
         scope: ['email', 'profile'],
-        startRedirectPath: '/auth/google',
-        callbackUri: 'http://localhost:3000/auth/google/callback',
+        startRedirectPath: '/google',
+        callbackUri: 'http://localhost:3000/v1/auth/google/callback',
         tags: ['auth'],
         callbackUriParams: {
             access_type: 'offline',
@@ -32,7 +32,7 @@ export const googleAuthRoutes = (fastify: FastifyInstance) => {
     });
 
     fastify.get(
-        '/auth/google/callback',
+        '/google/callback',
         {
             schema: {
                 tags: ['auth'],

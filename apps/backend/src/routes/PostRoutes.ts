@@ -18,8 +18,6 @@ import {
     userIdSchema,
 } from 'packages/shared';
 
-export const BASE_POST_ROUTE = '/post';
-
 export const PostRoutes = (fastify: FastifyInstance) => {
     const postController = container.get<IPostController>(
         CONTROLLER_IDENTIFIER.POST_CONTROLLER
@@ -27,7 +25,7 @@ export const PostRoutes = (fastify: FastifyInstance) => {
 
     // Create New Post
     fastify.post<{ Body: CreatePostDTO; Reply: PostWithContentDTO }>(
-        BASE_POST_ROUTE,
+        '',
         {
             preHandler: [fastify.authenticate],
             schema: {
@@ -43,7 +41,7 @@ export const PostRoutes = (fastify: FastifyInstance) => {
 
     // Get Post By ID
     fastify.get<{ Params: PostIdDTO; Reply: PostWithContentDTO }>(
-        '/post/:postId',
+        `/:postId`,
         {
             preHandler: [fastify.authenticate],
             schema: {
@@ -59,7 +57,7 @@ export const PostRoutes = (fastify: FastifyInstance) => {
 
     // Get Posts By UserID
     fastify.get<{ Params: UserIdDTO; Reply: PostSimpleDTO[] }>(
-        '/user/:userId/posts',
+        '/user/:userId',
         {
             preHandler: [fastify.authenticate],
             schema: {
@@ -74,12 +72,12 @@ export const PostRoutes = (fastify: FastifyInstance) => {
     );
 
     // Update Post
-    fastify.put<{
+    fastify.patch<{
         Body: UpdatePostDTO;
         Params: PostIdDTO;
         Reply: PostWithContentDTO;
     }>(
-        '/post/:postId',
+        '/:postId',
         {
             preHandler: [fastify.authenticate],
             schema: {
@@ -96,7 +94,7 @@ export const PostRoutes = (fastify: FastifyInstance) => {
 
     // Delete Post
     fastify.delete<{ Params: PostIdDTO; Reply: PostSimpleDTO }>(
-        '/post/:postId',
+        '/:postId',
         {
             preHandler: [fastify.authenticate],
             schema: {

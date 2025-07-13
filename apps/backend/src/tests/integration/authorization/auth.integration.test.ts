@@ -18,7 +18,7 @@ describe('authorization integration tests', () => {
     it('request without access-token cookie returns unauthorized', async () => {
         const res = await app.inject({
             method: 'GET',
-            url: '/post/276efe85-a684-4550-94dc-33150c7d173a',
+            url: '/v1/posts/276efe85-a684-4550-94dc-33150c7d173a',
         });
 
         expect(res.statusCode).toBe(401);
@@ -34,7 +34,7 @@ describe('authorization integration tests', () => {
         const jwtToken = app.jwt.sign(jwtPayload, { expiresIn: '1h' });
         const res = await app.inject({
             method: 'GET',
-            url: '/post/276efe85-a684-4550-94dc-33150c7d173a',
+            url: '/v1/posts/276efe85-a684-4550-94dc-33150c7d173a',
             cookies: {
                 access_token: jwtToken,
             },

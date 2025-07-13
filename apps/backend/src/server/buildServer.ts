@@ -93,11 +93,11 @@ export const buildServer = async (): Promise<FastifyInstance> => {
     });
 
     // Register routes
-    server.register(googleAuthRoutes);
-    server.register(PostRoutes);
-    server.register(CommentRoutes);
-    server.register(likeRoutes);
-    server.register(UserRoutes);
+    server.register(googleAuthRoutes, { prefix: '/v1/auth' });
+    server.register(PostRoutes, { prefix: '/v1/posts' });
+    server.register(CommentRoutes, { prefix: '/v1/comments' });
+    server.register(likeRoutes, { prefix: '/v1/likes' });
+    server.register(UserRoutes, { prefix: '/v1/users' });
 
     // Custom error handler
     server.setErrorHandler(ErrorHandler);

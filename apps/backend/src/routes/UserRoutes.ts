@@ -13,8 +13,6 @@ import {
     userSimpleSchema,
 } from 'packages/shared';
 
-export const BASE_USER_ROUTE = '/user';
-
 export const UserRoutes = (fastify: FastifyInstance) => {
     const userController = container.get<IUserController>(
         CONTROLLER_IDENTIFIER.USER_CONTROLLER
@@ -22,7 +20,7 @@ export const UserRoutes = (fastify: FastifyInstance) => {
 
     // Read
     fastify.get<{ Params: UserIdDTO; Reply: UserDetailDTO }>(
-        '/user/:userId',
+        '/:userId',
         {
             preHandler: [fastify.authenticate],
             schema: {
@@ -37,8 +35,8 @@ export const UserRoutes = (fastify: FastifyInstance) => {
     );
 
     // Update
-    fastify.put<{ Body: UpdateUserDTO; Reply: UserDetailDTO }>(
-        BASE_USER_ROUTE,
+    fastify.patch<{ Body: UpdateUserDTO; Reply: UserDetailDTO }>(
+        '',
         {
             preHandler: [fastify.authenticate],
             schema: {
@@ -54,7 +52,7 @@ export const UserRoutes = (fastify: FastifyInstance) => {
 
     // Delete
     fastify.delete<{ Reply: UserSimpleDTO }>(
-        BASE_USER_ROUTE,
+        '',
         {
             preHandler: [fastify.authenticate],
             schema: {
