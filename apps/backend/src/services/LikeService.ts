@@ -1,10 +1,14 @@
-import { Prisma } from 'apps/backend/prisma/generated/client';
 import {
     LOGGER,
     REPOSITORY_IDENTIFIER,
 } from 'apps/backend/src/constants/identifiers';
 import { NotFoundError } from 'apps/backend/src/errors/NotFoundError';
 import { logServiceErrorTrace } from 'apps/backend/src/helpers/loggingHelpers';
+import { isLikeCommentModel } from 'apps/backend/src/helpers/typeChecks';
+import {
+    mapLikeCommentModelToLikeCommentDTO,
+    mapLikePostModelToLikePostDTO,
+} from 'apps/backend/src/mappers/modelsToDtos/Like';
 import { ILikeRepository } from 'apps/backend/src/models/interfaces/repositories/ILikeRepository';
 import { ILikeService } from 'apps/backend/src/models/interfaces/services/ILikeService';
 import { inject, injectable } from 'inversify';
@@ -28,23 +32,13 @@ export class LikeService implements ILikeService {
 
     async likePost(user: UserIdDTO, post: PostIdDTO): Promise<LikeIdDTO> {
         try {
-            const createLikeInput: Prisma.LikeCreateInput = {
-                user: {
-                    connect: {
-                        userId: user.userId,
-                    },
-                },
-                post: {
-                    connect: {
-                        postId: post.postId,
-                    },
-                },
-            };
-
-            const like = await this.likeRepository.createLike(createLikeInput);
+            const likeId = await this.likeRepository.createLikeOnPost({
+                postId: post.postId,
+                userId: user.userId,
+            });
 
             return {
-                likeId: like.likeId,
+                likeId,
             };
         } catch (err) {
             logServiceErrorTrace({
@@ -63,23 +57,13 @@ export class LikeService implements ILikeService {
         comment: CommentIdDTO
     ): Promise<LikeIdDTO> {
         try {
-            const createLikeInput: Prisma.LikeCreateInput = {
-                user: {
-                    connect: {
-                        userId: user.userId,
-                    },
-                },
-                comment: {
-                    connect: {
-                        commentId: comment.commentId,
-                    },
-                },
-            };
-
-            const like = await this.likeRepository.createLike(createLikeInput);
+            const likeId = await this.likeRepository.createLikeOnComment({
+                userId: user.userId,
+                commentId: comment.commentId,
+            });
 
             return {
-                likeId: like.likeId,
+                likeId,
             };
         } catch (err) {
             logServiceErrorTrace({
@@ -95,11 +79,7 @@ export class LikeService implements ILikeService {
 
     async getLike(dto: LikeIdDTO): Promise<LikePostDTO | LikeCommentDTO> {
         try {
-            const likeUniqueInput: Prisma.LikeWhereUniqueInput = {
-                likeId: dto.likeId,
-            };
-
-            const like = await this.likeRepository.readLike(likeUniqueInput);
+            const like = await this.likeRepository.readLike(dto.likeId);
 
             if (!like) {
                 throw new NotFoundError(
@@ -107,27 +87,11 @@ export class LikeService implements ILikeService {
                 );
             }
 
-            if (like.postId) {
-                return {
-                    likeId: like.likeId,
-                    user: {
-                        userId: like.userId,
-                    },
-                    post: {
-                        postId: like.postId!,
-                    },
-                };
+            if (isLikeCommentModel(like)) {
+                return mapLikeCommentModelToLikeCommentDTO(like);
             }
 
-            return {
-                likeId: like.likeId,
-                user: {
-                    userId: like.userId,
-                },
-                comment: {
-                    commentId: like.commentId!,
-                },
-            };
+            return mapLikePostModelToLikePostDTO(like);
         } catch (err) {
             logServiceErrorTrace({
                 logger: this.logger,
@@ -142,15 +106,12 @@ export class LikeService implements ILikeService {
 
     async removeLike(dto: LikeIdDTO): Promise<LikeIdDTO> {
         try {
-            const likeUniqueInput: Prisma.LikeWhereUniqueInput = {
-                likeId: dto.likeId,
-            };
-
-            const removedLike =
-                await this.likeRepository.softDeleteLike(likeUniqueInput);
+            const removedLikeId = await this.likeRepository.softDeleteLike(
+                dto.likeId
+            );
 
             return {
-                likeId: removedLike.likeId,
+                likeId: removedLikeId,
             };
         } catch (err) {
             logServiceErrorTrace({
@@ -166,16 +127,13 @@ export class LikeService implements ILikeService {
 
     async getLikesForPost(dto: PostIdDTO): Promise<LikeIdDTO[]> {
         try {
-            const postUniqueInput: Prisma.PostWhereUniqueInput = {
-                postId: dto.postId,
-            };
-
-            const likes =
-                await this.likeRepository.readLikesPerPost(postUniqueInput);
+            const likes = await this.likeRepository.readLikesPerPost(
+                dto.postId
+            );
 
             return likes.map((like) => {
                 return {
-                    likeId: like.likeId,
+                    likeId: like.id,
                 };
             });
         } catch (err) {
@@ -192,18 +150,13 @@ export class LikeService implements ILikeService {
 
     async getLikesForComment(dto: CommentIdDTO): Promise<LikeIdDTO[]> {
         try {
-            const commentUniqueInput: Prisma.CommentWhereUniqueInput = {
-                commentId: dto.commentId,
-            };
-
-            const likes =
-                await this.likeRepository.readLikesPerComment(
-                    commentUniqueInput
-                );
+            const likes = await this.likeRepository.readLikesPerComment(
+                dto.commentId
+            );
 
             return likes.map((like) => {
                 return {
-                    likeId: like.likeId,
+                    likeId: like.id,
                 };
             });
         } catch (err) {
@@ -220,12 +173,8 @@ export class LikeService implements ILikeService {
 
     async getNumberOfLikesOfPost(dto: PostIdDTO): Promise<number> {
         try {
-            const postUniqueInput: Prisma.PostWhereUniqueInput = {
-                postId: dto.postId,
-            };
-
             return await this.likeRepository.readNumberOfLikesPerPost(
-                postUniqueInput
+                dto.postId
             );
         } catch (err) {
             logServiceErrorTrace({
@@ -241,12 +190,8 @@ export class LikeService implements ILikeService {
 
     async getNumberOfLikesOfComment(dto: CommentIdDTO): Promise<number> {
         try {
-            const commentUniqueInput: Prisma.CommentWhereUniqueInput = {
-                commentId: dto.commentId,
-            };
-
             return await this.likeRepository.readNumberOfLikesPerComment(
-                commentUniqueInput
+                dto.commentId
             );
         } catch (err) {
             logServiceErrorTrace({

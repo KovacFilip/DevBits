@@ -1,8 +1,4 @@
-import {
-    Like,
-    Prisma,
-    PrismaClient,
-} from 'apps/backend/prisma/generated/client';
+import { Prisma, PrismaClient } from 'apps/backend/prisma/generated/client';
 import {
     DATABASE_IDENTIFIER,
     LOGGER,
@@ -10,7 +6,22 @@ import {
 import { EntityAlreadyDeletedError } from 'apps/backend/src/errors/RepositoryErrors/EntityAlreadyDeletedError';
 import { EntityNotFoundError } from 'apps/backend/src/errors/RepositoryErrors/EntityNotFoundError';
 import { logRepositoryErrorTrace } from 'apps/backend/src/helpers/loggingHelpers';
+import {
+    mapPrismaLikeCommentToLikeCommentModel,
+    mapPrismaLikePostToLikePostModel,
+} from 'apps/backend/src/mappers/prismaToModels/Like';
 import { ILikeRepository } from 'apps/backend/src/models/interfaces/repositories/ILikeRepository';
+import { CommentIdModel } from 'apps/backend/src/models/models/Comment';
+import {
+    CreateLikeOnCommentModel,
+    CreateLikeOnPostModel,
+    LikeCommentModel,
+    LikeIdModel,
+    LikeModel,
+    LikePostModel,
+} from 'apps/backend/src/models/models/Like';
+import { PostIdModel } from 'apps/backend/src/models/models/Post';
+import { UserIdModel } from 'apps/backend/src/models/models/User';
 import { inject, injectable } from 'inversify';
 import { Logger } from 'pino';
 
@@ -22,11 +33,28 @@ export class LikeRepository implements ILikeRepository {
         @inject(LOGGER.LOGGER) private readonly logger: Logger
     ) {}
 
-    createLike(like: Prisma.LikeCreateInput): Promise<Like> {
+    async createLikeOnComment(
+        like: CreateLikeOnCommentModel
+    ): Promise<LikeIdModel> {
         try {
-            return this.prisma.like.create({
-                data: like,
+            const createLikeInput: Prisma.LikeCreateInput = {
+                user: {
+                    connect: {
+                        userId: like.userId,
+                    },
+                },
+                comment: {
+                    connect: {
+                        commentId: like.commentId,
+                    },
+                },
+            };
+
+            const result = await this.prisma.like.create({
+                data: createLikeInput,
             });
+
+            return result.likeId;
         } catch (err) {
             logRepositoryErrorTrace({
                 logger: this.logger,
@@ -39,19 +67,30 @@ export class LikeRepository implements ILikeRepository {
         }
     }
 
-    readLike(like: Prisma.LikeWhereUniqueInput): Promise<Like | null> {
+    async createLikeOnPost(like: CreateLikeOnPostModel): Promise<LikeIdModel> {
         try {
-            return this.prisma.like.findUnique({
-                where: {
-                    ...like,
-                    deletedAt: null,
+            const createLikeInput: Prisma.LikeCreateInput = {
+                user: {
+                    connect: {
+                        userId: like.userId,
+                    },
                 },
+                post: {
+                    connect: {
+                        postId: like.postId,
+                    },
+                },
+            };
+            const result = await this.prisma.like.create({
+                data: createLikeInput,
             });
+
+            return result.likeId;
         } catch (err) {
             logRepositoryErrorTrace({
                 logger: this.logger,
                 repository: 'LikeRepository',
-                method: 'readLike',
+                method: 'createLike',
                 functionInput: { like },
             });
 
@@ -59,33 +98,67 @@ export class LikeRepository implements ILikeRepository {
         }
     }
 
-    readLikesPerPost(post: Prisma.PostWhereUniqueInput): Promise<Like[]> {
+    async readLike(likeId: LikeIdModel): Promise<LikeModel | null> {
         try {
-            return this.prisma.like.findMany({
-                where: {
-                    post,
-                    deletedAt: null,
-                },
+            const likeUniqueInput: Prisma.LikeWhereUniqueInput = {
+                likeId: likeId,
+                deletedAt: null,
+            };
+
+            const result = await this.prisma.like.findUnique({
+                where: likeUniqueInput,
             });
+
+            if (!result) {
+                return null;
+            }
+
+            if (result?.commentId) {
+                return mapPrismaLikeCommentToLikeCommentModel(result);
+            }
+
+            return mapPrismaLikePostToLikePostModel(result);
         } catch (err) {
             logRepositoryErrorTrace({
                 logger: this.logger,
                 repository: 'LikeRepository',
-                method: 'readLikesPerPost',
-                functionInput: { post },
+                method: 'readLike',
+                functionInput: { likeId },
             });
 
             throw err;
         }
     }
 
-    readNumberOfLikesPerPost(
-        post: Prisma.PostWhereUniqueInput
-    ): Promise<number> {
+    async readLikesPerPost(postId: PostIdModel): Promise<LikePostModel[]> {
+        try {
+            const result = await this.prisma.like.findMany({
+                where: {
+                    post: {
+                        postId: postId,
+                    },
+                    deletedAt: null,
+                },
+            });
+
+            return result.map((like) => mapPrismaLikePostToLikePostModel(like));
+        } catch (err) {
+            logRepositoryErrorTrace({
+                logger: this.logger,
+                repository: 'LikeRepository',
+                method: 'readLikesPerPost',
+                functionInput: { postId },
+            });
+
+            throw err;
+        }
+    }
+
+    readNumberOfLikesPerPost(postId: PostIdModel): Promise<number> {
         try {
             return this.prisma.like.count({
                 where: {
-                    post,
+                    postId,
                     deletedAt: null,
                 },
             });
@@ -94,42 +167,46 @@ export class LikeRepository implements ILikeRepository {
                 logger: this.logger,
                 repository: 'LikeRepository',
                 method: 'readNumberOfLikesPerPost',
-                functionInput: { post },
+                functionInput: { postId },
             });
 
             throw err;
         }
     }
 
-    readLikesPerComment(
-        comment: Prisma.CommentWhereUniqueInput
-    ): Promise<Like[]> {
+    async readLikesPerComment(
+        commentId: CommentIdModel
+    ): Promise<LikeCommentModel[]> {
         try {
-            return this.prisma.like.findMany({
+            const result = await this.prisma.like.findMany({
                 where: {
-                    comment,
+                    comment: {
+                        commentId,
+                    },
                     deletedAt: null,
                 },
             });
+
+            return result.map((like) =>
+                mapPrismaLikeCommentToLikeCommentModel(like)
+            );
         } catch (err) {
             logRepositoryErrorTrace({
                 logger: this.logger,
                 repository: 'LikeRepository',
                 method: 'readLikesPerComment',
-                functionInput: { comment },
+                functionInput: { commentId },
             });
 
             throw err;
         }
     }
 
-    readNumberOfLikesPerComment(
-        comment: Prisma.CommentWhereUniqueInput
-    ): Promise<number> {
+    readNumberOfLikesPerComment(commentId: CommentIdModel): Promise<number> {
         try {
             return this.prisma.like.count({
                 where: {
-                    comment,
+                    commentId,
                     deletedAt: null,
                 },
             });
@@ -138,132 +215,104 @@ export class LikeRepository implements ILikeRepository {
                 logger: this.logger,
                 repository: 'LikeRepository',
                 method: 'readNumberOfLikesPerComment',
-                functionInput: { comment },
+                functionInput: { commentId },
             });
 
             throw err;
         }
     }
 
-    readLikesByUser(user: Prisma.UserWhereUniqueInput): Promise<Like[]> {
+    async readLikesByUser(userId: UserIdModel): Promise<LikeIdModel[]> {
         try {
-            return this.prisma.like.findMany({
+            const result = await this.prisma.like.findMany({
                 where: {
-                    user,
+                    user: {
+                        userId,
+                    },
                     deletedAt: null,
                 },
             });
+
+            return result.map((like) => like.likeId);
         } catch (err) {
             logRepositoryErrorTrace({
                 logger: this.logger,
                 repository: 'LikeRepository',
                 method: 'readLikesByUser',
-                functionInput: { user },
+                functionInput: { userId },
             });
 
             throw err;
         }
     }
 
-    updateLike(
-        where: Prisma.LikeWhereUniqueInput,
-        data: Prisma.LikeUpdateInput
-    ): Promise<Like> {
+    async hardDeleteLike(likeId: LikeIdModel): Promise<LikeIdModel> {
         try {
-            return this.prisma.$transaction(async (tx) => {
+            const result = await this.prisma.$transaction(async (tx) => {
                 const existingLike = await tx.like.findUnique({
-                    where: { ...where, deletedAt: null },
+                    where: { likeId, deletedAt: null },
                 });
 
                 if (!existingLike) {
-                    throw new EntityNotFoundError(
-                        'Like',
-                        where.likeId as string
-                    );
-                }
-
-                return tx.like.update({
-                    where,
-                    data,
-                });
-            });
-        } catch (err) {
-            logRepositoryErrorTrace({
-                logger: this.logger,
-                repository: 'LikeRepository',
-                method: 'updateLike',
-                functionInput: { where, data },
-            });
-
-            throw err;
-        }
-    }
-
-    hardDeleteLike(like: Prisma.LikeWhereUniqueInput): Promise<Like> {
-        try {
-            return this.prisma.$transaction(async (tx) => {
-                const existingLike = await tx.like.findUnique({
-                    where: { ...like, deletedAt: null },
-                });
-
-                if (!existingLike) {
-                    throw new EntityNotFoundError(
-                        'Like',
-                        like.likeId as string
-                    );
+                    throw new EntityNotFoundError('Like', likeId);
                 }
 
                 return this.prisma.like.delete({
-                    where: like,
+                    where: {
+                        likeId,
+                    },
                 });
             });
+
+            return result.likeId;
         } catch (err) {
             logRepositoryErrorTrace({
                 logger: this.logger,
                 repository: 'LikeRepository',
                 method: 'hardDeleteLike',
-                functionInput: { like },
+                functionInput: { likeId },
             });
 
             throw err;
         }
     }
 
-    softDeleteLike(like: Prisma.LikeWhereUniqueInput): Promise<Like> {
+    async softDeleteLike(likeId: LikeIdModel): Promise<LikeIdModel> {
         try {
-            return this.prisma.$transaction(async (tx) => {
+            const result = await this.prisma.$transaction(async (tx) => {
                 const existingLike = await tx.like.findUnique({
-                    where: { ...like, deletedAt: null },
+                    where: { likeId, deletedAt: null },
                 });
 
                 if (!existingLike) {
-                    throw new EntityNotFoundError(
-                        'Like',
-                        like.likeId as string
-                    );
+                    throw new EntityNotFoundError('Like', likeId);
                 }
 
                 if (existingLike.deletedAt !== null) {
                     throw new EntityAlreadyDeletedError(
                         'Like',
-                        like.likeId as string
+                        likeId as string
                     );
                 }
 
                 return this.prisma.like.update({
-                    where: like,
+                    where: {
+                        likeId,
+                    },
                     data: {
                         deletedAt: new Date(),
                         updatedAt: new Date(),
                     },
                 });
             });
+
+            return result.likeId;
         } catch (err) {
             logRepositoryErrorTrace({
                 logger: this.logger,
                 repository: 'LikeRepository',
                 method: 'softDeleteLike',
-                functionInput: { like },
+                functionInput: { likeId },
             });
 
             throw err;
