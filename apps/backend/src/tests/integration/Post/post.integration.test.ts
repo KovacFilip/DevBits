@@ -29,7 +29,7 @@ describe('post integration tests', () => {
     it('request get post by non-existing id', async () => {
         const res = await app.inject({
             method: 'GET',
-            url: '/post/276efe85-a684-4550-94dc-33150c7d173a',
+            url: '/v1/posts/276efe85-a684-4550-94dc-33150c7d173a',
             cookies: {
                 access_token: jwtToken,
             },
@@ -41,7 +41,7 @@ describe('post integration tests', () => {
     it('request get post invalid id zod validation', async () => {
         const res = await app.inject({
             method: 'GET',
-            url: '/post/post-123',
+            url: '/v1/posts/post-123',
             cookies: {
                 access_token: jwtToken,
             },
@@ -54,7 +54,7 @@ describe('post integration tests', () => {
     it('request get post by id', async () => {
         const res = await app.inject({
             method: 'GET',
-            url: `/post/${mikesPost.postId}`,
+            url: `/v1/posts/${mikesPost.postId}`,
             cookies: {
                 access_token: jwtToken,
             },
