@@ -20,8 +20,6 @@ import {
     userIdSchema,
 } from 'packages/shared';
 
-export const BASE_COMMENT_ROUTE = '/comment';
-
 export const CommentRoutes = (fastify: FastifyInstance) => {
     const commentController = container.get<ICommentController>(
         CONTROLLER_IDENTIFIER.COMMENT_CONTROLLER
@@ -29,7 +27,7 @@ export const CommentRoutes = (fastify: FastifyInstance) => {
 
     // Create Comment
     fastify.post<{ Body: CreateCommentDTO; Reply: CommentDTO }>(
-        BASE_COMMENT_ROUTE,
+        '',
         {
             preHandler: [fastify.authenticate],
             schema: {
@@ -45,7 +43,7 @@ export const CommentRoutes = (fastify: FastifyInstance) => {
 
     // Get Comment By Comment ID
     fastify.get<{ Params: CommentIdDTO; Reply: CommentDTO }>(
-        '/comment/:commentId',
+        '/:commentId',
         {
             preHandler: [fastify.authenticate],
             schema: {
@@ -61,7 +59,7 @@ export const CommentRoutes = (fastify: FastifyInstance) => {
 
     // Get Comments For Post By Post ID
     fastify.get<{ Params: PostIdDTO; Reply: SimpleCommentDTO[] }>(
-        '/post/:postId/comments',
+        '/post/:postId',
         {
             preHandler: [fastify.authenticate],
             schema: {
@@ -77,7 +75,7 @@ export const CommentRoutes = (fastify: FastifyInstance) => {
 
     // Get Comments Created by user with UserId
     fastify.get<{ Params: UserIdDTO; Reply: SimpleCommentDTO[] }>(
-        '/user/:userId/comments',
+        '/user/:userId',
         {
             preHandler: [fastify.authenticate],
             schema: {
@@ -92,12 +90,12 @@ export const CommentRoutes = (fastify: FastifyInstance) => {
     );
 
     // Update Comment
-    fastify.put<{
+    fastify.patch<{
         Body: UpdateCommentDTO;
         Params: CommentIdDTO;
         Reply: CommentDTO;
     }>(
-        BASE_COMMENT_ROUTE + '/:commentId',
+        '/:commentId',
         {
             preHandler: [fastify.authenticate],
             schema: {
@@ -114,7 +112,7 @@ export const CommentRoutes = (fastify: FastifyInstance) => {
 
     // Delete Comment
     fastify.delete<{ Params: CommentIdDTO; Reply: SimpleCommentDTO }>(
-        BASE_COMMENT_ROUTE + '/:commentId',
+        '/:commentId',
         {
             preHandler: [fastify.authenticate],
             schema: {
