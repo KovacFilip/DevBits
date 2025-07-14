@@ -12,7 +12,8 @@
         "test:integration:ci": "pnpm -r run test:integration:ci",
         "lint": "npx eslint .",
         "format:write": "prettier --write .",
-        "format:check": "prettier --check ."
+        "format:check": "prettier --check .",
+        "prepare": "husky"
     },
     "keywords": [],
     "author": "",
@@ -20,6 +21,7 @@
     "devDependencies": {
         "@types/node": "^22.15.3",
         "dotenv-cli": "^8.0.0",
+        "husky": "^9.1.7",
         "prettier": "^3.5.3",
         "typescript": "^5.8.3"
     },
