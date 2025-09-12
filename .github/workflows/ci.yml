@@ -43,7 +43,7 @@ jobs:
 
   unit-tests:
     name: Unit tests
-    needs: lint-and-format
+    needs: [lint, format]
     runs-on: ubuntu-latest
 
     steps:
@@ -69,7 +69,7 @@ jobs:
   integration-tests:
     name: Integration tests
     runs-on: ubuntu-latest
-    needs: lint-and-format
+    needs: [lint, format]
     env:
       POSTGRES_DB_CONNECTION_STRING: postgresql://username:password@localhost:5432/integration
       POSTGRES_USER: username
