@@ -7,3 +7,11 @@ bun.lockb
 
 # Miscellaneous
 /static/
+
+# Shadcn components
+src/lib/components/ui/**
+
+src/app.css
+src/lib/utils.ts
+
+**/*.config.*
