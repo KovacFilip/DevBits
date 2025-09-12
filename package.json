@@ -10,12 +10,14 @@
         "test:unit:coverage": "pnpm -r run test:unit:coverage",
         "test:integration": "pnpm -r run test:integration",
         "test:integration:ci": "pnpm -r run test:integration:ci",
-        "lint": "npx eslint .",
-        "format:write": "prettier --write .",
-        "format:check": "prettier --check .",
+        "lint": "pnpm -r lint",
+        "format:write": "pnpm -r run format:write .",
+        "format:check": "pnpm -r run format:check .",
         "prepare": "husky"
     },
-    "keywords": [],
+    "keywords": [
+        
+    ],
     "author": "",
     "license": "ISC",
     "devDependencies": {
@@ -35,5 +37,10 @@
         "globals": "^16.0.0",
         "typescript-eslint": "^8.31.1"
     },
-    "packageManager": "pnpm@8.15.5"
+    "packageManager": "pnpm@8.15.5",
+    "pnpm": {
+        "onlyBuiltDependencies": [
+            "esbuild"
+        ]
+    }
 }
