@@ -15,7 +15,9 @@
         "test:unit": "vitest --config ./vitest.unit.config.mts --reporter verbose",
         "test:unit:coverage": "vitest run --config ./vitest.unit.config.mts --coverage",
         "test:integration": "./src/tests/integration/run-integration-tests.sh",
-        "test:integration:ci": "vitest run --config ./vitest.integration.config.mts --reporter verbose"
+        "test:integration:ci": "vitest run --config ./vitest.integration.config.mts --reporter verbose",
+        "format:check": "prettier --check .",
+        "format:write": "prettier --write ."
     },
     "keywords": [],
     "author": "",
@@ -44,6 +46,7 @@
         "@types/jsonwebtoken": "^9.0.9",
         "@vitest/coverage-v8": "^3.2.3",
         "pino-pretty": "^13.0.0",
+        "prettier": "^3.5.3",
         "tsx": "^4.19.4",
         "vite-tsconfig-paths": "^5.1.4",
         "vitest": "^3.2.3",
