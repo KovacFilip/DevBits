@@ -15,7 +15,7 @@ export default defineConfig([
         'pg/**',
         '**/pg/**',
         '*/**/node_modules/**',
-        '*/**/dist/**',
+        '**/dist/**',
         '**/prisma/**',
         '**/coverage/**',
     ]),
