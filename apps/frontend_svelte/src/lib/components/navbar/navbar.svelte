@@ -19,7 +19,7 @@
 >
 	<a
 		href={resolve('/')}
-		class="tracking-light animate-gradient bg-gradient-to-r from-red-300 via-orange-300 to-yellow-300 bg-[length:200%_200%] bg-clip-text text-3xl font-bold text-transparent transition-opacity transition-transform hover:scale-105"
+		class="tracking-light animate-gradient bg-gradient-to-r from-red-300 via-orange-300 to-yellow-300 bg-[length:200%_200%] bg-clip-text text-3xl font-bold text-transparent transition-transform hover:scale-105"
 	>
 		DevBits
 	</a>
