@@ -2,8 +2,8 @@ import {
     likeCommentSchema,
     likeIdSchema,
     likePostSchema,
-} from 'packages/shared/models/ZodSchemas';
-import { z } from 'zod';
+} from "@/models/ZodSchemas/Like";
+import { z } from "zod";
 
 export type LikeIdDTO = z.infer<typeof likeIdSchema>;
 export type LikeCommentDTO = z.infer<typeof likeCommentSchema>;

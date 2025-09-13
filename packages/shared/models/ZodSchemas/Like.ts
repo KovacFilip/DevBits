@@ -1,7 +1,7 @@
-import { commentIdSchema } from 'packages/shared/models/ZodSchemas/Comment';
-import { postIdSchema } from 'packages/shared/models/ZodSchemas/Post';
-import { userIdSchema } from 'packages/shared/models/ZodSchemas/User';
-import { z } from 'zod';
+import { commentIdSchema } from "@/models/ZodSchemas/Comment";
+import { postIdSchema } from "@/models/ZodSchemas/Post";
+import { userIdSchema } from "@/models/ZodSchemas/User";
+import { z } from "zod";
 
 export const likeIdSchema = z.strictObject({
     likeId: z.string().uuid(),

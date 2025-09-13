@@ -3,8 +3,8 @@ import {
     userDetailSchema,
     userIdSchema,
     userSimpleSchema,
-} from 'packages/shared/models/ZodSchemas';
-import { z } from 'zod';
+} from "@/models/ZodSchemas/User";
+import { z } from "zod";
 
 export type UserIdDTO = z.infer<typeof userIdSchema>;
 export type UpdateUserDTO = z.infer<typeof updateUserSchema>;
@@ -13,7 +13,7 @@ export type CreateUserDTO = {
     email?: string;
     name?: string;
     profilePicture?: string;
-    provider: 'google' | 'facebook' | 'github' | 'discord';
+    provider: "google" | "facebook" | "github" | "discord";
     providerUserId: string;
 };
 

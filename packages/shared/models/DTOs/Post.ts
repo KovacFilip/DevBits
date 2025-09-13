@@ -4,8 +4,8 @@ import {
     postWithContentSchema,
     simplePostSchema,
     updatePostSchema,
-} from 'packages/shared/models/ZodSchemas';
-import { z } from 'zod';
+} from "@/models/ZodSchemas/Post";
+import { z } from "zod";
 
 export type CreatePostDTO = z.infer<typeof createPostSchema>;
 export type UpdatePostDTO = z.infer<typeof updatePostSchema>;

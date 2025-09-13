@@ -4,8 +4,8 @@ import {
     createCommentSchema,
     simpleCommentSchema,
     updateCommentBodySchema,
-} from 'packages/shared/models/ZodSchemas';
-import { z } from 'zod';
+} from "@/models/ZodSchemas/Comment";
+import { z } from "zod";
 
 export type CreateCommentDTO = z.infer<typeof createCommentSchema>;
 export type CommentIdDTO = z.infer<typeof commentIdSchema>;
