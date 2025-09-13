@@ -17,11 +17,11 @@
 	<link rel="icon" href={favicon} />
 </svelte:head>
 
-<div class="flex h-screen w-screen flex-col">
+<div class="flex h-screen flex-col">
 	<div>
 		<Navbar paths={routes.paths} />
 	</div>
-	<div class="flex w-screen flex-1 flex-col items-center justify-center">
+	<div class="flex flex-1 flex-col items-center justify-center overflow-y-auto">
 		{@render children?.()}
 	</div>
 </div>

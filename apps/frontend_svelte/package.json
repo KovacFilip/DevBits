@@ -46,6 +46,7 @@
 	},
 	"dependencies": {
 		"@devbits/shared": "workspace:^",
+		"marked": "^16.2.1",
 		"mode-watcher": "^1.1.0",
 		"zod": "^3.24.4"
 	}
