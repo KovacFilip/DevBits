@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { goto } from '$app/navigation';
+	import { resolve } from '$app/paths';
 	import {
 		Card,
 		CardContent,
@@ -8,18 +10,23 @@
 	} from '$lib/components/ui/card';
 	import type { PostWithContentDTO } from '@devbits/shared';
 
-	const { content, title, userId }: PostWithContentDTO = $props();
+	const { content, title, postId, userId }: PostWithContentDTO = $props();
 
 	const preview =
 		content.replace(/[#*`_~]/g, '').slice(0, 150) + (content.length > 150 ? '...' : '');
 </script>
 
-<Card class="w-4xl cursor-pointer transition-shadow hover:shadow-lg hover:shadow-foreground">
+<Card
+	onclick={() => {
+		goto(resolve(`/app/post/${postId}`));
+	}}
+	class="w-xs cursor-pointer transition-shadow hover:shadow-lg hover:shadow-foreground sm:w-md md:w-3xl lg:w-4xl xl:w-6xl"
+>
 	<CardHeader>
 		<CardTitle>{title}</CardTitle>
 		<CardDescription>Author ID: {userId}</CardDescription>
 	</CardHeader>
 	<CardContent>
-		<p class="text-muted-foreground">{preview}</p>
+		<p class="overflow-x-hidden text-muted-foreground">{preview}</p>
 	</CardContent>
 </Card>
