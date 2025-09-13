@@ -3,7 +3,7 @@
 	import { samplePosts } from '$lib/data/posts';
 </script>
 
-<div class="flex h-full w-6xl flex-col items-center gap-4 py-8">
+<div class="flex w-6xl flex-col items-center gap-4">
 	{#each samplePosts as post (post.title)}
 		<PostCard {...post} />
 	{/each}

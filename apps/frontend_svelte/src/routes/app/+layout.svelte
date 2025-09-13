@@ -21,7 +21,7 @@
 	<div>
 		<Navbar paths={routes.paths} />
 	</div>
-	<div class="flex flex-1 flex-col items-center justify-center overflow-y-auto">
+	<div class="flex flex-1 flex-col items-center overflow-y-auto py-8">
 		{@render children?.()}
 	</div>
 </div>
