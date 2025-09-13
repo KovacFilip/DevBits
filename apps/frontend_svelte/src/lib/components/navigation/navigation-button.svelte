@@ -8,11 +8,12 @@
 	interface Props {
 		path: RouteId | Pathname;
 		children: Snippet;
+		className?: string;
 	}
 
-	const { children, path }: Props = $props();
+	const { children, path, className }: Props = $props();
 </script>
 
-<Button class="hover:cursor-pointer" onclick={() => goto(resolve(path))}>
+<Button class={`hover:cursor-pointer ${className ?? ''}`} onclick={() => goto(resolve(path))}>
 	{@render children?.()}
 </Button>

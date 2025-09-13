@@ -1,9 +1,13 @@
 <script lang="ts">
 	import NavigationButton from '$lib/components/navigation/navigation-button.svelte';
+	import ModeSwitcher from '$lib/components/theme/mode-switcher.svelte';
 	import H1 from '$lib/components/typography/h1.svelte';
 	import P from '$lib/components/typography/p.svelte';
 </script>
 
+<nav class="flex w-full items-end justify-end px-4 pt-4">
+	<ModeSwitcher />
+</nav>
 <div class="flex h-full flex-col items-center justify-center gap-8 bg-background text-foreground">
 	<div class="flex flex-col items-center gap-4">
 		<div

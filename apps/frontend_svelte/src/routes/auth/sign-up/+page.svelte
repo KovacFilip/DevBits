@@ -1,5 +1,6 @@
 <script lang="ts">
 	import GoogleIcon from '$lib/assets/icons/google-icon.svelte';
+	import NavigationButton from '$lib/components/navigation/navigation-button.svelte';
 	import NavigationLink from '$lib/components/navigation/navigation-link.svelte';
 	import H3 from '$lib/components/typography/h3.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
@@ -16,11 +17,12 @@
 			<Input type="password" placeholder="Confirm Password" />
 			<Button>Sign Up</Button>
 			<div class="flex justify-center">
-				<Button
-					class="h-8 w-64 bg-secondary-foreground hover:scale-105 hover:cursor-pointer hover:bg-muted-foreground"
+				<NavigationButton
+					path="/app/home"
+					className="h-8 w-64 bg-secondary-foreground hover:scale-105 hover:cursor-pointer hover:bg-muted-foreground"
 				>
 					<GoogleIcon />
-				</Button>
+				</NavigationButton>
 			</div>
 
 			<div class="flex items-center gap-2 text-sm text-muted-foreground">
