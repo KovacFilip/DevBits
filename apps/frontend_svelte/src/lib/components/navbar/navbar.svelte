@@ -2,13 +2,13 @@
 	import * as NavigationMenu from '$lib/components/ui/navigation-menu/index.js';
 </script>
 
-<NavigationMenu.Root>
+<NavigationMenu.Root class="max-w-screen bg-slate-500">
 	<NavigationMenu.List>
 		<NavigationMenu.Item>
-			<NavigationMenu.Trigger>Item One</NavigationMenu.Trigger>
-			<NavigationMenu.Content>
-				<NavigationMenu.Link>Link</NavigationMenu.Link>
-			</NavigationMenu.Content>
+			<NavigationMenu.Link href="/">Home</NavigationMenu.Link>
+		</NavigationMenu.Item>
+		<NavigationMenu.Item>
+			<NavigationMenu.Link href="/about">About</NavigationMenu.Link>
 		</NavigationMenu.Item>
 	</NavigationMenu.List>
 </NavigationMenu.Root>
