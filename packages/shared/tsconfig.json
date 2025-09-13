@@ -14,7 +14,7 @@
       "@/*": ["./*"],
       "~/models/*": ["./models/*"],
       "~/types/*": ["./types/*"],
-      "~/schemas/*": ["./schemas/*"]
+      "~/schemas/*": ["./models/ZodSchemas/*"]
     }
   },
   "include": ["**/*.ts"],

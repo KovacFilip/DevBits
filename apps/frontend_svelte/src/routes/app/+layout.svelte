@@ -17,7 +17,11 @@
 	<link rel="icon" href={favicon} />
 </svelte:head>
 
-<div class="h-full w-full">
-	<Navbar paths={routes.paths} />
-	{@render children?.()}
+<div class="flex h-screen w-screen flex-col">
+	<div>
+		<Navbar paths={routes.paths} />
+	</div>
+	<div class="flex w-screen flex-1 flex-col items-center justify-center">
+		{@render children?.()}
+	</div>
 </div>

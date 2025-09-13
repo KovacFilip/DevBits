@@ -2,8 +2,6 @@
   "name": "@devbits/shared",
   "version": "1.0.0",
   "description": "",
-  "main": "./index.ts",
-  "types": "./index.ts",
   "exports": {
     ".": "./index.ts"
   },
