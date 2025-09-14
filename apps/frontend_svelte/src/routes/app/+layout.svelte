@@ -17,7 +17,7 @@
 	<link rel="icon" href={favicon} />
 </svelte:head>
 
-<div class="flex h-screen flex-col">
+<div class="flex flex-col">
 	<div>
 		<Navbar paths={routes.paths} />
 	</div>
