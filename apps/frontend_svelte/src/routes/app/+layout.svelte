@@ -8,6 +8,10 @@
 			{
 				title: 'About',
 				link: '/about'
+			},
+			{
+				title: 'Create Post',
+				link: '/app/post/create'
 			}
 		]
 	};
@@ -17,7 +21,7 @@
 	<link rel="icon" href={favicon} />
 </svelte:head>
 
-<div class="flex flex-col">
+<div class="flex h-screen flex-col">
 	<div>
 		<Navbar paths={routes.paths} />
 	</div>
