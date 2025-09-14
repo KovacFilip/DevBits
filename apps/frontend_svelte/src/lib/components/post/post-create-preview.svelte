@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { browser } from '$app/environment';
 	import { cn } from '$lib/utils';
 	import DOMPurify from 'dompurify';
 	import { marked } from 'marked';
@@ -9,9 +8,6 @@
 	});
 
 	let { content, className }: { content: string; className?: string } = $props();
-
-	const dirtyHtml = marked(content);
-	const pureHtml = browser ? DOMPurify.sanitize(dirtyHtml as string) : dirtyHtml;
 </script>
 
 <div
@@ -24,6 +20,6 @@
 		<span class="text-muted-foreground">Preview</span>
 	{:else}
 		<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-		{@html pureHtml}
+		{@html DOMPurify.sanitize(marked(content) as string)}
 	{/if}
 </div>

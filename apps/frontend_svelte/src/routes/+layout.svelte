@@ -12,7 +12,7 @@
 
 <div class="flex h-screen flex-col">
 	<ModeWatcher />
-	<div class="flex-1">
-		{@render children?.()}
-	</div>
+	<!-- <div class="flex-1"> -->
+	{@render children?.()}
+	<!-- </div> -->
 </div>
