@@ -5,6 +5,6 @@ export const load: LayoutServerLoad = ({ cookies }) => {
 	const accessToken = cookies.get('access_token');
 
 	if (!accessToken) {
-		redirect(307, '/auth/sign-in');
+		redirect(307, '/');
 	}
 };
