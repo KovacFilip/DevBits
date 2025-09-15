@@ -51,6 +51,7 @@
 		"axios": "^1.12.2",
 		"dompurify": "^3.2.6",
 		"marked": "^16.2.1",
+		"marked-highlight": "^2.2.2",
 		"mode-watcher": "^1.1.0",
 		"zod": "^3.24.4"
 	}
