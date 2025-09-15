@@ -12,3 +12,7 @@ pg/
 dist/
 **/dist/**
 **/coverage/**
+
+**/prisma/**
+
+**/dist/**

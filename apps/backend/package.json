@@ -5,17 +5,20 @@
     "main": "dist/index.js",
     "scripts": {
         "build": "tsc",
-        "db:migrate": "dotenv -e ../../.env -- prisma migrate dev",
-        "db:generate": "dotenv -e ../../.env -- prisma generate",
-        "db:deploy": "dotenv -e ../../.env -- prisma migrate deploy",
-        "db:studio": "dotenv -e ../../.env -- prisma studio",
-        "db:reset": "dotenv -e ../../.env -- prisma migrate reset",
-        "db:seed": "dotenv -e ../../.env -- tsx ./prisma/seed/seed.ts",
-        "dev": "dotenv -e ../../.env -- tsx --watch src/index.ts",
+        "db:migrate": "prisma migrate dev",
+        "db:generate": "prisma generate",
+        "db:deploy": "prisma migrate deploy",
+        "db:studio": "prisma studio",
+        "db:reset": "prisma migrate reset",
+        "db:seed": "tsx ./prisma/seed/seed.ts",
+        "dev": "tsx --watch src/index.ts",
         "test:unit": "vitest --config ./vitest.unit.config.mts --reporter verbose",
         "test:unit:coverage": "vitest run --config ./vitest.unit.config.mts --coverage",
         "test:integration": "./src/tests/integration/run-integration-tests.sh",
-        "test:integration:ci": "vitest run --config ./vitest.integration.config.mts --reporter verbose"
+        "test:integration:ci": "vitest run --config ./vitest.integration.config.mts --reporter verbose",
+        "format:check": "prettier --check .",
+        "format:write": "prettier --write .",
+        "lint": "eslint ."
     },
     "keywords": [],
     "author": "",
@@ -23,6 +26,7 @@
     "dependencies": {
         "@devbits/shared": "workspace:*",
         "@fastify/cookie": "^11.0.2",
+        "@fastify/cors": "^11.1.0",
         "@fastify/jwt": "^9.1.0",
         "@fastify/oauth2": "^8.1.2",
         "@fastify/swagger": "^9.5.1",
@@ -41,10 +45,16 @@
         "zod": "^3.24.4"
     },
     "devDependencies": {
+        "@eslint/js": "^9.35.0",
         "@types/jsonwebtoken": "^9.0.9",
         "@vitest/coverage-v8": "^3.2.3",
+        "eslint": "^9.35.0",
+        "globals": "^16.0.0",
+        "jiti": "^2.5.1",
         "pino-pretty": "^13.0.0",
+        "prettier": "^3.5.3",
         "tsx": "^4.19.4",
+        "typescript-eslint": "^8.43.0",
         "vite-tsconfig-paths": "^5.1.4",
         "vitest": "^3.2.3",
         "vitest-mock-extended": "^3.1.0"

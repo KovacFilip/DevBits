@@ -89,7 +89,7 @@ export const googleAuthRoutes = (fastify: FastifyInstance) => {
                 path: '/',
             });
 
-            return response.send({ payload: jwtToken });
+            return response.redirect('http://localhost:5173/app/home').send();
         }
     );
 };
