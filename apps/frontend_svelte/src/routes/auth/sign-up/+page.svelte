@@ -1,11 +1,17 @@
 <script lang="ts">
+	import { AuthApi } from '$lib/api/auth/auth';
 	import GoogleIcon from '$lib/assets/icons/google-icon.svelte';
-	import NavigationButton from '$lib/components/navigation/navigation-button.svelte';
 	import NavigationLink from '$lib/components/navigation/navigation-link.svelte';
 	import H3 from '$lib/components/typography/h3.svelte';
 	import Button from '$lib/components/ui/button/button.svelte';
 	import { Card, CardContent, CardHeader } from '$lib/components/ui/card';
 	import { Input } from '$lib/components/ui/input';
+
+	const authApi = new AuthApi();
+
+	async function handleGoogleLogin() {
+		await authApi.handleGoogleLogin();
+	}
 </script>
 
 <div class="flex h-full flex-col items-center justify-center gap-8 bg-background text-foreground">
@@ -17,12 +23,12 @@
 			<Input type="password" placeholder="Confirm Password" />
 			<Button>Sign Up</Button>
 			<div class="flex justify-center">
-				<NavigationButton
-					path="/app/home"
-					className="h-8 w-64 bg-secondary-foreground hover:scale-105 hover:cursor-pointer hover:bg-muted-foreground"
+				<Button
+					onclick={handleGoogleLogin}
+					class="h-8 w-64 bg-secondary-foreground hover:scale-105 hover:cursor-pointer hover:bg-muted-foreground"
 				>
 					<GoogleIcon />
-				</NavigationButton>
+				</Button>
 			</div>
 
 			<div class="flex items-center gap-2 text-sm text-muted-foreground">

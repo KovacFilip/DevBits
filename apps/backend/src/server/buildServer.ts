@@ -1,4 +1,5 @@
-import fCookie from '@fastify/cookie';
+import { fastifyCookie } from '@fastify/cookie';
+import cors from '@fastify/cors';
 import fjwt, { FastifyJWT } from '@fastify/jwt';
 import fastifySwagger from '@fastify/swagger';
 import fastifySwaggerUi from '@fastify/swagger-ui';
@@ -40,6 +41,16 @@ export const buildServer = async (): Promise<FastifyInstance> => {
     server.setValidatorCompiler(validatorCompiler);
     server.setSerializerCompiler(serializerCompiler);
 
+    // CORS
+    server.register(cors, {
+        origin: '*',
+    });
+
+    server.register(fastifyCookie, {
+        secret: JWT_SECRET,
+        hook: 'preHandler',
+    });
+
     // Swagger
     server.register(fastifySwagger, {
         openapi: {
@@ -69,11 +80,6 @@ export const buildServer = async (): Promise<FastifyInstance> => {
     server.addHook('preHandler', (req, _, next) => {
         req.jwt = server.jwt;
         return next();
-    });
-
-    server.register(fCookie, {
-        secret: JWT_SECRET,
-        hook: 'preHandler',
     });
 
     server.decorate('authenticate', async (request: FastifyRequest) => {
