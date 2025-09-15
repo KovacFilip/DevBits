@@ -49,6 +49,7 @@
 		"@tanstack/svelte-query": "^5.87.4",
 		"axios": "^1.12.2",
 		"dompurify": "^3.2.6",
+		"highlight.js": "^11.11.1",
 		"marked": "^16.2.1",
 		"marked-highlight": "^2.2.2",
 		"mode-watcher": "^1.1.0",

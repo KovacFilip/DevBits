@@ -1,11 +1,7 @@
 <script lang="ts">
+	import { marked } from '$lib/marked/marked';
 	import { cn } from '$lib/utils';
 	import DOMPurify from 'dompurify';
-	import { marked } from 'marked';
-
-	marked.setOptions({
-		async: false
-	});
 
 	let { content, className }: { content: string; className?: string } = $props();
 </script>
@@ -20,6 +16,6 @@
 		<span class="text-muted-foreground">Preview</span>
 	{:else}
 		<!-- eslint-disable-next-line svelte/no-at-html-tags -->
-		{@html DOMPurify.sanitize(marked(content) as string)}
+		{@html DOMPurify.sanitize(marked.parse(content) as string)}
 	{/if}
 </div>

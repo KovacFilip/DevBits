@@ -1,17 +1,13 @@
 <script lang="ts">
 	import { browser } from '$app/environment';
+	import { marked } from '$lib/marked/marked';
 	import type { PostWithContentDTO } from '@devbits/shared';
 	import DOMPurify from 'dompurify';
-	import { marked } from 'marked';
 	import P from '../typography/p.svelte';
-
-	marked.setOptions({
-		async: false
-	});
 
 	const { content, userId }: PostWithContentDTO = $props();
 
-	const dirtyHtml = marked(content);
+	const dirtyHtml = marked.parse(content);
 	const pureHtml = browser ? DOMPurify.sanitize(dirtyHtml as string) : dirtyHtml;
 </script>
 
