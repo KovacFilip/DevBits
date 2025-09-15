@@ -6,10 +6,6 @@
 	const routes: NavbarProps = {
 		paths: [
 			{
-				title: 'About',
-				link: '/about'
-			},
-			{
 				title: 'Create Post',
 				link: '/app/post/create'
 			}
